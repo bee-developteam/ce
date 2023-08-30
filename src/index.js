@@ -268,21 +268,21 @@ if (! formula && typeof(require) === 'function') {
                 search: 'Search',
                 entries: ' entries',
                 columnName: 'Column name',
-                insertANewColumnBefore: 'Insert a new column before',
-                insertANewColumnAfter: 'Insert a new column after',
-                deleteSelectedColumns: 'Delete selected columns',
+                insertANewColumnBefore: '上に行を挿入する',
+                insertANewColumnAfter: '下に行を挿入する',
+                deleteSelectedColumns: '選択行を削除する',
                 renameThisColumn: 'Rename this column',
                 orderAscending: 'Order ascending',
                 orderDescending: 'Order descending',
-                insertANewRowBefore: 'Insert a new row before',
-                insertANewRowAfter: 'Insert a new row after',
-                deleteSelectedRows: 'Delete selected rows',
+                insertANewRowBefore: '左に列を挿入する',
+                insertANewRowAfter: '右に列を挿入する',
+                deleteSelectedRows: '選択列を削除する',
                 editComments: 'Edit comments',
                 addComments: 'Add comments',
                 comments: 'Comments',
                 clearComments: 'Clear comments',
-                copy: 'Copy...',
-                paste: 'Paste...',
+                copy: '選択範囲をコピーする',
+                paste: '貼り付け',
                 saveAs: 'Save as...',
                 about: 'About',
                 areYouSureToDeleteTheSelectedRows: 'Are you sure to delete the selected rows?',
@@ -296,6 +296,14 @@ if (! formula && typeof(require) === 'function') {
             },
             // About message
             about: true,
+            //add transform CSS support
+            transform:{
+                x:0,
+                y:0,
+                scale:1,
+                originX:0,
+                originY:0,
+            }
         };
 
         // Loading initial configuration from user
@@ -535,6 +543,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Create table container
             obj.content = document.createElement('div');
+            
             obj.content.classList.add('jexcel_content');
             obj.content.onscroll = function(e) {
                 obj.scrollControls(e);
@@ -743,7 +752,6 @@ if (! formula && typeof(require) === 'function') {
             if (obj.options.toolbar && obj.options.toolbar.length) {
                 obj.createToolbar();
             }
-
             // Fullscreen
             if (obj.options.fullscreen == true) {
                 el.classList.add('fullscreen');
@@ -761,7 +769,6 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
             }
-
             // With toolbars
             if (obj.options.tableOverflow != true && obj.options.toolbar) {
                 el.classList.add('with-toolbar');
@@ -3214,20 +3221,19 @@ if (! formula && typeof(require) === 'function') {
                 var contentRect = obj.content.getBoundingClientRect();
                 var x1 = contentRect.left;
                 var y1 = contentRect.top;
-
                 var lastRect = last.getBoundingClientRect();
                 var x2 = lastRect.left;
                 var y2 = lastRect.top;
                 var w2 = lastRect.width;
                 var h2 = lastRect.height;
-
-                var x = (x2 - x1) + obj.content.scrollLeft + w2 - 4;
-                var y = (y2 - y1) + obj.content.scrollTop + h2 - 4;
-
+                var x = (x2 - x1) + obj.content.scrollLeft + w2;
+                var y = (y2 - y1) + obj.content.scrollTop + h2;
+                y = jexcel.transformScaleTop(obj,y) -4;
+                x = jexcel.transformScaleLeft(obj,x) -4;
                 // Place the corner in the correct place
+                
                 obj.corner.style.top = y + 'px';
                 obj.corner.style.left = x + 'px';
-
                 if (obj.options.freezeColumns) {
                     var width = obj.getFreezeWidth();
                     // Only check if the last column is not part of the merged cells
@@ -8293,6 +8299,84 @@ if (! formula && typeof(require) === 'function') {
                         var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                         // The id is depending on header and body
                         jexcel.current.contextMenu.contextmenu.open(e, items);
+                        // transform scale position
+                        
+                            var rect = jexcel.current.contextMenu.getBoundingClientRect();
+                            console.log('rect',rect);
+   
+                            // console.log('offsetY',offsetY);
+                            var offsetX = window.scrollX;
+                            var offsetY = window.scrollY;
+                            if (e.target) {
+                                switch (e.type) {
+                                    case "touchstart" :
+                                        var touches = e.touches;
+                                    case "touchmove" :
+                                        var touches = e.touches;
+                                        break;
+                                    case "touchcancel" :
+                                        if (!_cancelReport) {
+                                        var touches = e.changedTouches;
+                            
+                                        }
+                                    case "touchend" :
+                                        var touches = e.changedTouches;
+                            
+                                        break;
+                                }
+                            }else{
+                                var touches = e;
+                            }
+                        
+                            var x;
+                            var y;
+                            var ua = navigator.userAgent;
+
+                            if (ua.indexOf('iPhone') > 0 || ua.indexOf('iPod') > 0 || ua.indexOf('Android') > 0 && ua.indexOf('Mobile') > 0) {
+                                x = touches[0].clientX;
+                                y = touches[0].clientY;
+                            } else if (ua.indexOf('iPad') > 0 || ua.indexOf('Android') > 0) {
+                                x = touches[0].clientX;
+                                y = touches[0].clientY;
+                            } else {
+                                if(e.type.indexOf("touch")) {
+                                    x = e.clientX;
+                                    y = e.clientY;
+                                    //console.log("touch")
+                                } else {
+                                    x = touches.x;
+                                    y = touches.y;
+                                    console.log(y)
+                                }
+                            }
+                            x = x - jexcel.current.options.transform.x + offsetX;
+                            y = y - jexcel.current.options.transform.y + offsetY;
+
+                            var t = y;
+                            // var rectH = rect.height / jexcel.current.options.transform.scale
+                            if (window.innerHeight < y + rect.height) {
+                                var h = y - rect.height;
+                                if (h < 0) {
+                                    t = 0;
+                                }else{
+                                    t = h;
+                                }
+                            }
+                                
+                            jexcel.current.contextMenu.style.top = jexcel.transformScaleTop(jexcel.current,t) + 'px';
+
+                            var l = x;
+                            // var rectW = rect.width / jexcel.current.options.transform.scale
+                            if (window.innerWidth < x + rect.width) {
+                                var w = x - rect.width;
+                                if (w > 0) {
+                                    l = w;
+                                } else {
+                                    l = 10;
+                                }
+                            }
+                            
+                            jexcel.current.contextMenu.style.left = jexcel.transformScaleTop(jexcel.current,l) + 'px';
                         // Avoid the real one
                         e.preventDefault();
                     }
@@ -8892,7 +8976,15 @@ if (! formula && typeof(require) === 'function') {
             return options;
         }
     }
-
+        /**
+         * add
+         */
+        jexcel.transformScaleLeft = function(o,number){
+            return Math.round(number / o.options.transform.scale)
+        }
+        jexcel.transformScaleTop = function(o,number){
+            return Math.round(number / o.options.transform.scale)
+        }
     // Helpers
     jexcel.helpers = (function() {
         var component = {};
