@@ -607,7 +607,7 @@ declare namespace jspreadsheet {
       colIndex: string | null,
       rowIndex: string | null,
       event: PointerEvent
-    ) => object[];
+    ) => object[] | null;
 
     /**
      * If true, copy and export will bring formula results. If false, it will bring formulas.
@@ -1403,6 +1403,22 @@ declare namespace jspreadsheet {
      * @default false
      */
     wordWrap?: boolean;
+    /**
+     * css transform param position replace.
+     * @param x - transform translate position x px
+     * @param y - transform translate position y px
+     * @param scale - transform scale number 0<scale
+     * @param originX - transform-origin x default 0
+     * @param originY - transform-origin y default 0
+     */
+    transform?:{
+      x:number,
+      y:number,
+      scale:number,
+      originX:number,
+      originY:number,
+    }
+
   }
 
   interface JspreadsheetInstanceElement extends HTMLDivElement {
@@ -2164,7 +2180,7 @@ declare namespace jspreadsheet {
      * @param str - Data.
      * @param delimiter - CSV delimiter. Defaut: ",".
      */
-    parseCSV: (str: number, delimiter?: number) => string[][];
+    parseCSV: (str: string, delimiter?: number) => string[][];
 
     /**
      * Extract a number from a string.
