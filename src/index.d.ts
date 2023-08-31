@@ -651,7 +651,7 @@ declare namespace jspreadsheet {
      * Default width for columns with no specified width.
      * @default 50
      */
-    defaultColWidth?: number;
+    defaultColWidth?: number|string;
 
     /**
      * Default row height.
@@ -1418,7 +1418,16 @@ declare namespace jspreadsheet {
       originX:number,
       originY:number,
     }
-
+    autoWidth?:{
+      saveIgnore:{
+        ignoreEvents:boolean|null,
+        ignoreHistory:boolean|null,
+      },
+      columnsToResize:Array<number>,
+      min_W:number,
+      max_w:number,
+      fullSizeTable:boolean,
+    }
   }
 
   interface JspreadsheetInstanceElement extends HTMLDivElement {
@@ -2564,6 +2573,19 @@ declare namespace jspreadsheet {
       oldWidth?: number | number[]
     ): void;
 
+    /**
+    * add
+    * autoWidth
+    */
+    columnsAutoResize():void;
+    /**
+     * get Width offset of columns
+     * @returns {Array}
+     */
+    getWidthColumns():Array<number>;
+    setWidthColumn(colsWidth:Array<number>): void;
+    enableIgnoreDispatch(inst:JspreadsheetInstance)
+    disableIgnoreDispatch(inst:JspreadsheetInstance)
     /**
      * Show hidden column.
      * @param colNumber - Column index.

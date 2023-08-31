@@ -367,7 +367,6 @@ if (! formula && typeof(require) === 'function') {
         obj.hashString = null;
         obj.resizing = null;
         obj.dragging = null;
-
         // Lazy loading
         if (obj.options.lazyLoading == true && (obj.options.tableOverflow == false && obj.options.fullscreen == false)) {
             console.error('Jspreadsheet: The lazyloading only works when tableOverflow = yes or fullscreen = yes');
@@ -3391,7 +3390,203 @@ if (! formula && typeof(require) === 'function') {
                 obj.updateCornerPosition();
             }
         }
+        /**
+         * https://github.com/jspreadsheet/plugins/tree/master
+         * autoWidth
+         * Copyright GBonnaire.fr and Code released under the MIT License
+         * @param {object} worksheet
+         * @returns {Array}
+         */
+        //設定の一時保存
+        obj.options.autoWidth={
+            saveIgnore:{
+                ignoreEvents:null,
+                ignoreHistory:null,
+            },
+            columnsToResize:[],
+             min_W : 50,
+             max_w:190,
+             fullSizeTable:true,
+        }
+        obj.columnsAutoResize = function(){
+            for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+                const column = obj.options.columns[ite_col];
+                console.log('column',column);
+                if(column.width == null || column.width === '' || column.width === 'auto') {
+                    obj.options.autoWidth.columnsToResize.push(ite_col);
+                    obj.options.columns[ite_col].width = obj.options.autoWidth.min_W;
+                }
+            }
+            const colsWidth = obj.getWidthColumns();
+            console.log('colsWidth',colsWidth);
+            obj.setWidthColumn(colsWidth);
 
+        }
+        /**
+         * get Width offset of columns
+         * @returns {Array}
+         */
+        obj.getWidthColumns = function() {
+            const cols = [];
+            if(obj.rows.length === 0) {
+                return cols;
+            }
+            const tr = obj.rows[0];
+            console.log('tr',tr);
+            if(tr) {
+                for(let ite_td=0; ite_td < tr.children.length; ite_td++) {
+                    if(ite_td === 0) { // Skip index
+                        continue;
+                    }
+                    const td = tr.children[ite_td];
+                    let width = td.offsetWidth;
+                        let maxLength = tr.children[0].innerText.length;
+                        console.log('maxLength',maxLength);
+                        let widthInit = 20;//font-size
+                        for(let ite_row=0; ite_row<obj.rows.length; ite_row++) {
+                            let valueRow = obj.getValueFromCoords(ite_td-1, ite_row, true);
+                           
+                            if(typeof valueRow !== "string") {
+                                if(valueRow === null) {
+                                    valueRow = "";
+                                } else {
+                                    valueRow = "" + valueRow;
+                                }
+                            }else{
+                                //改行がある場合
+                                if(valueRow.match(/\n/)){
+                                    let valueAry = valueRow.split(/\n/);
+                                    console.log('valueAry',valueAry);
+                                    valueRow = valueAry.sort(function(a, b) {return b.length - a.length;})[0];
+                                }
+                            }
+                            console.log('valueRow',valueRow);
+                            if(obj.rows[ite_row].element == null) {
+                                width = Math.max(Math.ceil((valueRow.length / maxLength) * widthInit), width);
+                            } else {
+                                maxLength = Math.max(valueRow.length, maxLength);
+                            }
+                        }
+                        if(width < obj.options.autoWidth.min_W){
+                            width = obj.options.autoWidth.min_W;
+                        }else if(width > obj.options.autoWidth.max_w){
+                            width = obj.options.autoWidth.max_w;
+                        }
+                    
+                    cols.push(width);
+                }
+            }
+            return cols;
+        };
+
+        /**
+         * defined new columns width
+         * @param {array} colsWidth
+         * @returns {undefined}
+         */
+        obj.setWidthColumn = function(colsWidth) {
+
+            // Authorize edit colsWidth
+            let editable = obj.options.editable;
+            obj.options.editable = true;
+            enableIgnoreDispatch(obj);
+
+            if(obj.options.defaultColWidth == null || obj.options.defaultColWidth === "" || obj.options.defaultColWidth === "auto") {
+                obj.options.defaultColWidth = obj.options.autoWidth.min_W;
+            } else if(typeof obj.options.defaultColWidth == "string") {
+                obj.options.defaultColWidth = parseInt(obj.options.defaultColWidth);
+            }
+
+            // Parse cols - calculate good size
+            let width_table = 0;
+            let cols_size_total = 0;
+
+            // Manage Option fullsizeTable
+            if(obj.options.autoWidth.fullSizeTable) {
+                width_table = obj.table.parentNode.parentNode.offsetWidth;
+                console.log('width_table',width_table);
+                if(!obj.table.classList.contains("jss_hidden_index")) {
+                    width_table -= 50;
+                }
+
+                cols_size_total = colsWidth.reduce(function(accVal,val, index) {
+                    if(obj.options.autoWidth.columnsToResize.indexOf(index) > -1) {
+                        if(index === 1 && obj.options.autoWidth.columnsToResize.indexOf(0) === -1) {
+                            return val;
+                        } else {
+                            return accVal+val;
+                        }
+                    } else {
+                        if(index === 1 && obj.columnsToResize.indexOf(0) === -1) {
+                            return 0;
+                        } else {
+                            return accVal;
+                        }
+                    }
+                });
+
+                for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+                    const column = obj.options.columns[ite_col];
+                    // Exclude hidden column
+                    if(column.type === "hidden") {
+                        continue;
+                    }
+
+                    if(obj.options.autoWidth.columnsToResize.indexOf(ite_col) === -1) {
+                        width_table = Math.max(0, width_table - parseFloat(column.width));
+                    } else if(colsWidth[ite_col]<obj.options.autoWidth.min_W) {
+                        cols_size_total = Math.max(0, cols_size_total + (obj.options.autoWidth.min_W-colsWidth[ite_col]));
+                    }
+                }
+            }
+
+            width_table = width_table - 7;
+
+            // Parse cols - set width
+            for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+                const column = obj.options.columns[ite_col];
+                let newWidth;
+                // Exclude hidden column
+                if(column.type === "hidden") {
+                    continue;
+                }
+                if(obj.options.autoWidth.columnsToResize.indexOf(ite_col) > -1) {
+                    if(colsWidth[ite_col]) {
+                        newWidth = Math.max(obj.options.defaultColWidth, colsWidth[ite_col]);
+                    } else {
+                        newWidth = obj.options.defaultColWidth;
+                    }
+                    if(obj.options.autoWidth.fullSizeTable && cols_size_total < width_table) {
+                        newWidth = (newWidth / cols_size_total) * width_table;
+                    }
+                    obj.setWidth(ite_col, newWidth);
+                }
+            }
+
+            // Resize old value
+            disableIgnoreDispatch(obj);
+            obj.options.editable = editable;
+        };
+        /**
+         * enableIgnoreDispatch
+         * @param {object} inst
+         */
+        const enableIgnoreDispatch = function(inst) {
+            if(obj.options.autoWidth.saveIgnore.ignoreEvents==null) {obj.options.autoWidth.saveIgnore.ignoreEvents = inst.ignoreEvents;}
+            inst.ignoreEvents = true;
+            if(obj.options.autoWidth.saveIgnore.ignoreHistory==null) {obj.options.autoWidth.saveIgnore.ignoreHistory = inst.ignoreHistory;}
+            inst.ignoreHistory = true;
+        };
+
+        /**
+         * disableIgnoreDispatch
+         * @param {object} inst
+         */
+        const disableIgnoreDispatch = function(inst) {
+            inst.ignoreEvents = obj.options.autoWidth.saveIgnore.ignoreEvents;
+            inst.ignoreHistory = obj.options.autoWidth.saveIgnore.ignoreHistory;
+            obj.options.autoWidth.saveIgnore = {};
+        };
         /**
          * Set the row height
          *
