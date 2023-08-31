@@ -2690,6 +2690,10 @@ declare namespace jspreadsheet {
      * Updates the position and appearance of frozen columns. This update is based on the position of the scroll.
      */
     updateFreezePosition: () => void;
+    /**
+     * Updates the transform param.
+     */
+    updateTransform: () => void;
 
     /**
      * Replace cell names in meta information.

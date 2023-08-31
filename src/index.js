@@ -268,15 +268,15 @@ if (! formula && typeof(require) === 'function') {
                 search: 'Search',
                 entries: ' entries',
                 columnName: 'Column name',
-                insertANewColumnBefore: '上に行を挿入する',
-                insertANewColumnAfter: '下に行を挿入する',
-                deleteSelectedColumns: '選択行を削除する',
+                insertANewColumnBefore: '左に列を挿入する',
+                insertANewColumnAfter: '右に列を挿入する',
+                deleteSelectedColumns: '選択列を削除する',
                 renameThisColumn: 'Rename this column',
-                orderAscending: 'Order ascending',
-                orderDescending: 'Order descending',
-                insertANewRowBefore: '左に列を挿入する',
-                insertANewRowAfter: '右に列を挿入する',
-                deleteSelectedRows: '選択列を削除する',
+                orderAscending: '昇順',
+                orderDescending: '降順',
+                insertANewRowBefore: '上に行を挿入する',
+                insertANewRowAfter: '下に行を挿入する',
+                deleteSelectedRows: '選択行を削除する',
                 editComments: 'Edit comments',
                 addComments: 'Add comments',
                 comments: 'Comments',
@@ -2960,7 +2960,7 @@ if (! formula && typeof(require) === 'function') {
 
             // select column
             if (y1 == null) {
-                y1 = 0;
+                y1 = 1;
                 y2 = obj.rows.length - 1;
             }
 
@@ -3226,12 +3226,14 @@ if (! formula && typeof(require) === 'function') {
                 var y2 = lastRect.top;
                 var w2 = lastRect.width;
                 var h2 = lastRect.height;
-                var x = (x2 - x1) + obj.content.scrollLeft + w2;
-                var y = (y2 - y1) + obj.content.scrollTop + h2;
-                y = jexcel.transformScaleTop(obj,y) -4;
-                x = jexcel.transformScaleLeft(obj,x) -4;
+                // console.log('obj.content.scrollTop',obj.content.scrollTop);
+                var x = (x2 - x1)  + w2;
+                var y = (y2 - y1)  + h2;
+                // console.log('before y',y);
+                y = jexcel.transformScaleTop(obj,y)+ obj.content.scrollTop -4;
+                x = jexcel.transformScaleLeft(obj,x)+ obj.content.scrollLeft -4;
                 // Place the corner in the correct place
-                
+                // console.log('y',y);
                 obj.corner.style.top = y + 'px';
                 obj.corner.style.left = x + 'px';
                 if (obj.options.freezeColumns) {
@@ -3906,10 +3908,18 @@ if (! formula && typeof(require) === 'function') {
                     }
                 } else {
                     for (var j = 0; j < obj.options.data.length; j++) {
-                        temp[j] = [ j, obj.records[j][column].textContent.toLowerCase() ];
+                        var val =obj.options.data[j][column];
+                        //数値振り分け
+                        if((val!=="" && val !== null && val !== undefined) && isFinite(val)){
+                            temp[j] = [ j, Number(obj.options.data[j][column]) ];
+                        }else{
+                            temp[j] = [ j, obj.records[j][column].textContent.toLowerCase() ];
+
+                        }
                     }
                 }
-
+                //先頭行だけソート対象外にする
+                var headRow = temp.shift();
                 // Default sorting method
                 if (typeof(obj.options.sorting) !== 'function') {
                     obj.options.sorting = function(direction) {
@@ -3927,7 +3937,8 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 temp = temp.sort(obj.options.sorting(order));
-
+                //先頭を戻す
+                temp.unshift(headRow);
                 // Save history
                 var newValue = [];
                 for (var j = 0; j < temp.length; j++) {
@@ -3941,7 +3952,6 @@ if (! formula && typeof(require) === 'function') {
                     column: column,
                     order: order,
                 });
-
                 // Update order
                 obj.updateOrderArrow(column, order);
                 obj.updateOrder(newValue);
@@ -7328,7 +7338,14 @@ if (! formula && typeof(require) === 'function') {
             // Place the corner in the correct place
             obj.updateCornerPosition();
         }
-
+        obj.updateTransform = function(transformOption) {
+            // Remove any merged cells
+            if (obj.options.transform) {
+                obj.options.transform.x = transformOption.x;
+                obj.options.transform.y = transformOption.y;
+                obj.options.transform.scale = transformOption.scale;
+            }
+        }
         el.addEventListener("DOMMouseScroll", obj.wheelControls);
         el.addEventListener("mousewheel", obj.wheelControls);
 
@@ -8302,7 +8319,7 @@ if (! formula && typeof(require) === 'function') {
                         // transform scale position
                         
                             var rect = jexcel.current.contextMenu.getBoundingClientRect();
-                            console.log('rect',rect);
+                            // console.log('rect',rect);
    
                             // console.log('offsetY',offsetY);
                             var offsetX = window.scrollX;
@@ -8349,9 +8366,10 @@ if (! formula && typeof(require) === 'function') {
                                     console.log(y)
                                 }
                             }
+                            // console.log('before y',y);
                             x = x - jexcel.current.options.transform.x + offsetX;
                             y = y - jexcel.current.options.transform.y + offsetY;
-
+                            // console.log('y',y);
                             var t = y;
                             // var rectH = rect.height / jexcel.current.options.transform.scale
                             if (window.innerHeight < y + rect.height) {
