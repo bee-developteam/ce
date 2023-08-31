@@ -2715,7 +2715,7 @@ declare namespace jspreadsheet {
     /**
      * Updates the transform param.
      */
-    updateTransform: () => void;
+    updateTransform: ({x:number,y:number,scale:number}) => void;
 
     /**
      * Replace cell names in meta information.
