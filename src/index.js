@@ -7274,6 +7274,7 @@ if (! formula && typeof(require) === 'function') {
             }
             if(IS_TOUCH_DEVICE){
                 obj.createMultipleSelectorHandles();
+                console.log('obj.selectionHandles',obj.selectionHandles);
             }
         }
 
@@ -7625,10 +7626,7 @@ if (! formula && typeof(require) === 'function') {
                 bY = y1;
             }
             const hitAreaWidth = parseInt(obj.selectionHandles.styles.topLeftHitArea.width, 10);
-            var last = obj.highlighted[obj.highlighted.length-1];
-            var lastX = last.getAttribute('data-x');
-            // console.log('x1',x1);
-            // console.log('y1',y1);
+            
             var cellTopLeft = obj.getCellFromCoords(tX,tY).getBoundingClientRect();
             var cellBottomRight = obj.getCellFromCoords(bX,bY).getBoundingClientRect();
             // console.log('cellTopLeft',cellTopLeft);
@@ -7646,8 +7644,8 @@ if (! formula && typeof(require) === 'function') {
             var w2 = contentRect.width;
             var h2 = contentRect.height;
             // console.log('obj.content.scrollTop',obj.content.scrollTop);
-            var topLeftX = (x1pos- offsetX);
-            var topLeftY = (y1pos -offsetY);
+            var topLeftX = (x1pos - offsetX);
+            var topLeftY = (y1pos - offsetY);
             // console.log('before y',y);
             topLeftY = jexcel.transformScaleTop(obj,topLeftY)+ obj.content.scrollTop -4;
             topLeftX = jexcel.transformScaleLeft(obj,topLeftX)+ obj.content.scrollLeft -4;
@@ -7658,8 +7656,8 @@ if (! formula && typeof(require) === 'function') {
         
             obj.selectionHandles.styles.topLeftHitArea.top = `${parseInt(topLeftY - ((hitAreaWidth / 4) * 3), 10)}px`;
             obj.selectionHandles.styles.topLeftHitArea.left = `${parseInt(topLeftX - ((hitAreaWidth / 4) * 3), 10)}px`;
-            var bottomRightX = (x2pos- x2);
-            var bottomRightY = (y2pos -y2);
+            var bottomRightX = (x2pos- offsetX);
+            var bottomRightY = (y2pos -offsetY);
             // console.log('before y',y);
             bottomRightY = jexcel.transformScaleTop(obj,bottomRightY)+ obj.content.scrollTop -4;
             bottomRightX = jexcel.transformScaleLeft(obj,bottomRightX)+ obj.content.scrollLeft -4;
@@ -8473,7 +8471,6 @@ if (! formula && typeof(require) === 'function') {
         if (! mouseButton) {
             jexcel.isMouseAction = false;
         }
-        // console.log('over',e.target);
         if (jexcel.current && jexcel.isMouseAction == true) {
             // Get elements
             var jexcelTable = jexcel.getElement(e.target);
@@ -8664,9 +8661,6 @@ if (! formula && typeof(require) === 'function') {
                         // transform scale position
                         
                             var rect = jexcel.current.contextMenu.getBoundingClientRect();
-                            // console.log('rect',rect);
-   
-                            // console.log('offsetY',offsetY);
                             var offsetX = window.scrollX;
                             var offsetY = window.scrollY;
                             if (e.target) {
@@ -8704,7 +8698,6 @@ if (! formula && typeof(require) === 'function') {
                                 if(e.type.indexOf("touch")) {
                                     x = e.clientX;
                                     y = e.clientY;
-                                    //console.log("touch")
                                 } else {
                                     x = touches.x;
                                     y = touches.y;
@@ -8788,10 +8781,10 @@ if (! formula && typeof(require) === 'function') {
             if (touchButton) {
 
                 if(e.target.classList.contains('topLeftSelectionHandle-HitArea') || e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
-                    // console.log('HitArea');
                     e.preventDefault();
                     var HL = jexcel.current.getHighlighted();
                     var last = HL[HL.length-1];
+                    // var last = e.target;
                     // console.log('last',last);
                     var jexcelTable = jexcel.getElement(last);
                     // console.log('jexcelTable',jexcelTable);
@@ -8800,7 +8793,6 @@ if (! formula && typeof(require) === 'function') {
                     // console.log('jexcelTable[1]',jexcelTable[1]);
                     if (jexcelTable[1] == 1) {
                         var columnId = last.getAttribute('data-x');
-                        // console.log('columnId',columnId);
                         if (columnId) {
                             // Update cursor
                             var info = last.getBoundingClientRect();
@@ -8851,6 +8843,7 @@ if (! formula && typeof(require) === 'function') {
                     } else {
                         jexcel.current.selectedHeader = false;
                     }
+                    
                     // Body found
                     if (jexcelTable[1] == 2) {
                         var rowId = last.getAttribute('data-y');
@@ -9015,7 +9008,6 @@ if (! formula && typeof(require) === 'function') {
                     var columnId = target.getAttribute('data-x');
                     var rowId = target.getAttribute('data-y');
                     
-                    // console.log('columnId',columnId);
                     if (jexcel.current.dragging) {
                     } else {
                         
@@ -9044,11 +9036,9 @@ if (! formula && typeof(require) === 'function') {
                                 // Do not select edtion is in progress
                                 if (! jexcel.current.edition) {
                                     if (columnId && rowId) {
-                                        // console.log('jexcel.current.selectedCorner',jexcel.current.selectedCorner);
                                         if (jexcel.current.selectedCorner) {
                                             jexcel.current.updateCopySelection(columnId, rowId);
                                         } else {
-                                            // console.log('jexcel.current.selectedCell',jexcel.current.selectedCell);
                                             if (jexcel.current.selectedCell) {
                                                 jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
                                             }

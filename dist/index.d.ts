@@ -1428,18 +1428,6 @@ declare namespace jspreadsheet {
       max_w:number,
       fullSizeTable:boolean,
     }
-    selectionHandles?:{
-      topLeft:HTMLElement,
-      topLeftHitArea:HTMLElement,
-      bottomRight:HTMLElement,
-      bottomRightHitArea:HTMLElement,
-      styles:{
-        topLeft:CSSStyleSheet,
-        topLeftHitArea:CSSStyleSheet,
-        bottomRight:CSSStyleSheet,
-        bottomRightHitArea:CSSStyleSheet,
-      }
-    }
   }
 
   interface JspreadsheetInstanceElement extends HTMLDivElement {
@@ -2732,10 +2720,16 @@ declare namespace jspreadsheet {
      * mobile tablet selection
      */
     selectionHandles:{
-      topLeft:HTMLDivElement,
-      topLeftHitArea:HTMLDivElement,
-      bottomRight:HTMLDivElement,
-      bottomRightHitArea:HTMLDivElement
+      topLeft:HTMLElement,
+      topLeftHitArea:HTMLElement,
+      bottomRight:HTMLElement,
+      bottomRightHitArea:HTMLElement,
+      styles:{
+        topLeft:CSSStyleSheet,
+        topLeftHitArea:CSSStyleSheet,
+        bottomRight:CSSStyleSheet,
+        bottomRightHitArea:CSSStyleSheet,
+      }
     }
     createMultipleSelectorHandles: () => void;
     updateMultipleSelectionHandlesPosition: ({x1:number,y1:number,x2:number,y2:number}) => void;
