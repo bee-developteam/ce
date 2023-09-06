@@ -72,7 +72,10 @@ if (! formula && typeof(require) === 'function') {
 
         return null;
     }
-
+    const IS_TOUCH_DEVICE =
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia('(pointer:coarse)').matches;
     // Jspreadsheet core object
     var jexcel = (function(el, options) {
         // Create jspreadsheet object
@@ -3213,44 +3216,49 @@ if (! formula && typeof(require) === 'function') {
                 obj.corner.style.top = '-2000px';
                 obj.corner.style.left = '-2000px';
             } else {
-                // Get last cell
-                var last = obj.highlighted[obj.highlighted.length-1];
-                var lastX = last.getAttribute('data-x');
+                if(IS_TOUCH_DEVICE){
+                    obj.updateMultipleSelectionHandlesPosition(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3])
+                }else{
+                    // Get last cell
+                    var last = obj.highlighted[obj.highlighted.length-1];
+                    var lastX = last.getAttribute('data-x');
 
-                var contentRect = obj.content.getBoundingClientRect();
-                var x1 = contentRect.left;
-                var y1 = contentRect.top;
-                var lastRect = last.getBoundingClientRect();
-                var x2 = lastRect.left;
-                var y2 = lastRect.top;
-                var w2 = lastRect.width;
-                var h2 = lastRect.height;
-                // console.log('obj.content.scrollTop',obj.content.scrollTop);
-                var x = (x2 - x1)  + w2;
-                var y = (y2 - y1)  + h2;
-                // console.log('before y',y);
-                y = jexcel.transformScaleTop(obj,y)+ obj.content.scrollTop -4;
-                x = jexcel.transformScaleLeft(obj,x)+ obj.content.scrollLeft -4;
-                // Place the corner in the correct place
-                // console.log('y',y);
-                obj.corner.style.top = y + 'px';
-                obj.corner.style.left = x + 'px';
-                if (obj.options.freezeColumns) {
-                    var width = obj.getFreezeWidth();
-                    // Only check if the last column is not part of the merged cells
-                    if (lastX > obj.options.freezeColumns-1 && x2 - x1 + w2 < width) {
-                        obj.corner.style.display = 'none';
+                    var contentRect = obj.content.getBoundingClientRect();
+                    var x1 = contentRect.left;
+                    var y1 = contentRect.top;
+                    var lastRect = last.getBoundingClientRect();
+                    var x2 = lastRect.left;
+                    var y2 = lastRect.top;
+                    var w2 = lastRect.width;
+                    var h2 = lastRect.height;
+                    // console.log('obj.content.scrollTop',obj.content.scrollTop);
+                    var x = (x2 - x1)  + w2;
+                    var y = (y2 - y1)  + h2;
+                    // console.log('before y',y);
+                    y = jexcel.transformScaleTop(obj,y)+ obj.content.scrollTop -4;
+                    x = jexcel.transformScaleLeft(obj,x)+ obj.content.scrollLeft -4;
+                    // Place the corner in the correct place
+                    // console.log('y',y);
+                    obj.corner.style.top = y + 'px';
+                    obj.corner.style.left = x + 'px';
+                    if (obj.options.freezeColumns) {
+                        var width = obj.getFreezeWidth();
+                        // Only check if the last column is not part of the merged cells
+                        if (lastX > obj.options.freezeColumns-1 && x2 - x1 + w2 < width) {
+                            obj.corner.style.display = 'none';
+                        } else {
+                            if (obj.options.selectionCopy == true) {
+                                obj.corner.style.display = '';
+                            }
+                        }
                     } else {
                         if (obj.options.selectionCopy == true) {
                             obj.corner.style.display = '';
                         }
                     }
-                } else {
-                    if (obj.options.selectionCopy == true) {
-                        obj.corner.style.display = '';
-                    }
                 }
             }
+            
         }
 
         /**
@@ -3411,14 +3419,14 @@ if (! formula && typeof(require) === 'function') {
         obj.columnsAutoResize = function(){
             for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
                 const column = obj.options.columns[ite_col];
-                console.log('column',column);
+                // console.log('column',column);
                 if(column.width == null || column.width === '' || column.width === 'auto') {
                     obj.options.autoWidth.columnsToResize.push(ite_col);
                     obj.options.columns[ite_col].width = obj.options.autoWidth.min_W;
                 }
             }
             const colsWidth = obj.getWidthColumns();
-            console.log('colsWidth',colsWidth);
+            // console.log('colsWidth',colsWidth);
             obj.setWidthColumn(colsWidth);
 
         }
@@ -3432,7 +3440,7 @@ if (! formula && typeof(require) === 'function') {
                 return cols;
             }
             const tr = obj.rows[0];
-            console.log('tr',tr);
+            // console.log('tr',tr);
             if(tr) {
                 for(let ite_td=0; ite_td < tr.children.length; ite_td++) {
                     if(ite_td === 0) { // Skip index
@@ -3441,7 +3449,7 @@ if (! formula && typeof(require) === 'function') {
                     const td = tr.children[ite_td];
                     let width = td.offsetWidth;
                         let maxLength = tr.children[0].innerText.length;
-                        console.log('maxLength',maxLength);
+                        // console.log('maxLength',maxLength);
                         let widthInit = 20;//font-size
                         for(let ite_row=0; ite_row<obj.rows.length; ite_row++) {
                             let valueRow = obj.getValueFromCoords(ite_td-1, ite_row, true);
@@ -3456,11 +3464,11 @@ if (! formula && typeof(require) === 'function') {
                                 //改行がある場合
                                 if(valueRow.match(/\n/)){
                                     let valueAry = valueRow.split(/\n/);
-                                    console.log('valueAry',valueAry);
+                                    // console.log('valueAry',valueAry);
                                     valueRow = valueAry.sort(function(a, b) {return b.length - a.length;})[0];
                                 }
                             }
-                            console.log('valueRow',valueRow);
+                            // console.log('valueRow',valueRow);
                             if(obj.rows[ite_row].element == null) {
                                 width = Math.max(Math.ceil((valueRow.length / maxLength) * widthInit), width);
                             } else {
@@ -3504,7 +3512,7 @@ if (! formula && typeof(require) === 'function') {
             // Manage Option fullsizeTable
             if(obj.options.autoWidth.fullSizeTable) {
                 width_table = obj.table.parentNode.parentNode.offsetWidth;
-                console.log('width_table',width_table);
+                // console.log('width_table',width_table);
                 if(!obj.table.classList.contains("jss_hidden_index")) {
                     width_table -= 50;
                 }
@@ -7056,6 +7064,7 @@ if (! formula && typeof(require) === 'function') {
                     // Update selection
                     if (historyRecord.selection) {
                         obj.updateSelectionFromCoords(historyRecord.selection[0], historyRecord.selection[1], historyRecord.selection[2], historyRecord.selection[3]);
+
                     }
                 }
             }
@@ -7177,6 +7186,7 @@ if (! formula && typeof(require) === 'function') {
         obj.init = function() {
             jexcel.current = obj;
 
+ 
             // Build handlers
             if (typeof(jexcel.build) == 'function') {
                 if (obj.options.root) {
@@ -7261,6 +7271,9 @@ if (! formula && typeof(require) === 'function') {
             } else {
                 // Prepare table
                 obj.prepareTable();
+            }
+            if(IS_TOUCH_DEVICE){
+                obj.createMultipleSelectorHandles();
             }
         }
 
@@ -7541,17 +7554,154 @@ if (! formula && typeof(require) === 'function') {
                 obj.options.transform.scale = transformOption.scale;
             }
         }
+
+        /**
+         * Create multiple selector handler for mobile devices
+         */
+        obj.selectionHandles = {}
+        obj.createMultipleSelectorHandles = function() {
+            obj.selectionHandles = {
+            topLeft: document.createElement('DIV'),
+            topLeftHitArea: document.createElement('DIV'),
+            bottomRight: document.createElement('DIV'),
+            bottomRightHitArea: document.createElement('DIV')
+            };
+            const width = 10;
+            const hitAreaWidth = 40;
+
+            obj.selectionHandles.topLeft.className = 'topLeftSelectionHandle';
+            obj.selectionHandles.topLeftHitArea.className = 'topLeftSelectionHandle-HitArea';
+            obj.selectionHandles.bottomRight.className = 'bottomRightSelectionHandle';
+            obj.selectionHandles.bottomRightHitArea.className = 'bottomRightSelectionHandle-HitArea';
+
+            obj.selectionHandles.styles = {
+            topLeft: obj.selectionHandles.topLeft.style,
+            topLeftHitArea: obj.selectionHandles.topLeftHitArea.style,
+            bottomRight: obj.selectionHandles.bottomRight.style,
+            bottomRightHitArea: obj.selectionHandles.bottomRightHitArea.style
+            };
+
+            const hitAreaStyle = {
+            position: 'absolute',
+            height: `${hitAreaWidth}px`,
+            width: `${hitAreaWidth}px`,
+            'border-radius': `${parseInt(hitAreaWidth / 1.5, 10)}px`,
+            };
+
+            jexcel.objectEach(hitAreaStyle, (value, key) => {
+            obj.selectionHandles.styles.bottomRightHitArea[key] = value;
+            obj.selectionHandles.styles.topLeftHitArea[key] = value;
+            });
+
+            const handleStyle = {
+            position: 'absolute',
+            height: `${width}px`,
+            width: `${width}px`,
+            'border-radius': `${parseInt(width / 1.5, 10)}px`,
+            background: '#F5F5FF',
+            border: '1px solid #4285c8'
+            };
+
+            jexcel.objectEach(handleStyle, (value, key) => {
+            obj.selectionHandles.styles.bottomRight[key] = value;
+            obj.selectionHandles.styles.topLeft[key] = value;
+            });
+            obj.content.appendChild(obj.selectionHandles.topLeft);
+            obj.content.appendChild(obj.selectionHandles.bottomRight);
+            obj.content.appendChild(obj.selectionHandles.topLeftHitArea);
+            obj.content.appendChild(obj.selectionHandles.bottomRightHitArea);
+        }
+        obj.updateMultipleSelectionHandlesPosition = function(x1, y1, x2, y2) {
+            var tX = x1;
+            var tY = y1;
+            var bX = x2;
+            var bY = y2;
+            if(parseInt(x1) > parseInt(x2)){
+                tX = x2;
+                bX = x1;
+            }
+            if(parseInt(y1) > parseInt(y2)){
+                tY = y2;
+                bY = y1;
+            }
+            const hitAreaWidth = parseInt(obj.selectionHandles.styles.topLeftHitArea.width, 10);
+            var last = obj.highlighted[obj.highlighted.length-1];
+            var lastX = last.getAttribute('data-x');
+            // console.log('x1',x1);
+            // console.log('y1',y1);
+            var cellTopLeft = obj.getCellFromCoords(tX,tY).getBoundingClientRect();
+            var cellBottomRight = obj.getCellFromCoords(bX,bY).getBoundingClientRect();
+            // console.log('cellTopLeft',cellTopLeft);
+            // console.log('cellBottomRight',cellBottomRight);
+            
+            var x1pos = cellTopLeft.left;
+            var y1pos = cellTopLeft.top;
+            var x2pos = cellBottomRight.right;
+            var y2pos = cellBottomRight.bottom;
+            // console.log('x1pos',x1pos);
+            // console.log('y1pos',y1pos);
+            var contentRect = obj.content.getBoundingClientRect();
+            var offsetX = contentRect.left;
+            var offsetY = contentRect.top;
+            var w2 = contentRect.width;
+            var h2 = contentRect.height;
+            // console.log('obj.content.scrollTop',obj.content.scrollTop);
+            var topLeftX = (x1pos- offsetX);
+            var topLeftY = (y1pos -offsetY);
+            // console.log('before y',y);
+            topLeftY = jexcel.transformScaleTop(obj,topLeftY)+ obj.content.scrollTop -4;
+            topLeftX = jexcel.transformScaleLeft(obj,topLeftX)+ obj.content.scrollLeft -4;
+            // Place the corner in the correct place
+            // console.log('y',y);
+            obj.selectionHandles.styles.topLeft.top = topLeftY + 'px';
+            obj.selectionHandles.styles.topLeft.left = topLeftX + 'px';
+        
+            obj.selectionHandles.styles.topLeftHitArea.top = `${parseInt(topLeftY - ((hitAreaWidth / 4) * 3), 10)}px`;
+            obj.selectionHandles.styles.topLeftHitArea.left = `${parseInt(topLeftX - ((hitAreaWidth / 4) * 3), 10)}px`;
+            var bottomRightX = (x2pos- x2);
+            var bottomRightY = (y2pos -y2);
+            // console.log('before y',y);
+            bottomRightY = jexcel.transformScaleTop(obj,bottomRightY)+ obj.content.scrollTop -4;
+            bottomRightX = jexcel.transformScaleLeft(obj,bottomRightX)+ obj.content.scrollLeft -4;
+
+            obj.selectionHandles.styles.bottomRight.top = bottomRightY + 'px';
+            obj.selectionHandles.styles.bottomRight.left = bottomRightX + 'px';
+        
+            obj.selectionHandles.styles.bottomRightHitArea.top = `${parseInt(bottomRightY - (hitAreaWidth / 4), 10)}px`;
+            obj.selectionHandles.styles.bottomRightHitArea.left = `${parseInt(bottomRightX - (hitAreaWidth / 4), 10)}px`;
+        
+            
+          }
         el.addEventListener("DOMMouseScroll", obj.wheelControls);
         el.addEventListener("mousewheel", obj.wheelControls);
 
         el.jexcel = obj;
         el.jspreadsheet = obj;
 
+
         obj.init();
 
         return obj;
     });
-
+    /**
+     * A specialized version of `.forEach` for objects.
+     *
+     * @param {Object} object The object to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    jexcel.objectEach = function(object, iteratee) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key in object) {
+        if (!object.hasOwnProperty || (object.hasOwnProperty && Object.prototype.hasOwnProperty.call(object, key))) {
+            if (iteratee(object[key], key, object) === false) {
+            break;
+            }
+        }
+        }
+    
+        return object;
+    }
     // Define dictionary
     jexcel.setDictionary = function(o) {
         jSuites.setDictionary(o);
@@ -7590,9 +7740,10 @@ if (! formula && typeof(require) === 'function') {
         root.removeEventListener("dblclick", jexcel.doubleClickControls);
         root.removeEventListener("paste", jexcel.pasteControls);
         root.removeEventListener("contextmenu", jexcel.contextMenuControls);
-        root.removeEventListener("touchstart", jexcel.touchStartControls);
-        root.removeEventListener("touchend", jexcel.touchEndControls);
-        root.removeEventListener("touchcancel", jexcel.touchEndControls);
+        root.removeEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
+        root.removeEventListener("touchend", jexcel.touchEndControls,{ passive: false });
+        root.removeEventListener("touchcancel", jexcel.touchEndControls,{ passive: false });
+        root.addEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
         document.removeEventListener("keydown", jexcel.keyDownControls);
     }
 
@@ -7620,10 +7771,10 @@ if (! formula && typeof(require) === 'function') {
         root.addEventListener("dblclick", jexcel.doubleClickControls);
         root.addEventListener("paste", jexcel.pasteControls);
         root.addEventListener("contextmenu", jexcel.contextMenuControls);
-        root.addEventListener("touchstart", jexcel.touchStartControls);
-        root.addEventListener("touchend", jexcel.touchEndControls);
-        root.addEventListener("touchcancel", jexcel.touchEndControls);
-        root.addEventListener("touchmove", jexcel.touchEndControls);
+        root.addEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
+        root.addEventListener("touchend", jexcel.touchEndControls,{ passive: false });
+        root.addEventListener("touchcancel", jexcel.touchEndControls,{ passive: false });
+        root.addEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
         document.addEventListener("keydown", jexcel.keyDownControls);
     }
 
@@ -7848,10 +7999,10 @@ if (! formula && typeof(require) === 'function') {
         } else {
             var mouseButton = e.which;
         }
-
         // Get elements
+        // console.log('e.target',e.target);
         var jexcelTable = jexcel.getElement(e.target);
-
+        // console.log('jexcelTable',jexcelTable);
         if (jexcelTable[0]) {
             if (jexcel.current != jexcelTable[0].jexcel) {
                 if (jexcel.current) {
@@ -8009,7 +8160,6 @@ if (! formula && typeof(require) === 'function') {
                                 var o = rowId;
                                 var d = rowId;
                             }
-
                             // Update selection
                             jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
                         }
@@ -8050,7 +8200,6 @@ if (! formula && typeof(require) === 'function') {
                                         jexcel.current.updateSelectionFromCoords(columnId, rowId);
                                     }
                                 }
-
                                 // No full row selected
                                 jexcel.current.selectedHeader = null;
                                 jexcel.current.selectedRow = null;
@@ -8275,6 +8424,7 @@ if (! formula && typeof(require) === 'function') {
                         }
                     }
                 }
+                
             } else {
                 var x = e.target.getAttribute('data-x');
                 var y = e.target.getAttribute('data-y');
@@ -8323,7 +8473,7 @@ if (! formula && typeof(require) === 'function') {
         if (! mouseButton) {
             jexcel.isMouseAction = false;
         }
-
+        // console.log('over',e.target);
         if (jexcel.current && jexcel.isMouseAction == true) {
             // Get elements
             var jexcelTable = jexcel.getElement(e.target);
@@ -8558,7 +8708,6 @@ if (! formula && typeof(require) === 'function') {
                                 } else {
                                     x = touches.x;
                                     y = touches.y;
-                                    console.log(y)
                                 }
                             }
                             // console.log('before y',y);
@@ -8597,47 +8746,337 @@ if (! formula && typeof(require) === 'function') {
             }
         }
     }
-
+    jexcel.isTouchAction = false;
     jexcel.touchStartControls = function(e) {
-        var jexcelTable = jexcel.getElement(e.target);
-
-        if (jexcelTable[0]) {
-            if (jexcel.current != jexcelTable[0].jexcel) {
-                if (jexcel.current) {
-                    jexcel.current.resetSelection();
+        e = e || window.event;
+        switch (e.type) {
+            case "touchstart" :
+                var touchButton = e.touches;
+            case "touchmove" :
+                var touchButton = e.touches;
+                break;
+            case "touchcancel" :
+                if (!_cancelReport) {
+                var touchButton = e.changedTouches;
+    
                 }
-                jexcel.current = jexcelTable[0].jexcel;
+            case "touchend" :
+                var touchButton = e.changedTouches;
+    
+                break;
+        }
+        
+        var jexcelTable = jexcel.getElement(e.target);
+        // if (jexcelTable[0]) {
+        //     if (jexcel.current != jexcelTable[0].jexcel) {
+        //         if (jexcel.current) {
+        //             jexcel.current.resetSelection();
+        //         }
+        //         jexcel.current = jexcelTable[0].jexcel;
+        //     }
+        // } else {
+        //     if (jexcel.current) {
+        //         jexcel.current.resetSelection();
+        //         jexcel.current = null;
+        //     }
+        // }
+
+        if (jexcel.current) {
+
+        
+            //mobile用範囲選択
+            if (touchButton) {
+
+                if(e.target.classList.contains('topLeftSelectionHandle-HitArea') || e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                    // console.log('HitArea');
+                    e.preventDefault();
+                    var HL = jexcel.current.getHighlighted();
+                    var last = HL[HL.length-1];
+                    // console.log('last',last);
+                    var jexcelTable = jexcel.getElement(last);
+                    // console.log('jexcelTable',jexcelTable);
+                    jexcel.current.SelectionHandle = true;
+                    // Header found
+                    // console.log('jexcelTable[1]',jexcelTable[1]);
+                    if (jexcelTable[1] == 1) {
+                        var columnId = last.getAttribute('data-x');
+                        // console.log('columnId',columnId);
+                        if (columnId) {
+                            // Update cursor
+                            var info = last.getBoundingClientRect();
+                            if (jexcel.current.options.columnDrag == true && info.height - e.offsetY < 6) {
+                                if (jexcel.current.isColMerged(columnId).length) {
+                                    console.error('Jspreadsheet: This column is part of a merged cell.');
+                                } else {
+                                    // Reset selection
+                                    jexcel.current.resetSelection();
+                                    // Drag helper
+                                    jexcel.current.dragging = {
+                                        element: last,
+                                        column: columnId,
+                                        destination: columnId,
+                                    };
+                                    // Border indication
+                                    jexcel.current.headers[columnId].classList.add('dragging');
+                                    for (var j = 0; j < jexcel.current.records.length; j++) {
+                                        if (jexcel.current.records[j][columnId]) {
+                                            jexcel.current.records[j][columnId].classList.add('dragging');
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (jexcel.current.selectedHeader && (e.shiftKey || e.ctrlKey)) {
+                                    var o = jexcel.current.selectedHeader;
+                                    var d = columnId;
+                                } else {
+                                    // Press to rename
+                                    if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
+                                        jexcel.timeControl = setTimeout(function() {
+                                            jexcel.current.setHeader(columnId);
+                                        }, 800);
+                                    }
+
+                                    // Keep track of which header was selected first
+                                    jexcel.current.selectedHeader = columnId;
+
+                                    // Update selection single column
+                                    var o = columnId;
+                                    var d = columnId;
+                                }
+
+                                // Update selection
+                                jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
+                            }
+                        }
+                    } else {
+                        jexcel.current.selectedHeader = false;
+                    }
+                    // Body found
+                    if (jexcelTable[1] == 2) {
+                        var rowId = last.getAttribute('data-y');
+                        if (last.classList.contains('jexcel_row')) {
+                            var info = last.getBoundingClientRect();
+                            if (jexcel.current.options.rowDrag == true && info.width - e.offsetX < 6) {
+                                if (jexcel.current.isRowMerged(rowId).length) {
+                                    console.error('Jspreadsheet: This row is part of a merged cell');
+                                } else if (jexcel.current.options.search == true && jexcel.current.results) {
+                                    console.error('Jspreadsheet: Please clear your search before perform this action');
+                                } else {
+                                    // Reset selection
+                                    jexcel.current.resetSelection();
+                                    // Drag helper
+                                    jexcel.current.dragging = {
+                                        element: last.parentNode,
+                                        row:rowId,
+                                        destination:rowId,
+                                    };
+                                    // Border indication
+                                    last.parentNode.classList.add('dragging');
+                                }
+                            } else {
+                                
+                                if (jexcel.current.selectedRow && (e.shiftKey || e.ctrlKey)) {
+                                    var o = jexcel.current.selectedRow;
+                                    var d = rowId;
+                                } else {
+                                
+                                    // Keep track of which header was selected first
+                                    jexcel.current.selectedRow = rowId;
+
+                                    // Update selection single column
+                                    var o = rowId;
+                                    var d = rowId;
+                                }
+
+                                // Update selection
+                                jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
+                            }
+                        } else {
+                        
+                                var getCellCoords = function(element) {
+                                    var x = element.getAttribute('data-x');
+                                    var y = element.getAttribute('data-y');
+                                    if (x && y) {
+                                        return [x, y];
+                                    } else {
+                                        if (element.parentNode) {
+                                            return getCellCoords(element.parentNode);
+                                        }
+                                    }
+                                };
+
+                                var position = getCellCoords(last);
+                                if (position) {
+
+                                    var columnId = position[0];
+                                    var rowId = position[1];
+                                    // Close edition
+                                    if (jexcel.current.edition) {
+                                        if (jexcel.current.edition[2] != columnId || jexcel.current.edition[3] != rowId) {
+                                            jexcel.current.closeEditor(jexcel.current.edition[0], true);
+                                        }
+                                    }
+                                    if (! jexcel.current.edition) {
+                                        // Update cell selection
+                                        if (e.shiftKey) {
+                                            jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
+                                        } else {
+                                            jexcel.current.updateSelectionFromCoords(columnId, rowId);
+                                        }
+                                    }
+
+                                    // No full row selected
+                                    jexcel.current.selectedHeader = null;
+                                    jexcel.current.selectedRow = null;
+                                }
+                            
+                        }
+                    } else {
+                        jexcel.current.selectedRow = false;
+                    }
+
+                    
+                }
+
+                if (jexcel.current.edition) {
+                    jexcel.isTouchAction = false;
+                } else {
+                    jexcel.isTouchAction = true;
+                }
+            } else {
+                jexcel.isTouchAction = false;
             }
-        } else {
-            if (jexcel.current) {
-                jexcel.current.resetSelection();
-                jexcel.current = null;
-            }
+            // if (! jexcel.current.edition) {
+            //     var columnId = e.target.getAttribute('data-x');
+            //     var rowId = e.target.getAttribute('data-y');
+
+            //     if (columnId && rowId) {
+            //         jexcel.current.updateSelectionFromCoords(columnId, rowId);
+
+            //         jexcel.timeControl = setTimeout(function() {
+            //             // Keep temporary reference to the element
+            //             if (jexcel.current.options.columns[columnId].type == 'color') {
+            //                 jexcel.tmpElement = null;
+            //             } else {
+            //                 jexcel.tmpElement = e.target;
+            //             }
+            //             jexcel.current.openEditor(e.target, false, e);
+            //         }, 500);
+            //     }
+            // }
+        }
+        // console.log('jexcel.isTouchAction',jexcel.isTouchAction);
+    }
+    // Mouse move controls
+    jexcel.touchmoveControls = function(e) {
+        e = e || window.event;
+        switch (e.type) {
+            case "touchstart" :
+                var touchButton = e.touches;
+            case "touchmove" :
+                var touchButton = e.touches;
+                break;
+            case "touchcancel" :
+                if (!_cancelReport) {
+                var touchButton = e.changedTouches;
+    
+                }
+            case "touchend" :
+                var touchButton = e.changedTouches;
+    
+                break;
+        }
+        
+        if (! touchButton) {
+            jexcel.isTouchAction = false;
         }
 
         if (jexcel.current) {
-            if (! jexcel.current.edition) {
-                var columnId = e.target.getAttribute('data-x');
-                var rowId = e.target.getAttribute('data-y');
-
-                if (columnId && rowId) {
-                    jexcel.current.updateSelectionFromCoords(columnId, rowId);
-
-                    jexcel.timeControl = setTimeout(function() {
-                        // Keep temporary reference to the element
-                        if (jexcel.current.options.columns[columnId].type == 'color') {
-                            jexcel.tmpElement = null;
-                        } else {
-                            jexcel.tmpElement = e.target;
+            if (jexcel.isTouchAction == true) {
+                // Resizing is ongoing
+                e.preventDefault();
+                var HL = jexcel.current.getHighlighted();
+                var last = HL[HL.length-1];
+                // console.log('last',last);
+                var jexcelTable = jexcel.getElement(last);
+                // console.log('jexcelTable',jexcelTable);
+                if (jexcelTable[0]) {
+                    // Avoid cross reference
+                    if (jexcel.current != jexcelTable[0].jexcel) {
+                        if (jexcel.current) {
+                            return false;
                         }
-                        jexcel.current.openEditor(e.target, false, e);
-                    }, 500);
+                    }
+                    var lastRect = last.getBoundingClientRect();
+                    // console.log('lastRect',lastRect);
+                    
+                    let target = document.elementFromPoint(touchButton[0].pageX,touchButton[0].pageY);
+                    // console.log('target',target);
+                    var columnId = target.getAttribute('data-x');
+                    var rowId = target.getAttribute('data-y');
+                    
+                    // console.log('columnId',columnId);
+                    if (jexcel.current.dragging) {
+                    } else {
+                        
+                        // Header found
+                        if (jexcelTable[1] == 1) {
+                            if (jexcel.current.selectedHeader) {
+                                var columnId = last.getAttribute('data-x');
+                                var o = jexcel.current.selectedHeader;
+                                var d = columnId;
+                                // Update selection
+                                jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
+                            }
+                        }
+    
+                        // Body found
+                        if (jexcelTable[1] == 2) {
+                            if (last.classList.contains('jexcel_row')) {
+                                if (jexcel.current.selectedRow) {
+                                    var o = jexcel.current.selectedRow;
+                                    var d = rowId;
+                                    // Update selection
+                                    
+                                    jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
+                                }
+                            } else {
+                                // Do not select edtion is in progress
+                                if (! jexcel.current.edition) {
+                                    if (columnId && rowId) {
+                                        // console.log('jexcel.current.selectedCorner',jexcel.current.selectedCorner);
+                                        if (jexcel.current.selectedCorner) {
+                                            jexcel.current.updateCopySelection(columnId, rowId);
+                                        } else {
+                                            // console.log('jexcel.current.selectedCell',jexcel.current.selectedCell);
+                                            if (jexcel.current.selectedCell) {
+                                                jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            
         }
     }
-
     jexcel.touchEndControls = function(e) {
+        if (jexcel.current.selectedCorner) {
+            jexcel.current.selectedCorner = false;
+
+            // Data to be copied
+            if (jexcel.current.selection.length > 0) {
+                // Copy data
+                jexcel.current.copyData(jexcel.current.selection[0], jexcel.current.selection[jexcel.current.selection.length - 1]);
+
+                // Remove selection
+                jexcel.current.removeCopySelection();
+            }
+        }
+
         // Clear any time control
         if (jexcel.timeControl) {
             clearTimeout(jexcel.timeControl);
@@ -8648,6 +9087,8 @@ if (! formula && typeof(require) === 'function') {
             }
             jexcel.tmpElement = null;
         }
+        // Close any corner selection
+        jexcel.isTouchAction = false;
     }
 
     /**
