@@ -2395,7 +2395,6 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
             }
-
             return value;
         }
 
@@ -8782,10 +8781,19 @@ if (! formula && typeof(require) === 'function') {
 
                 if(e.target.classList.contains('topLeftSelectionHandle-HitArea') || e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
                     e.preventDefault();
+                    jexcel.isTouchAction = true;
+                    //既存の選択状態
+                    console.log('jexcel.current.selectedCell',jexcel.current.selectedCell);
+                    var oldX1 = jexcel.current.selectedCell[0];
+                    var oldY1 = jexcel.current.selectedCell[1];
+                    var oldX2 = jexcel.current.selectedCell[2];
+                    var oldY2 = jexcel.current.selectedCell[3];
                     var HL = jexcel.current.getHighlighted();
-                    var last = HL[HL.length-1];
-                    // var last = e.target;
-                    // console.log('last',last);
+                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
+                        var last = HL[0];
+                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                        var last = HL[HL.length-1];
+                    }
                     var jexcelTable = jexcel.getElement(last);
                     // console.log('jexcelTable',jexcelTable);
                     jexcel.current.SelectionHandle = true;
@@ -8897,12 +8905,21 @@ if (! formula && typeof(require) === 'function') {
                                         }
                                     }
                                 };
-
+                                
                                 var position = getCellCoords(last);
                                 if (position) {
-
-                                    var columnId = position[0];
-                                    var rowId = position[1];
+                                    var newX1 = oldX1;
+                                    var newY1 = oldY1;
+                                    var newX2 = oldX2;
+                                    var newY2 = oldY2;
+                                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
+                                        newX1 = position[0];
+                                        newY1 = position[1];
+                                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                                        newX2 = position[0];
+                                        newY2 = position[1];
+                                    }
+                                    
                                     // Close edition
                                     if (jexcel.current.edition) {
                                         if (jexcel.current.edition[2] != columnId || jexcel.current.edition[3] != rowId) {
@@ -8911,11 +8928,8 @@ if (! formula && typeof(require) === 'function') {
                                     }
                                     if (! jexcel.current.edition) {
                                         // Update cell selection
-                                        if (e.shiftKey) {
-                                            jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
-                                        } else {
-                                            jexcel.current.updateSelectionFromCoords(columnId, rowId);
-                                        }
+                                            jexcel.current.updateSelectionFromCoords(newX1, newY1, newX2, newY2);
+                                        
                                     }
 
                                     // No full row selected
@@ -8933,8 +8947,6 @@ if (! formula && typeof(require) === 'function') {
 
                 if (jexcel.current.edition) {
                     jexcel.isTouchAction = false;
-                } else {
-                    jexcel.isTouchAction = true;
                 }
             } else {
                 jexcel.isTouchAction = false;
@@ -9007,7 +9019,18 @@ if (! formula && typeof(require) === 'function') {
                     // console.log('target',target);
                     var columnId = target.getAttribute('data-x');
                     var rowId = target.getAttribute('data-y');
-                    
+   
+                    var newX1 = jexcel.current.selectedCell[0];
+                    var newY1 = jexcel.current.selectedCell[1];
+                    var newX2 = jexcel.current.selectedCell[2];
+                    var newY2 = jexcel.current.selectedCell[3];
+                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
+                        newX1 = columnId;
+                        newY1 = rowId;
+                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                        newX2 = columnId;
+                        newY2 = rowId;
+                    }
                     if (jexcel.current.dragging) {
                     } else {
                         
@@ -9040,7 +9063,7 @@ if (! formula && typeof(require) === 'function') {
                                             jexcel.current.updateCopySelection(columnId, rowId);
                                         } else {
                                             if (jexcel.current.selectedCell) {
-                                                jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
+                                                jexcel.current.updateSelectionFromCoords(newX1, newY1, newX2, newY2);
                                             }
                                         }
                                     }
