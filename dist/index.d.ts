@@ -2717,6 +2717,11 @@ declare namespace jspreadsheet {
      */
     updateTransform: ({x:number,y:number,scale:number}) => void;
     /**
+     * dragging auto scroll table
+     */
+    scrollUpdateControls:()=>void;
+    scrollEndControls:()=>void;
+    /**
      * mobile tablet selection
      */
     selectionHandles:{

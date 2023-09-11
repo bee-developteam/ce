@@ -3308,8 +3308,10 @@ if (! formula && typeof(require) === 'function') {
             // Left position check - TODO: change that to the bottom border of the element
             if (x > (obj.content.scrollLeft + freezed) && x < (obj.content.scrollLeft + w1)) {
                 // In the viewport
+                console.log('updateScroll in');
             } else {
                 // Out of viewport
+                console.log('updateScroll out');
                 if (x < obj.content.scrollLeft + 30) {
                     obj.content.scrollLeft = x;
                     if (obj.content.scrollLeft < 50) {
@@ -3425,7 +3427,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             }
             const colsWidth = obj.getWidthColumns();
-            // console.log('colsWidth',colsWidth);
+            console.log('colsWidth',colsWidth);
             obj.setWidthColumn(colsWidth);
 
         }
@@ -3448,8 +3450,8 @@ if (! formula && typeof(require) === 'function') {
                     const td = tr.children[ite_td];
                     let width = td.offsetWidth;
                         let maxLength = tr.children[0].innerText.length;
-                        // console.log('maxLength',maxLength);
-                        let widthInit = 20;//font-size
+                        console.log('maxLength',maxLength);
+                        let widthInit = 12;//font-size
                         for(let ite_row=0; ite_row<obj.rows.length; ite_row++) {
                             let valueRow = obj.getValueFromCoords(ite_td-1, ite_row, true);
                            
@@ -3467,11 +3469,11 @@ if (! formula && typeof(require) === 'function') {
                                     valueRow = valueAry.sort(function(a, b) {return b.length - a.length;})[0];
                                 }
                             }
-                            // console.log('valueRow',valueRow);
+                            console.log('valueRow',valueRow);
                             if(obj.rows[ite_row].element == null) {
-                                width = Math.max(Math.ceil((valueRow.length / maxLength) * widthInit), width);
+                                width = Math.max(Math.ceil((stringWidthCount(valueRow) / maxLength) * widthInit), width);
                             } else {
-                                maxLength = Math.max(valueRow.length, maxLength);
+                                maxLength = Math.max(stringWidthCount(valueRow), maxLength);
                             }
                         }
                         if(width < obj.options.autoWidth.min_W){
@@ -3479,13 +3481,23 @@ if (! formula && typeof(require) === 'function') {
                         }else if(width > obj.options.autoWidth.max_w){
                             width = obj.options.autoWidth.max_w;
                         }
-                    
+                        console.log('width',width);
                     cols.push(width);
                 }
             }
             return cols;
         };
+        function stringWidthCount (str) {
 
+            let len = 0;
+        
+            for (let i = 0; i < str.length; i++) {
+            (str[i].match(/[ -~]/)) ? len += 1 : len += 2;
+            }
+        
+            return len;
+        
+        }
         /**
          * defined new columns width
          * @param {array} colsWidth
@@ -7554,7 +7566,61 @@ if (! formula && typeof(require) === 'function') {
                 obj.options.transform.scale = transformOption.scale;
             }
         }
+        var nIntervScroll;
+        //選択状態drag中に表示範囲外に移動した場合にtableをスクロールさせる
+        obj.scrollUpdateControls = function(event){
+            if(jexcel.isMouseAction){
+                //移動方向を判定
+               
+                // console.log("out",event)
+                // Jspreadsheet Container information
+                var contentRect = obj.content.getBoundingClientRect();
+                //移動量
+                if(event.pageY+5 > contentRect.bottom){
+                    console.log("out",event)
+                    if (!nIntervScroll) {
+                        nIntervScroll = setInterval(()=>{
+                            var moveing = 3;
+                            obj.content.scrollTop += moveing
+                        }, 10);
+                    }
+                }else if(event.pageX+5 > contentRect.right){
+                    console.log("out",event)
+                    if (!nIntervScroll) {
+                        nIntervScroll = setInterval(()=>{
+                            var moveing = 3;
+                            obj.content.scrollLeft += moveing
+                        }, 10);
+                    }
+                }else if(event.pageX-5 < contentRect.left){
+                    console.log("out",event)
+                    if (!nIntervScroll) {
+                        nIntervScroll = setInterval(()=>{
+                            var moveing = 3;
+                            obj.content.scrollLeft -= moveing
+                        }, 10);
+                        }
+                }else if(event.pageY-5 < contentRect.top){
+                    console.log("out",event)
+                    if (!nIntervScroll) {
+                        nIntervScroll = setInterval(()=>{
+                            var moveing = 3;
+                            obj.content.scrollTop -= moveing
+                        }, 10);
+                        }
+                    
+                }else{
+                    console.log("in")
+                    clearInterval(nIntervScroll);
+                    nIntervScroll = null;
+                }
 
+            }
+        }
+        obj.scrollEndControls = function(){
+            clearInterval(nIntervScroll);
+            nIntervScroll = null;
+        }
         /**
          * Create multiple selector handler for mobile devices
          */
@@ -7671,7 +7737,8 @@ if (! formula && typeof(require) === 'function') {
           }
         el.addEventListener("DOMMouseScroll", obj.wheelControls);
         el.addEventListener("mousewheel", obj.wheelControls);
-
+        el.addEventListener("mouseout", obj.scrollUpdateControls);
+        document.addEventListener("mouseup", obj.scrollEndControls);
         el.jexcel = obj;
         el.jspreadsheet = obj;
 
@@ -7740,7 +7807,7 @@ if (! formula && typeof(require) === 'function') {
         root.removeEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
         root.removeEventListener("touchend", jexcel.touchEndControls,{ passive: false });
         root.removeEventListener("touchcancel", jexcel.touchEndControls,{ passive: false });
-        root.addEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
+        root.removeEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
         document.removeEventListener("keydown", jexcel.keyDownControls);
     }
 
@@ -7749,6 +7816,8 @@ if (! formula && typeof(require) === 'function') {
             var root = element.jexcel.options.root ? element.jexcel.options.root : document;
             element.removeEventListener("DOMMouseScroll", element.jexcel.scrollControls);
             element.removeEventListener("mousewheel", element.jexcel.scrollControls);
+            element.removeEventListener("mouseout", element.jexcel.scrollUpdateControls);
+            document.removeEventListener("mouseup", element.jexcel.scrollEndControls);
             element.jexcel = null;
             element.innerHTML = '';
 
