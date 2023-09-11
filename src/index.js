@@ -3230,14 +3230,11 @@ if (! formula && typeof(require) === 'function') {
                     var y2 = lastRect.top;
                     var w2 = lastRect.width;
                     var h2 = lastRect.height;
-                    // console.log('obj.content.scrollTop',obj.content.scrollTop);
                     var x = (x2 - x1)  + w2;
                     var y = (y2 - y1)  + h2;
-                    // console.log('before y',y);
                     y = jexcel.transformScaleTop(obj,y)+ obj.content.scrollTop -4;
                     x = jexcel.transformScaleLeft(obj,x)+ obj.content.scrollLeft -4;
                     // Place the corner in the correct place
-                    // console.log('y',y);
                     obj.corner.style.top = y + 'px';
                     obj.corner.style.left = x + 'px';
                     if (obj.options.freezeColumns) {
@@ -3308,10 +3305,8 @@ if (! formula && typeof(require) === 'function') {
             // Left position check - TODO: change that to the bottom border of the element
             if (x > (obj.content.scrollLeft + freezed) && x < (obj.content.scrollLeft + w1)) {
                 // In the viewport
-                console.log('updateScroll in');
             } else {
                 // Out of viewport
-                console.log('updateScroll out');
                 if (x < obj.content.scrollLeft + 30) {
                     obj.content.scrollLeft = x;
                     if (obj.content.scrollLeft < 50) {
@@ -3420,14 +3415,12 @@ if (! formula && typeof(require) === 'function') {
         obj.columnsAutoResize = function(){
             for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
                 const column = obj.options.columns[ite_col];
-                // console.log('column',column);
                 if(column.width == null || column.width === '' || column.width === 'auto') {
                     obj.options.autoWidth.columnsToResize.push(ite_col);
                     obj.options.columns[ite_col].width = obj.options.autoWidth.min_W;
                 }
             }
             const colsWidth = obj.getWidthColumns();
-            console.log('colsWidth',colsWidth);
             obj.setWidthColumn(colsWidth);
 
         }
@@ -3441,7 +3434,6 @@ if (! formula && typeof(require) === 'function') {
                 return cols;
             }
             const tr = obj.rows[0];
-            // console.log('tr',tr);
             if(tr) {
                 for(let ite_td=0; ite_td < tr.children.length; ite_td++) {
                     if(ite_td === 0) { // Skip index
@@ -3450,7 +3442,6 @@ if (! formula && typeof(require) === 'function') {
                     const td = tr.children[ite_td];
                     let width = td.offsetWidth;
                         let maxLength = tr.children[0].innerText.length;
-                        console.log('maxLength',maxLength);
                         let widthInit = 12;//font-size
                         for(let ite_row=0; ite_row<obj.rows.length; ite_row++) {
                             let valueRow = obj.getValueFromCoords(ite_td-1, ite_row, true);
@@ -3465,11 +3456,9 @@ if (! formula && typeof(require) === 'function') {
                                 //改行がある場合
                                 if(valueRow.match(/\n/)){
                                     let valueAry = valueRow.split(/\n/);
-                                    // console.log('valueAry',valueAry);
                                     valueRow = valueAry.sort(function(a, b) {return b.length - a.length;})[0];
                                 }
                             }
-                            console.log('valueRow',valueRow);
                             if(obj.rows[ite_row].element == null) {
                                 width = Math.max(Math.ceil((stringWidthCount(valueRow) / maxLength) * widthInit), width);
                             } else {
@@ -3481,7 +3470,6 @@ if (! formula && typeof(require) === 'function') {
                         }else if(width > obj.options.autoWidth.max_w){
                             width = obj.options.autoWidth.max_w;
                         }
-                        console.log('width',width);
                     cols.push(width);
                 }
             }
@@ -3523,7 +3511,6 @@ if (! formula && typeof(require) === 'function') {
             // Manage Option fullsizeTable
             if(obj.options.autoWidth.fullSizeTable) {
                 width_table = obj.table.parentNode.parentNode.offsetWidth;
-                // console.log('width_table',width_table);
                 if(!obj.table.classList.contains("jss_hidden_index")) {
                     width_table -= 50;
                 }
@@ -7566,53 +7553,77 @@ if (! formula && typeof(require) === 'function') {
                 obj.options.transform.scale = transformOption.scale;
             }
         }
+        /**
+         * 選択状態drag中に表示範囲外に移動した場合にtableをスクロールさせる
+         */
+        //
         var nIntervScroll;
-        //選択状態drag中に表示範囲外に移動した場合にtableをスクロールさせる
+        var scrollCount=0;
+        
         obj.scrollUpdateControls = function(event){
             if(jexcel.isMouseAction){
                 //移動方向を判定
-               
-                // console.log("out",event)
                 // Jspreadsheet Container information
                 var contentRect = obj.content.getBoundingClientRect();
                 //移動量
                 if(event.pageY+5 > contentRect.bottom){
-                    console.log("out",event)
                     if (!nIntervScroll) {
                         nIntervScroll = setInterval(()=>{
-                            var moveing = 3;
+                            scrollCount++;
+                            var moveing = 4;
+                            if(scrollCount > 200){
+                                moveing = 56;
+                            }else if(scrollCount > 100){
+                                moveing = 12;
+                            }
                             obj.content.scrollTop += moveing
                         }, 10);
                     }
                 }else if(event.pageX+5 > contentRect.right){
-                    console.log("out",event)
                     if (!nIntervScroll) {
                         nIntervScroll = setInterval(()=>{
-                            var moveing = 3;
+                            scrollCount++;
+                            var moveing = 4;
+                            if(scrollCount > 200){
+                                moveing = 56;
+                            }else if(scrollCount > 100){
+                                moveing = 12;
+                            }
                             obj.content.scrollLeft += moveing
                         }, 10);
                     }
                 }else if(event.pageX-5 < contentRect.left){
-                    console.log("out",event)
                     if (!nIntervScroll) {
                         nIntervScroll = setInterval(()=>{
-                            var moveing = 3;
+                            scrollCount++;
+                            var moveing = 4;
+                            if(scrollCount > 200){
+                                moveing = 56;
+                            }else if(scrollCount > 100){
+                                moveing = 12;
+                            }
                             obj.content.scrollLeft -= moveing
                         }, 10);
                         }
                 }else if(event.pageY-5 < contentRect.top){
-                    console.log("out",event)
                     if (!nIntervScroll) {
                         nIntervScroll = setInterval(()=>{
-                            var moveing = 3;
+                            scrollCount++;
+                            var moveing = 4;
+                            if(scrollCount > 200){
+                                moveing = 56;
+                            }else if(scrollCount > 100){
+                                moveing = 12;
+                            }
                             obj.content.scrollTop -= moveing
                         }, 10);
                         }
                     
                 }else{
-                    console.log("in")
+                    // console.log("in")
                     clearInterval(nIntervScroll);
                     nIntervScroll = null;
+                    scrollCount=0;
                 }
 
             }
@@ -7620,6 +7631,7 @@ if (! formula && typeof(require) === 'function') {
         obj.scrollEndControls = function(){
             clearInterval(nIntervScroll);
             nIntervScroll = null;
+            scrollCount=0;
         }
         /**
          * Create multiple selector handler for mobile devices
@@ -7701,21 +7713,16 @@ if (! formula && typeof(require) === 'function') {
             var y1pos = cellTopLeft.top;
             var x2pos = cellBottomRight.right;
             var y2pos = cellBottomRight.bottom;
-            // console.log('x1pos',x1pos);
-            // console.log('y1pos',y1pos);
             var contentRect = obj.content.getBoundingClientRect();
             var offsetX = contentRect.left;
             var offsetY = contentRect.top;
             var w2 = contentRect.width;
             var h2 = contentRect.height;
-            // console.log('obj.content.scrollTop',obj.content.scrollTop);
             var topLeftX = (x1pos - offsetX);
             var topLeftY = (y1pos - offsetY);
-            // console.log('before y',y);
             topLeftY = jexcel.transformScaleTop(obj,topLeftY)+ obj.content.scrollTop -4;
             topLeftX = jexcel.transformScaleLeft(obj,topLeftX)+ obj.content.scrollLeft -4;
             // Place the corner in the correct place
-            // console.log('y',y);
             obj.selectionHandles.styles.topLeft.top = topLeftY + 'px';
             obj.selectionHandles.styles.topLeft.left = topLeftX + 'px';
         
@@ -7723,7 +7730,6 @@ if (! formula && typeof(require) === 'function') {
             obj.selectionHandles.styles.topLeftHitArea.left = `${parseInt(topLeftX - ((hitAreaWidth / 4) * 3), 10)}px`;
             var bottomRightX = (x2pos- offsetX);
             var bottomRightY = (y2pos -offsetY);
-            // console.log('before y',y);
             bottomRightY = jexcel.transformScaleTop(obj,bottomRightY)+ obj.content.scrollTop -4;
             bottomRightX = jexcel.transformScaleLeft(obj,bottomRightX)+ obj.content.scrollLeft -4;
 
@@ -8066,9 +8072,7 @@ if (! formula && typeof(require) === 'function') {
             var mouseButton = e.which;
         }
         // Get elements
-        // console.log('e.target',e.target);
         var jexcelTable = jexcel.getElement(e.target);
-        // console.log('jexcelTable',jexcelTable);
         if (jexcelTable[0]) {
             if (jexcel.current != jexcelTable[0].jexcel) {
                 if (jexcel.current) {
@@ -8771,10 +8775,8 @@ if (! formula && typeof(require) === 'function') {
                                     y = touches.y;
                                 }
                             }
-                            // console.log('before y',y);
                             x = x - jexcel.current.options.transform.x + offsetX;
                             y = y - jexcel.current.options.transform.y + offsetY;
-                            // console.log('y',y);
                             var t = y;
                             // var rectH = rect.height / jexcel.current.options.transform.scale
                             if (window.innerHeight < y + rect.height) {
@@ -8852,7 +8854,6 @@ if (! formula && typeof(require) === 'function') {
                     e.preventDefault();
                     jexcel.isTouchAction = true;
                     //既存の選択状態
-                    console.log('jexcel.current.selectedCell',jexcel.current.selectedCell);
                     var oldX1 = jexcel.current.selectedCell[0];
                     var oldY1 = jexcel.current.selectedCell[1];
                     var oldX2 = jexcel.current.selectedCell[2];
@@ -8864,10 +8865,8 @@ if (! formula && typeof(require) === 'function') {
                         var last = HL[HL.length-1];
                     }
                     var jexcelTable = jexcel.getElement(last);
-                    // console.log('jexcelTable',jexcelTable);
                     jexcel.current.SelectionHandle = true;
                     // Header found
-                    // console.log('jexcelTable[1]',jexcelTable[1]);
                     if (jexcelTable[1] == 1) {
                         var columnId = last.getAttribute('data-x');
                         if (columnId) {
@@ -9020,24 +9019,6 @@ if (! formula && typeof(require) === 'function') {
             } else {
                 jexcel.isTouchAction = false;
             }
-            // if (! jexcel.current.edition) {
-            //     var columnId = e.target.getAttribute('data-x');
-            //     var rowId = e.target.getAttribute('data-y');
-
-            //     if (columnId && rowId) {
-            //         jexcel.current.updateSelectionFromCoords(columnId, rowId);
-
-            //         jexcel.timeControl = setTimeout(function() {
-            //             // Keep temporary reference to the element
-            //             if (jexcel.current.options.columns[columnId].type == 'color') {
-            //                 jexcel.tmpElement = null;
-            //             } else {
-            //                 jexcel.tmpElement = e.target;
-            //             }
-            //             jexcel.current.openEditor(e.target, false, e);
-            //         }, 500);
-            //     }
-            // }
         }
         // console.log('jexcel.isTouchAction',jexcel.isTouchAction);
     }
@@ -9071,9 +9052,7 @@ if (! formula && typeof(require) === 'function') {
                 e.preventDefault();
                 var HL = jexcel.current.getHighlighted();
                 var last = HL[HL.length-1];
-                // console.log('last',last);
                 var jexcelTable = jexcel.getElement(last);
-                // console.log('jexcelTable',jexcelTable);
                 if (jexcelTable[0]) {
                     // Avoid cross reference
                     if (jexcel.current != jexcelTable[0].jexcel) {
@@ -9082,10 +9061,8 @@ if (! formula && typeof(require) === 'function') {
                         }
                     }
                     var lastRect = last.getBoundingClientRect();
-                    // console.log('lastRect',lastRect);
                     
                     let target = document.elementFromPoint(touchButton[0].pageX,touchButton[0].pageY);
-                    // console.log('target',target);
                     var columnId = target.getAttribute('data-x');
                     var rowId = target.getAttribute('data-y');
    
