@@ -7197,12 +7197,15 @@ if (! formula && typeof(require) === 'function') {
 
             // Event
             el.setAttribute('tabindex', 1);
-            el.addEventListener('focus', function(e) {
-                if (jexcel.current && ! obj.selectedCell) {
-                    obj.updateSelectionFromCoords(0,0,0,0);
-                    obj.left();
-                }
-            });
+            //load時に多重判定するからトル
+            // el.addEventListener('focus', function(e) {
+            //     console.log('focus'); 
+            //     console.log('obj.selectedCell',obj.selectedCell);
+            //     if (jexcel.current && !obj.selectedCell ) {
+            //         obj.updateSelectionFromCoords(0,0,0,0);
+            //         obj.updateScroll(0);
+            //     }
+            // });
 
             // Load the table data based on an CSV file
             if (obj.options.csv) {
@@ -8110,7 +8113,14 @@ if (! formula && typeof(require) === 'function') {
                     if (columnId) {
                         // Update cursor
                         var info = e.target.getBoundingClientRect();
-                        if (jexcel.current.options.columnResize == true && info.width - e.offsetX < 6) {
+                      
+                        //リサイズ対応
+                        
+                        const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
+                        const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
+                        console.log('infoH',infoH);
+                        if (jexcel.current.options.columnResize == true && (infoW - e.offsetX < 10)) {
+                            console.log('columnResize'); 
                             // Resize helper
                             jexcel.current.resizing = {
                                 mousePosition: e.pageX,
@@ -8125,10 +8135,12 @@ if (! formula && typeof(require) === 'function') {
                                     jexcel.current.records[j][columnId].classList.add('resizing');
                                 }
                             }
-                        } else if (jexcel.current.options.columnDrag == true && info.height - e.offsetY < 6) {
+                        } else if (jexcel.current.options.columnDrag == true && (infoH - e.offsetY < 10)) {
+                            console.log('columnDrag'); 
                             if (jexcel.current.isColMerged(columnId).length) {
                                 console.error('Jspreadsheet: This column is part of a merged cell.');
                             } else {
+                                
                                 // Reset selection
                                 jexcel.current.resetSelection();
                                 // Drag helper
@@ -8191,7 +8203,12 @@ if (! formula && typeof(require) === 'function') {
 
                     if (e.target.classList.contains('jexcel_row')) {
                         var info = e.target.getBoundingClientRect();
-                        if (jexcel.current.options.rowResize == true && info.height - e.offsetY < 6) {
+                        //リサイズ対応
+                        
+                        const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
+                        const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
+                        console.log('infoH',infoH);
+                        if (jexcel.current.options.rowResize == true && infoH - e.offsetY < 10) {
                             // Resize helper
                             jexcel.current.resizing = {
                                 element: e.target.parentNode,
@@ -8201,12 +8218,13 @@ if (! formula && typeof(require) === 'function') {
                             };
                             // Border indication
                             e.target.parentNode.classList.add('resizing');
-                        } else if (jexcel.current.options.rowDrag == true && info.width - e.offsetX < 6) {
+                        } else if (jexcel.current.options.rowDrag == true && infoW - e.offsetY < 10) {
                             if (jexcel.current.isRowMerged(rowId).length) {
                                 console.error('Jspreadsheet: This row is part of a merged cell');
                             } else if (jexcel.current.options.search == true && jexcel.current.results) {
                                 console.error('Jspreadsheet: Please clear your search before perform this action');
                             } else {
+                                console.log('rowDrag');
                                 // Reset selection
                                 jexcel.current.resetSelection();
                                 // Drag helper
@@ -8702,6 +8720,7 @@ if (! formula && typeof(require) === 'function') {
     }
 
     jexcel.contextMenuControls = function(e) {
+        console.log('contextMenuControls'); 
         e = e || window.event;
         if ("buttons" in e) {
             var mouseButton = e.buttons;
@@ -8866,100 +8885,110 @@ if (! formula && typeof(require) === 'function') {
                     }
                     var jexcelTable = jexcel.getElement(last);
                     jexcel.current.SelectionHandle = true;
-                    // Header found
-                    if (jexcelTable[1] == 1) {
-                        var columnId = last.getAttribute('data-x');
-                        if (columnId) {
-                            // Update cursor
-                            var info = last.getBoundingClientRect();
-                            if (jexcel.current.options.columnDrag == true && info.height - e.offsetY < 6) {
-                                if (jexcel.current.isColMerged(columnId).length) {
-                                    console.error('Jspreadsheet: This column is part of a merged cell.');
-                                } else {
-                                    // Reset selection
-                                    jexcel.current.resetSelection();
-                                    // Drag helper
-                                    jexcel.current.dragging = {
-                                        element: last,
-                                        column: columnId,
-                                        destination: columnId,
-                                    };
-                                    // Border indication
-                                    jexcel.current.headers[columnId].classList.add('dragging');
-                                    for (var j = 0; j < jexcel.current.records.length; j++) {
-                                        if (jexcel.current.records[j][columnId]) {
-                                            jexcel.current.records[j][columnId].classList.add('dragging');
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (jexcel.current.selectedHeader && (e.shiftKey || e.ctrlKey)) {
-                                    var o = jexcel.current.selectedHeader;
-                                    var d = columnId;
-                                } else {
-                                    // Press to rename
-                                    if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
-                                        jexcel.timeControl = setTimeout(function() {
-                                            jexcel.current.setHeader(columnId);
-                                        }, 800);
-                                    }
 
-                                    // Keep track of which header was selected first
-                                    jexcel.current.selectedHeader = columnId;
-
-                                    // Update selection single column
-                                    var o = columnId;
-                                    var d = columnId;
-                                }
-
-                                // Update selection
-                                jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
-                            }
-                        }
-                    } else {
-                        jexcel.current.selectedHeader = false;
-                    }
+                                        // Header found
+                                        // if (jexcelTable[1] == 1) {
+                                        //     var columnId = last.getAttribute('data-x');
+                                        //     console.log('columnId',columnId);
+                                        //     if (columnId) {
+                                        //         // Update cursor
+                                        //         var info = last.getBoundingClientRect();
+                                        //         //リサイズ対応 
+                                            
+                                        //         const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
+                                        //         const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
+                                        //         console.log('infoH',infoH);
+                                        //         if (jexcel.current.options.columnDrag == true && infoH - e.offsetY < 10) {
+                                        //             if (jexcel.current.isColMerged(columnId).length) {
+                                        //                 console.error('Jspreadsheet: This column is part of a merged cell.');
+                                        //             } else {
+                                        //                 // Reset selection
+                                        //                 jexcel.current.resetSelection();
+                                        //                 // Drag helper
+                                        //                 jexcel.current.dragging = {
+                                        //                     element: last,
+                                        //                     column: columnId,
+                                        //                     destination: columnId,
+                                        //                 };
+                                        //                 // Border indication
+                                        //                 jexcel.current.headers[columnId].classList.add('dragging');
+                                        //                 for (var j = 0; j < jexcel.current.records.length; j++) {
+                                        //                     if (jexcel.current.records[j][columnId]) {
+                                        //                         jexcel.current.records[j][columnId].classList.add('dragging');
+                                        //                     }
+                                        //                 }
+                                        //             }
+                                        //         } else {
+                                        //             if (jexcel.current.selectedHeader && (e.shiftKey || e.ctrlKey)) {
+                                        //                 var o = jexcel.current.selectedHeader;
+                                        //                 var d = columnId;
+                                        //             } else {
+                                        //                 // Press to rename
+                                        //                 if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
+                                        //                     jexcel.timeControl = setTimeout(function() {
+                                        //                         jexcel.current.setHeader(columnId);
+                                        //                     }, 800);
+                                        //                 }
                     
+                                        //                 // Keep track of which header was selected first
+                                        //                 jexcel.current.selectedHeader = columnId;
+                    
+                                        //                 // Update selection single column
+                                        //                 var o = columnId;
+                                        //                 var d = columnId;
+                                        //             }
+                    
+                                        //             // Update selection
+                                        //             jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
+                                        //         }
+                                        //     }
+                                        // } else {
+                                        //     jexcel.current.selectedHeader = false;
+                                        // }
                     // Body found
                     if (jexcelTable[1] == 2) {
                         var rowId = last.getAttribute('data-y');
                         if (last.classList.contains('jexcel_row')) {
-                            var info = last.getBoundingClientRect();
-                            if (jexcel.current.options.rowDrag == true && info.width - e.offsetX < 6) {
-                                if (jexcel.current.isRowMerged(rowId).length) {
-                                    console.error('Jspreadsheet: This row is part of a merged cell');
-                                } else if (jexcel.current.options.search == true && jexcel.current.results) {
-                                    console.error('Jspreadsheet: Please clear your search before perform this action');
-                                } else {
-                                    // Reset selection
-                                    jexcel.current.resetSelection();
-                                    // Drag helper
-                                    jexcel.current.dragging = {
-                                        element: last.parentNode,
-                                        row:rowId,
-                                        destination:rowId,
-                                    };
-                                    // Border indication
-                                    last.parentNode.classList.add('dragging');
-                                }
-                            } else {
+                            // var info = last.getBoundingClientRect();
+                            // //リサイズ対応 
+                        
+                            // const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
+                            // const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
+                            // if (jexcel.current.options.rowDrag == true && infoW - e.offsetX < 10) {
+                            //     if (jexcel.current.isRowMerged(rowId).length) {
+                            //         console.error('Jspreadsheet: This row is part of a merged cell');
+                            //     } else if (jexcel.current.options.search == true && jexcel.current.results) {
+                            //         console.error('Jspreadsheet: Please clear your search before perform this action');
+                            //     } else {
+                            //         // Reset selection
+                            //         jexcel.current.resetSelection();
+                            //         // Drag helper
+                            //         jexcel.current.dragging = {
+                            //             element: last.parentNode,
+                            //             row:rowId,
+                            //             destination:rowId,
+                            //         };
+                            //         // Border indication
+                            //         last.parentNode.classList.add('dragging');
+                            //     }
+                            // } else {
                                 
-                                if (jexcel.current.selectedRow && (e.shiftKey || e.ctrlKey)) {
-                                    var o = jexcel.current.selectedRow;
-                                    var d = rowId;
-                                } else {
+                            //     if (jexcel.current.selectedRow && (e.shiftKey || e.ctrlKey)) {
+                            //         var o = jexcel.current.selectedRow;
+                            //         var d = rowId;
+                            //     } else {
                                 
-                                    // Keep track of which header was selected first
-                                    jexcel.current.selectedRow = rowId;
+                            //         // Keep track of which header was selected first
+                            //         jexcel.current.selectedRow = rowId;
 
-                                    // Update selection single column
-                                    var o = rowId;
-                                    var d = rowId;
-                                }
+                            //         // Update selection single column
+                            //         var o = rowId;
+                            //         var d = rowId;
+                            //     }
 
-                                // Update selection
-                                jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
-                            }
+                            //     // Update selection
+                            //     jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
+                            // }
                         } else {
                         
                                 var getCellCoords = function(element) {
@@ -9078,6 +9107,51 @@ if (! formula && typeof(require) === 'function') {
                         newY2 = rowId;
                     }
                     if (jexcel.current.dragging) {
+                        // if (jexcel.current.dragging.column) {
+                        //     if (columnId) {
+    
+                        //         if (jexcel.current.isColMerged(columnId).length) {
+                        //             console.error('Jspreadsheet: This column is part of a merged cell.');
+                        //         } else {
+                        //             for (var i = 0; i < jexcel.current.headers.length; i++) {
+                        //                 jexcel.current.headers[i].classList.remove('dragging-left');
+                        //                 jexcel.current.headers[i].classList.remove('dragging-right');
+                        //             }
+    
+                        //             if (jexcel.current.dragging.column == columnId) {
+                        //                 jexcel.current.dragging.destination = parseInt(columnId);
+                        //             } else {
+                        //                 if (target.clientWidth / 2 > e.offsetX) {
+                        //                     if (jexcel.current.dragging.column < columnId) {
+                        //                         jexcel.current.dragging.destination = parseInt(columnId) - 1;
+                        //                     } else {
+                        //                         jexcel.current.dragging.destination = parseInt(columnId);
+                        //                     }
+                        //                     jexcel.current.headers[columnId].classList.add('dragging-left');
+                        //                 } else {
+                        //                     if (jexcel.current.dragging.column < columnId) {
+                        //                         jexcel.current.dragging.destination = parseInt(columnId);
+                        //                     } else {
+                        //                         jexcel.current.dragging.destination = parseInt(columnId) + 1;
+                        //                     }
+                        //                     jexcel.current.headers[columnId].classList.add('dragging-right');
+                        //                 }
+                        //             }
+                        //         }
+                        //     }
+                        // } else {
+                        //     if (rowId) {
+                        //         if (jexcel.current.isRowMerged(rowId).length) {
+                        //             console.error('Jspreadsheet: This row is part of a merged cell.');
+                        //         } else {
+                        //             var moveTarget = (target.clientHeight / 2 > e.offsetY) ? target.parentNode.nextSibling : target.parentNode;
+                        //             if (jexcel.current.dragging.element != moveTarget) {
+                        //                 target.parentNode.parentNode.insertBefore(jexcel.current.dragging.element, moveTarget);
+                        //                 jexcel.current.dragging.destination = Array.prototype.indexOf.call(jexcel.current.dragging.element.parentNode.children, jexcel.current.dragging.element);
+                        //             }
+                        //         }
+                        //     }
+                        // }
                     } else {
                         
                         // Header found
