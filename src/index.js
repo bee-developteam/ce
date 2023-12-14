@@ -9272,9 +9272,10 @@ if (! formula && typeof(require) === 'function') {
                 console.log('contentRect',contentRect);
                 var offsetX = contentRect.left;
                 var offsetY = contentRect.top;
-                var topRightY = (y1pos - offsetY);
-                var topRightX = (x1pos- offsetX);
-                
+                var topRightY = (y1pos - offsetY);//
+                var topRightX = (x1pos- offsetX);//
+                topRightY = jexcel.transformScaleTop(jexcel.current,topRightY - cellTopRight.height)+ ($(".jexcel_contextmenu").height()/2);
+                topRightX = jexcel.transformScaleLeft(jexcel.current,topRightX)- ($(".jexcel_contextmenu").width()/2);
                 
                 console.log('topRightY',topRightY);
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
@@ -9282,8 +9283,8 @@ if (! formula && typeof(require) === 'function') {
                 console.log('e',e);
                 // The id is depending on header and body
                 jexcel.current.contextMenu.contextmenu.open(e, items);
-                topRightY = jexcel.transformScaleTop(jexcel.current,topRightY)+ jexcel.current.content.scrollTop -4 + ($(".jexcel_contextmenu").height()/2);
-                topRightX = jexcel.transformScaleLeft(jexcel.current,topRightX)+ jexcel.current.content.scrollLeft -4  + ($(".jexcel_contextmenu").width()/2);
+                // topRightY = jexcel.transformScaleTop(jexcel.current,topRightY)+ jexcel.current.content.scrollTop -4 + ($(".jexcel_contextmenu").height()/2);
+                // topRightX = jexcel.transformScaleLeft(jexcel.current,topRightX)+ jexcel.current.content.scrollLeft -4  + ($(".jexcel_contextmenu").width()/2);
                 $(".jexcel_contextmenu").css({top:topRightY,left:topRightX});
             }
             
