@@ -7335,19 +7335,19 @@ if (! formula && typeof(require) === 'function') {
                     if (obj.options.columnSorting == true) {
                         // Line
                         items.push({ type:'line' });
-
-                        items.push({
-                            title:obj.options.text.orderAscending,
-                            onclick:function() {
-                                obj.orderBy(x, 0);
-                            }
-                        });
-                        items.push({
-                            title:obj.options.text.orderDescending,
-                            onclick:function() {
-                                obj.orderBy(x, 1);
-                            }
-                        });
+                        //降順昇順機能削除
+                        // items.push({
+                        //     title:obj.options.text.orderAscending,
+                        //     onclick:function() {
+                        //         obj.orderBy(x, 0);
+                        //     }
+                        // });
+                        // items.push({
+                        //     title:obj.options.text.orderDescending,
+                        //     onclick:function() {
+                        //         obj.orderBy(x, 1);
+                        //     }
+                        // });
                     }
                 } else {
                     // Insert new row
@@ -8689,6 +8689,7 @@ if (! formula && typeof(require) === 'function') {
                 // Double click over header
                 if (jexcelTable[1] == 1 && jexcel.current.options.columnSorting == true) {
                     // Check valid column header coords
+                    //降順昇順機能削除
                     // var columnId = e.target.getAttribute('data-x');
                     // if (columnId) {
                     //     jexcel.current.orderBy(columnId);
