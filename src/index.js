@@ -7286,7 +7286,7 @@ if (! formula && typeof(require) === 'function') {
 
         // Context menu
         if (options && options.contextMenu != null) {
-            obj.options.contextMenu = options.contextMenu;
+            //obj.options.contextMenu = options.contextMenu;
         } else {
             obj.options.contextMenu = function(el, x, y, e) {
                 var items = [];
@@ -7457,7 +7457,6 @@ if (! formula && typeof(require) === 'function') {
                         }
                     });
                 }
-                console.log(items)
                 return items;
             }
         }
