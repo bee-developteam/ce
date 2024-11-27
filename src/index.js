@@ -80,6 +80,8 @@ if (! formula && typeof(require) === 'function') {
     // Jspreadsheet core object
     var jexcel = (function(el, options) {
         // Create jspreadsheet object
+        let test = options
+        console.log(test)
         var obj = {};
         obj.options = {};
 
