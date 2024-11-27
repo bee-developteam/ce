@@ -274,7 +274,7 @@ if (! formula && typeof(require) === 'function') {
                 columnName: 'Column name',
                 insertANewColumnBefore: '左に列を挿入する',
                 insertANewColumnAfter: '右に列を挿入する',
-                deleteSelectedColumns: '選択列をする',
+                deleteSelectedColumns: '選択列をsする',
                 renameThisColumn: 'Rename this column',
                 orderAscending: '昇順',
                 orderDescending: '降順',
