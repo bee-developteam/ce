@@ -7844,7 +7844,7 @@ if (! formula && typeof(require) === 'function') {
         root.removeEventListener("mousedown", jexcel.mouseDownControls);
         root.removeEventListener("mousemove", jexcel.mouseMoveControls);
         root.removeEventListener("mouseover", jexcel.mouseOverControls);
-        //root.removeEventListener("dblclick", jexcel.doubleClickControls);
+        root.removeEventListener("dblclick", jexcel.doubleClickControls);
         root.removeEventListener("paste", jexcel.pasteControls);
         root.removeEventListener("contextmenu", jexcel.contextMenuControls);
         root.removeEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
@@ -7877,7 +7877,7 @@ if (! formula && typeof(require) === 'function') {
         root.addEventListener("mousedown", jexcel.mouseDownControls);
         root.addEventListener("mousemove", jexcel.mouseMoveControls);
         root.addEventListener("mouseover", jexcel.mouseOverControls);
-        //root.addEventListener("dblclick", jexcel.doubleClickControls);
+        root.addEventListener("dblclick", jexcel.doubleClickControls);
         root.addEventListener("paste", jexcel.pasteControls);
         root.addEventListener("contextmenu", jexcel.contextMenuControls);
         root.addEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
@@ -8689,10 +8689,10 @@ if (! formula && typeof(require) === 'function') {
                 // Double click over header
                 if (jexcelTable[1] == 1 && jexcel.current.options.columnSorting == true) {
                     // Check valid column header coords
-                    var columnId = e.target.getAttribute('data-x');
-                    if (columnId) {
-                        jexcel.current.orderBy(columnId);
-                    }
+                    // var columnId = e.target.getAttribute('data-x');
+                    // if (columnId) {
+                    //     jexcel.current.orderBy(columnId);
+                    // }
                 }
 
                 // Double click over body
