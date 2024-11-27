@@ -274,7 +274,7 @@ if (! formula && typeof(require) === 'function') {
                 columnName: 'Column name',
                 insertANewColumnBefore: '左に列を挿入する',
                 insertANewColumnAfter: '右に列を挿入する',
-                deleteSelectedColumns: '選択列をsする',
+                deleteSelectedColumns: '選択列を削除する',
                 renameThisColumn: 'Rename this column',
                 orderAscending: '昇順',
                 orderDescending: '降順',
@@ -7844,7 +7844,7 @@ if (! formula && typeof(require) === 'function') {
         root.removeEventListener("mousedown", jexcel.mouseDownControls);
         root.removeEventListener("mousemove", jexcel.mouseMoveControls);
         root.removeEventListener("mouseover", jexcel.mouseOverControls);
-        root.removeEventListener("dblclick", jexcel.doubleClickControls);
+        //root.removeEventListener("dblclick", jexcel.doubleClickControls);
         root.removeEventListener("paste", jexcel.pasteControls);
         root.removeEventListener("contextmenu", jexcel.contextMenuControls);
         root.removeEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
@@ -7877,7 +7877,7 @@ if (! formula && typeof(require) === 'function') {
         root.addEventListener("mousedown", jexcel.mouseDownControls);
         root.addEventListener("mousemove", jexcel.mouseMoveControls);
         root.addEventListener("mouseover", jexcel.mouseOverControls);
-        root.addEventListener("dblclick", jexcel.doubleClickControls);
+        //root.addEventListener("dblclick", jexcel.doubleClickControls);
         root.addEventListener("paste", jexcel.pasteControls);
         root.addEventListener("contextmenu", jexcel.contextMenuControls);
         root.addEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
