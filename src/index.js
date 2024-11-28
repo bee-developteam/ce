@@ -9278,7 +9278,7 @@ if (! formula && typeof(require) === 'function') {
             jexcel.isTouchContextMenu = false;
             jexcel.current.contextMenu.contextmenu.close();
             if (jexcel.current) {
-                console.log('selectedCell',jexcel.current.selectedCell);
+                console.log('selectedCell',jexcel.current);
                 var y = jexcel.current.selectedCell[1];
                 var x = jexcel.current.selectedCell[2];
                 var cellTopRight = jexcel.current.getCellFromCoords(x,y).getBoundingClientRect();
