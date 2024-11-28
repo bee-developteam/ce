@@ -7287,7 +7287,7 @@ if (! formula && typeof(require) === 'function') {
         //Context menu
         if (options && options.contextMenu != null) {
             obj.options.contextMenu = options.contextMenu;
-            console.log('test2',options.contextMenu(el, x, y, e));
+            console.log('test2',options.contextMenu);
         } else {
             obj.options.contextMenu = function(el, x, y, e) {
                 var items = [];
