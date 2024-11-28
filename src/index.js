@@ -7321,6 +7321,14 @@ if (! formula && typeof(require) === 'function') {
                             }
                         });
                     }
+                    if (obj.options.allowDeleteRow == true) {
+                        items.push({
+                            title:obj.options.text.deleteSelectedRows,
+                            onclick:function() {
+                                obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                            }
+                        });
+                    }
 
                     // Rename column
                     if (obj.options.allowRenameColumn == true) {
@@ -7897,7 +7905,6 @@ if (! formula && typeof(require) === 'function') {
         root.addEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
         document.addEventListener("keydown", jexcel.keyDownControls);
     }
-
     /**
      * Events
      */
