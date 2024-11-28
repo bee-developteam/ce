@@ -7321,14 +7321,6 @@ if (! formula && typeof(require) === 'function') {
                             }
                         });
                     }
-                    if (obj.options.allowDeleteRow == true) {
-                        items.push({
-                            title:obj.options.text.deleteSelectedRows,
-                            onclick:function() {
-                                obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
-                            }
-                        });
-                    }
 
                     // Rename column
                     if (obj.options.allowRenameColumn == true) {
@@ -7376,14 +7368,14 @@ if (! formula && typeof(require) === 'function') {
                         });
                     }
 
-                    if (obj.options.allowDeleteRow == true) {
+                    //if (obj.options.allowDeleteRow == true) {
                         items.push({
                             title:obj.options.text.deleteSelectedRows,
                             onclick:function() {
                                 obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
                             }
                         });
-                    }
+                    //}
 
                     if (x) {
                         if (obj.options.allowComments == true) {
