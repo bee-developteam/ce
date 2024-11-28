@@ -7286,6 +7286,7 @@ if (! formula && typeof(require) === 'function') {
 
         //Context menu
         if (options && options.contextMenu != null) {
+            console.log('test',options.contextMenu);
             obj.options.contextMenu = options.contextMenu;
         } else {
             obj.options.contextMenu = function(el, x, y, e) {
@@ -8152,7 +8153,6 @@ if (! formula && typeof(require) === 'function') {
                         const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
                         const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
                         console.log('infoH',infoH);
-                        console.log('test',options.contextMenu);
                         if (jexcel.current.options.columnResize == true && (infoW - e.offsetX < 10)) {
                             console.log('columnResize'); 
                             // Resize helper
