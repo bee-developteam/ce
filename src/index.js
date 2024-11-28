@@ -9275,7 +9275,6 @@ if (! formula && typeof(require) === 'function') {
                 var x = jexcel.current.selectedCell[2];
                 var cellTopRight = jexcel.current.getCellFromCoords(x,y).getBoundingClientRect();
             console.log('cellTopRight',cellTopRight);
-            // 
             
                 var x1pos = cellTopRight.left;
                 var y1pos = cellTopRight.top;
