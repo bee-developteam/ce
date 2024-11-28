@@ -9293,12 +9293,12 @@ if (! formula && typeof(require) === 'function') {
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
                 if(jexcel.current.selectedHeader != null){
-                    items.push({
-                        title:jexcel.current.options.text.deleteSelectedRows,
+                    items.splice(2,1,({
+                        title:jexcel.current.options.text.deleteSelectedColumns,
                         onclick:function() {
-                            jexcel.current.deleteRow(jexcel.current.getSelectedRows().length ? undefined : parseInt(y));
+                            jexcel.current.deleteColumn(jexcel.current.getSelectedColumns().length ? undefined : parseInt(x));
                         }
-                    })
+                    })) 
                 }
                 console.log('items',items);
                 // The id is depending on header and body
