@@ -9290,15 +9290,30 @@ if (! formula && typeof(require) === 'function') {
                 
                 console.log('topRightY',topRightY);
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
+                if(jexcel.current.selectedHeader != null){
+                    y = null;
+                }
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
                 if(jexcel.current.selectedHeader != null){
-                    items.splice(2,1,({
-                        title:jexcel.current.options.text.deleteSelectedColumns,
-                        onclick:function() {
-                            jexcel.current.deleteColumn(jexcel.current.getSelectedColumns().length ? undefined : parseInt(x));
-                        }
-                    })) 
+                    // items.splice(0,1,({
+                    //     title:jexcel.current.options.text.insertANewColumnBefore,
+                    //     onclick:function() {
+                    //         jexcel.current.insertColumn(1, parseInt(x), 1);
+                    //     }
+                    // })) 
+                    // items.splice(1,1,({
+                    //     title:jexcel.current.options.text.insertANewColumnAfter,
+                    //     onclick:function() {
+                    //         jexcel.current.insertColumn(1, parseInt(x), 0);
+                    //     }
+                    // })) 
+                    // items.splice(2,1,({
+                    //     title:jexcel.current.options.text.deleteSelectedColumns,
+                    //     onclick:function() {
+                    //         jexcel.current.deleteColumn(jexcel.current.getSelectedColumns().length ? undefined : parseInt(x));
+                    //     }
+                    // })) 
                 }
                 console.log('items',items);
                 // The id is depending on header and body
