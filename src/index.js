@@ -9289,7 +9289,7 @@ if (! formula && typeof(require) === 'function') {
                 
                 console.log('topRightY',topRightY);
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
-                if(!jexcel.current.selectedHeader && jexcel.current.selectedHeader != null){
+                if(jexcel.current.selectedHeader && jexcel.current.selectedHeader != null){
                     y = null;
                 }
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
