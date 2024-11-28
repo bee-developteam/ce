@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-
+const TerserPlugin = require('terser-webpack-plugin');
 let dependencies = {
     jsuites: "jsuites",
 }
@@ -16,7 +16,16 @@ module.exports = {
         libraryTarget: 'umd',
     },
     optimization: {
-        minimize: true
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+              terserOptions: {
+                compress: {
+                  drop_console: false, // console.logを削除しない
+                },
+              },
+            }),
+          ],
     },
     plugins: [
         new webpack.BannerPlugin({

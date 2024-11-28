@@ -8241,7 +8241,7 @@ if (! formula && typeof(require) === 'function') {
                         const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
                         const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
                         console.log('infoH',infoH);
-                        console.log(options.contextMenu);
+                        console.log('test',options.contextMenu);
                         if (jexcel.current.options.rowResize == true && infoH - e.offsetY < 10) {
                             // Resize helper
                             jexcel.current.resizing = {
