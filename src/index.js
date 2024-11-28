@@ -7285,10 +7285,10 @@ if (! formula && typeof(require) === 'function') {
         }
 
         //Context menu
-        if (options && options.contextMenu != null) {
-            obj.options.contextMenu = options.contextMenu;
-            console.log('test2',options.contextMenu);
-        } else {
+        // if (options && options.contextMenu != null) {
+        //     obj.options.contextMenu = options.contextMenu;
+        //     console.log('test2',options.contextMenu);
+        // } else {
             obj.options.contextMenu = function(el, x, y, e) {
                 var items = [];
 
@@ -7335,7 +7335,7 @@ if (! formula && typeof(require) === 'function') {
                     // Sorting
                     if (obj.options.columnSorting == true) {
                         // Line
-                        items.push({ type:'line' });
+                        // items.push({ type:'line' });
                         //降順昇順機能削除
                         // items.push({
                         //     title:obj.options.text.orderAscending,
@@ -7444,7 +7444,18 @@ if (! formula && typeof(require) === 'function') {
                         }
                     });
                 }
-
+                items.push({
+                    title:"元に戻す",
+                    onclick:function() {
+                        obj.undo();
+                    }
+                });
+                items.push({
+                    title:"やり直し",
+                    onclick:function() {
+                        obj.redo();
+                    }
+                });
                 // About
                 if (obj.options.about) {
                     items.push({
@@ -7460,7 +7471,7 @@ if (! formula && typeof(require) === 'function') {
                 }
                 return items;
             }
-        }
+        //}
 
         obj.scrollControls = function(e) {
             obj.wheelControls();
