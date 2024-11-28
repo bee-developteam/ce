@@ -9293,9 +9293,9 @@ if (! formula && typeof(require) === 'function') {
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
                 items.push({
-                    title:obj.options.text.deleteSelectedRows,
+                    title:jexcel.current.options.text.deleteSelectedRows,
                     onclick:function() {
-                        obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                        jexcel.current.deleteRow(jexcel.current.getSelectedRows().length ? undefined : parseInt(y));
                     }
                 });
                 console.log('items',items);
