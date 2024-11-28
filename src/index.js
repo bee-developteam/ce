@@ -9300,6 +9300,7 @@ if (! formula && typeof(require) === 'function') {
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
+                console.log('items',items);
                 // The id is depending on header and body
                 jexcel.current.contextMenu.contextmenu.open(e, items);
                 // topRightY = jexcel.transformScaleTop(jexcel.current,topRightY)+ jexcel.current.content.scrollTop -4 + ($(".jexcel_contextmenu").height()/2);
