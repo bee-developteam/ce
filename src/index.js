@@ -7286,8 +7286,8 @@ if (! formula && typeof(require) === 'function') {
 
         //Context menu
         if (options && options.contextMenu != null) {
+            options.contextMenu.splice(3,3);
             obj.options.contextMenu = options.contextMenu;
-            obj.options.contextMenu.splice(3,3);
         } else {
             obj.options.contextMenu = function(el, x, y, e) {
                 var items = [];
