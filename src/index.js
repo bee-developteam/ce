@@ -80,8 +80,6 @@ if (! formula && typeof(require) === 'function') {
     // Jspreadsheet core object
     var jexcel = (function(el, options) {
         // Create jspreadsheet object
-        let test = options
-        console.log(test)
         var obj = {};
         obj.options = {};
 
@@ -7286,10 +7284,11 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        // Context menu
-        // if (options && options.contextMenu != null) {
-        //     obj.options.contextMenu = options.contextMenu;
-        // } else {
+        //Context menu
+        if (options && options.contextMenu != null) {
+            obj.options.contextMenu = options.contextMenu;
+            console.log(options.contextMenu);
+        } else {
             obj.options.contextMenu = function(el, x, y, e) {
                 var items = [];
 
@@ -7460,7 +7459,7 @@ if (! formula && typeof(require) === 'function') {
                     });
                 }
                 return items;
-           // }
+            }
         }
 
         obj.scrollControls = function(e) {
