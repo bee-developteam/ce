@@ -7368,14 +7368,14 @@ if (! formula && typeof(require) === 'function') {
                         });
                     }
 
-                    //if (obj.options.allowDeleteRow == true) {
+                    if (obj.options.allowDeleteRow == true) {
                         items.push({
                             title:obj.options.text.deleteSelectedRows,
                             onclick:function() {
                                 obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
                             }
                         });
-                    //}
+                    }
 
                     if (x) {
                         if (obj.options.allowComments == true) {
@@ -9292,6 +9292,12 @@ if (! formula && typeof(require) === 'function') {
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
+                items.push({
+                    title:obj.options.text.deleteSelectedRows,
+                    onclick:function() {
+                        obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                    }
+                });
                 console.log('items',items);
                 // The id is depending on header and body
                 jexcel.current.contextMenu.contextmenu.open(e, items);
