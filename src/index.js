@@ -7411,7 +7411,7 @@ if (! formula && typeof(require) === 'function') {
                 // Copy
                 items.push({
                     title:obj.options.text.copy,
-                    shortcut:'Ctrl + C',
+                    //shortcut:'Ctrl + C',
                     onclick:function() {
                         obj.copy(true);
                     }
@@ -7421,7 +7421,7 @@ if (! formula && typeof(require) === 'function') {
                 if (navigator && navigator.clipboard) {
                     items.push({
                         title:obj.options.text.paste,
-                        shortcut:'Ctrl + V',
+                        //shortcut:'Ctrl + V',
                         onclick:function() {
                             if (obj.selectedCell) {
                                 navigator.clipboard.readText().then(function(text) {
