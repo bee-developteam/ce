@@ -9293,12 +9293,12 @@ if (! formula && typeof(require) === 'function') {
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
                 console.log('e',e);
                 if(jexcel.current.selectedHeader != null){
-                    items.splice(2,1,({
+                    items.push({
                         title:jexcel.current.options.text.deleteSelectedRows,
                         onclick:function() {
                             jexcel.current.deleteRow(jexcel.current.getSelectedRows().length ? undefined : parseInt(y));
                         }
-                    })) 
+                    })
                 }
                 console.log('items',items);
                 // The id is depending on header and body
