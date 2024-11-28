@@ -7286,6 +7286,7 @@ if (! formula && typeof(require) === 'function') {
 
         //Context menu
         if (options && options.contextMenu != null) {
+            console.log(options.contextMenu);
             obj.options.contextMenu = options.contextMenu;
         } else {
             obj.options.contextMenu = function(el, x, y, e) {
