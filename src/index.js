@@ -9289,6 +9289,8 @@ if (! formula && typeof(require) === 'function') {
                 
                 console.log('topRightY',topRightY);
                 console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
+                console.log(jexcel.current.selectedHeader)
+                console.log(isNaN(jexcel.current.selectedHeader))
                 if(!isNaN(jexcel.current.selectedHeader)){
                     y = null;
                 }
