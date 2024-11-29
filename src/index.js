@@ -3284,7 +3284,7 @@ if (!formula && typeof (require) === 'function') {
                 var x = (x2 - x1) + obj.content.scrollLeft;
                 var y = (y2 - y1) + obj.content.scrollTop - 2;
             } else {
-                var x = (x2 - x1) + obj.content.scrollLeft + w2 + 100;
+                var x = (x2 - x1) + obj.content.scrollLeft + w2;
                 var y = (y2 - y1) + obj.content.scrollTop + h2;
             }
 
@@ -8371,7 +8371,7 @@ if (!formula && typeof (require) === 'function') {
                 // Columns to be updated
                 if (jexcel.current.resizing.column) {
                     // New width
-                    var newWidth = jexcel.current.colgroup[jexcel.current.resizing.column].getAttribute('width');
+                    var newWidth = jexcel.current.colgroup[jexcel.current.resizing.column].getAttribute('width') + 100;
                     // Columns
                     var columns = jexcel.current.getSelectedColumns();
                     if (columns.length > 1) {
