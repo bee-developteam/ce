@@ -8371,7 +8371,7 @@ if (!formula && typeof (require) === 'function') {
                 // Columns to be updated
                 if (jexcel.current.resizing.column) {
                     // New width
-                    var newWidth = String(Number(jexcel.current.colgroup[jexcel.current.resizing.column].getAttribute('width'))/jexcel.current.options.transform.scale);
+                    var newWidth = jexcel.current.colgroup[jexcel.current.resizing.column].getAttribute('width');
                     console.log('newWidth',newWidth)
                     console.log(jexcel.current)
                     // Columns
