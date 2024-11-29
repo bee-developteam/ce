@@ -7,20 +7,20 @@
  * This software is distribute under MIT License
  */
 
-if (! formula && typeof(require) === 'function') {
+if (!formula && typeof (require) === 'function') {
     var formula = require('@jspreadsheet/formula');
 }
 
-;(function (global, factory) {
+; (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    global.jspreadsheet = global.jexcel = factory();
+        typeof define === 'function' && define.amd ? define(factory) :
+            global.jspreadsheet = global.jexcel = factory();
 }(this, (function () {
 
     'use strict';
 
     // Basic version information
-    var Version = function() {
+    var Version = function () {
         // Information
         var info = {
             title: 'Jspreadsheet',
@@ -28,12 +28,12 @@ if (! formula && typeof(require) === 'function') {
             type: 'CE',
             host: 'https://bossanova.uk/jspreadsheet',
             license: 'MIT',
-            print: function() {
-                return [ this.title + ' ' + this.type + ' ' + this.version, this.host, this.license ].join('\r\n');
+            print: function () {
+                return [this.title + ' ' + this.type + ' ' + this.version, this.host, this.license].join('\r\n');
             }
         }
 
-        return function() {
+        return function () {
             return info;
         };
     }();
@@ -41,15 +41,15 @@ if (! formula && typeof(require) === 'function') {
     /**
      * The value is a formula
      */
-    var isFormula = function(value) {
-        var v = (''+value)[0];
+    var isFormula = function (value) {
+        var v = ('' + value)[0];
         return v == '=' || v == '#' ? true : false;
     }
 
     /**
      * Get the mask in the jSuites.mask format
      */
-    var getMask = function(o) {
+    var getMask = function (o) {
         if (o.format || o.mask || o.locale) {
             var opt = {};
             if (o.mask) {
@@ -62,7 +62,7 @@ if (! formula && typeof(require) === 'function') {
             }
 
             if (o.decimal) {
-                if (! opt.options) {
+                if (!opt.options) {
                     opt.options = {};
                 }
                 opt.options = { decimal: o.decimal };
@@ -73,17 +73,17 @@ if (! formula && typeof(require) === 'function') {
         return null;
     }
     const IS_TOUCH_DEVICE =
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.matchMedia('(pointer:coarse)').matches;
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        window.matchMedia('(pointer:coarse)').matches;
 
     // Jspreadsheet core object
-    var jexcel = (function(el, options) {
+    var jexcel = (function (el, options) {
         // Create jspreadsheet object
         var obj = {};
         obj.options = {};
 
-        if (! (el instanceof Element || el instanceof HTMLDocument)) {
+        if (!(el instanceof Element || el instanceof HTMLDocument)) {
             console.error('Jspreadsheet: el is not a valid DOM element');
             return false;
         } else if (el.tagName == 'TABLE') {
@@ -101,171 +101,171 @@ if (! formula && typeof(require) === 'function') {
         // Loading default configuration
         var defaults = {
             // External data
-            url:null,
+            url: null,
             // Ajax options
             method: 'GET',
             requestVariables: null,
             // Data
-            data:null,
+            data: null,
             // Custom sorting handler
-            sorting:null,
+            sorting: null,
             // Copy behavior
-            copyCompatibility:false,
-            root:null,
+            copyCompatibility: false,
+            root: null,
             // Rows and columns definitions
-            rows:[],
-            columns:[],
+            rows: [],
+            columns: [],
             // Deprected legacy options
-            colHeaders:[],
-            colWidths:[],
-            colAlignments:[],
-            nestedHeaders:null,
+            colHeaders: [],
+            colWidths: [],
+            colAlignments: [],
+            nestedHeaders: null,
             // Column width that is used by default
-            defaultColWidth:50,
-            defaultColAlign:'center',
+            defaultColWidth: 50,
+            defaultColAlign: 'center',
             // Rows height default
             defaultRowHeight: null,
             // Spare rows and columns
-            minSpareRows:0,
-            minSpareCols:0,
+            minSpareRows: 0,
+            minSpareCols: 0,
             // Minimal table dimensions
-            minDimensions:[0,0],
+            minDimensions: [0, 0],
             // Allow Export
-            allowExport:true,
+            allowExport: true,
             // @type {boolean} - Include the header titles on download
-            includeHeadersOnDownload:false,
+            includeHeadersOnDownload: false,
             // @type {boolean} - Include the header titles on copy
-            includeHeadersOnCopy:false,
+            includeHeadersOnCopy: false,
             // Allow column sorting
-            columnSorting:true,
+            columnSorting: true,
             // Allow column dragging
-            columnDrag:false,
+            columnDrag: false,
             // Allow column resizing
-            columnResize:true,
+            columnResize: true,
             // Allow row resizing
-            rowResize:false,
+            rowResize: false,
             // Allow row dragging
-            rowDrag:true,
+            rowDrag: true,
             // Allow table edition
-            editable:true,
+            editable: true,
             // Allow new rows
-            allowInsertRow:true,
+            allowInsertRow: true,
             // Allow new rows
-            allowManualInsertRow:true,
+            allowManualInsertRow: true,
             // Allow new columns
-            allowInsertColumn:true,
+            allowInsertColumn: true,
             // Allow new rows
-            allowManualInsertColumn:true,
+            allowManualInsertColumn: true,
             // Allow row delete
-            allowDeleteRow:true,
+            allowDeleteRow: true,
             // Allow deleting of all rows
-            allowDeletingAllRows:false,
+            allowDeletingAllRows: false,
             // Allow column delete
-            allowDeleteColumn:true,
+            allowDeleteColumn: true,
             // Allow rename column
-            allowRenameColumn:true,
+            allowRenameColumn: true,
             // Allow comments
-            allowComments:false,
+            allowComments: false,
             // Global wrap
-            wordWrap:false,
+            wordWrap: false,
             // Image options
             imageOptions: null,
             // CSV source
-            csv:null,
+            csv: null,
             // Filename
-            csvFileName:'jspreadsheet',
+            csvFileName: 'jspreadsheet',
             // Consider first line as header
-            csvHeaders:true,
+            csvHeaders: true,
             // Delimiters
-            csvDelimiter:',',
+            csvDelimiter: ',',
             // First row as header
-            parseTableFirstRowAsHeader:false,
-            parseTableAutoCellType:false,
+            parseTableFirstRowAsHeader: false,
+            parseTableAutoCellType: false,
             // Disable corner selection
-            selectionCopy:true,
+            selectionCopy: true,
             // Merged cells
-            mergeCells:{},
+            mergeCells: {},
             // Create toolbar
-            toolbar:null,
+            toolbar: null,
             // Allow search
-            search:false,
+            search: false,
             // Create pagination
-            pagination:false,
-            paginationOptions:null,
+            pagination: false,
+            paginationOptions: null,
             // Full screen
-            fullscreen:false,
+            fullscreen: false,
             // Lazy loading
-            lazyLoading:false,
-            loadingSpin:false,
+            lazyLoading: false,
+            loadingSpin: false,
             // Table overflow
-            tableOverflow:false,
-            tableHeight:'300px',
-            tableWidth:null,
-            textOverflow:false,
+            tableOverflow: false,
+            tableHeight: '300px',
+            tableWidth: null,
+            textOverflow: false,
             // Meta
             meta: null,
             // Style
-            style:null,
-            classes:null,
+            style: null,
+            classes: null,
             // Execute formulas
-            parseFormulas:true,
-            autoIncrement:true,
-            autoCasting:true,
+            parseFormulas: true,
+            autoIncrement: true,
+            autoCasting: true,
             // Security
-            secureFormulas:true,
-            stripHTML:true,
-            stripHTMLOnCopy:false,
+            secureFormulas: true,
+            stripHTML: true,
+            stripHTMLOnCopy: false,
             // Filters
-            filters:false,
-            footers:null,
+            filters: false,
+            footers: null,
             // Event handles
-            onundo:null,
-            onredo:null,
-            onload:null,
-            onchange:null,
-            oncomments:null,
-            onbeforechange:null,
-            onafterchanges:null,
+            onundo: null,
+            onredo: null,
+            onload: null,
+            onchange: null,
+            oncomments: null,
+            onbeforechange: null,
+            onafterchanges: null,
             onbeforeinsertrow: null,
-            oninsertrow:null,
+            oninsertrow: null,
             onbeforeinsertcolumn: null,
-            oninsertcolumn:null,
-            onbeforedeleterow:null,
-            ondeleterow:null,
-            onbeforedeletecolumn:null,
-            ondeletecolumn:null,
-            onmoverow:null,
-            onmovecolumn:null,
-            onresizerow:null,
-            onresizecolumn:null,
-            onsort:null,
-            onselection:null,
-            oncopy:null,
-            onpaste:null,
-            onbeforepaste:null,
-            onmerge:null,
-            onfocus:null,
-            onblur:null,
-            onchangeheader:null,
-            oncreateeditor:null,
-            oneditionstart:null,
-            oneditionend:null,
-            onchangestyle:null,
-            onchangemeta:null,
-            onchangepage:null,
-            onbeforesave:null,
-            onsave:null,
+            oninsertcolumn: null,
+            onbeforedeleterow: null,
+            ondeleterow: null,
+            onbeforedeletecolumn: null,
+            ondeletecolumn: null,
+            onmoverow: null,
+            onmovecolumn: null,
+            onresizerow: null,
+            onresizecolumn: null,
+            onsort: null,
+            onselection: null,
+            oncopy: null,
+            onpaste: null,
+            onbeforepaste: null,
+            onmerge: null,
+            onfocus: null,
+            onblur: null,
+            onchangeheader: null,
+            oncreateeditor: null,
+            oneditionstart: null,
+            oneditionend: null,
+            onchangestyle: null,
+            onchangemeta: null,
+            onchangepage: null,
+            onbeforesave: null,
+            onsave: null,
             // Global event dispatcher
-            onevent:null,
+            onevent: null,
             // Persistance
-            persistance:false,
+            persistance: false,
             // Customize any cell behavior
-            updateTable:null,
+            updateTable: null,
             // Detach the HTML table when calling updateTable
             detachForUpdates: false,
-            freezeColumns:null,
+            freezeColumns: null,
             // Texts
-            text:{
+            text: {
                 noRecordsFound: 'No records found',
                 showingPage: 'Showing page {0} of {1} entries',
                 show: 'Show ',
@@ -301,12 +301,12 @@ if (! formula && typeof(require) === 'function') {
             // About message
             about: true,
             //add transform CSS support
-            transform:{
-                x:0,
-                y:0,
-                scale:1,
-                originX:0,
-                originY:0,
+            transform: {
+                x: 0,
+                y: 0,
+                scale: 1,
+                originX: 0,
+                originY: 0,
             }
         };
 
@@ -316,7 +316,7 @@ if (! formula && typeof(require) === 'function') {
                 if (property === 'text') {
                     obj.options[property] = defaults[property];
                     for (var textKey in options[property]) {
-                        if (options[property].hasOwnProperty(textKey)){
+                        if (options[property].hasOwnProperty(textKey)) {
                             obj.options[property][textKey] = options[property][textKey];
                         }
                     }
@@ -354,7 +354,7 @@ if (! formula && typeof(require) === 'function') {
         obj.formula = [];
         obj.colgroup = [];
         obj.selection = [];
-        obj.highlighted  = [];
+        obj.highlighted = [];
         obj.selectedCell = null;
         obj.selectedContainer = null;
         obj.style = [];
@@ -382,10 +382,10 @@ if (! formula && typeof(require) === 'function') {
          * use programmatically : table.fullscreen(); or table.fullscreen(true); or table.fullscreen(false);
          * @Param {boolean} activate
          */
-        obj.fullscreen = function(activate) {
+        obj.fullscreen = function (activate) {
             // If activate not defined, get reverse options.fullscreen
             if (activate == null) {
-                activate = ! obj.options.fullscreen;
+                activate = !obj.options.fullscreen;
             }
 
             // If change
@@ -404,15 +404,15 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Trigger events
          */
-        obj.dispatch = function(event) {
+        obj.dispatch = function (event) {
             // Dispatch events
-            if (! obj.ignoreEvents) {
+            if (!obj.ignoreEvents) {
                 // Call global event
-                if (typeof(obj.options.onevent) == 'function') {
+                if (typeof (obj.options.onevent) == 'function') {
                     var ret = obj.options.onevent.apply(this, arguments);
                 }
                 // Call specific events
-                if (typeof(obj.options[event]) == 'function') {
+                if (typeof (obj.options[event]) == 'function') {
                     var ret = obj.options[event].apply(this, Array.prototype.slice.call(arguments, 1));
                 }
             }
@@ -432,14 +432,14 @@ if (! formula && typeof(require) === 'function') {
          *
          * @Param config
          */
-        obj.prepareTable = function() {
+        obj.prepareTable = function () {
             // Loading initial data from remote sources
             var results = [];
 
             // Number of columns
             var size = obj.options.columns.length;
 
-            if (obj.options.data && typeof(obj.options.data[0]) !== 'undefined') {
+            if (obj.options.data && typeof (obj.options.data[0]) !== 'undefined') {
                 // Data keys
                 var keys = Object.keys(obj.options.data[0]);
 
@@ -459,44 +459,44 @@ if (! formula && typeof(require) === 'function') {
             // Preparations
             for (var i = 0; i < size; i++) {
                 // Deprected options. You should use only columns
-                if (! obj.options.colHeaders[i]) {
+                if (!obj.options.colHeaders[i]) {
                     obj.options.colHeaders[i] = '';
                 }
-                if (! obj.options.colWidths[i]) {
+                if (!obj.options.colWidths[i]) {
                     obj.options.colWidths[i] = obj.options.defaultColWidth;
                 }
-                if (! obj.options.colAlignments[i]) {
+                if (!obj.options.colAlignments[i]) {
                     obj.options.colAlignments[i] = obj.options.defaultColAlign;
                 }
 
                 // Default column description
-                if (! obj.options.columns[i]) {
-                    obj.options.columns[i] = { type:'text' };
-                } else if (! obj.options.columns[i].type) {
+                if (!obj.options.columns[i]) {
+                    obj.options.columns[i] = { type: 'text' };
+                } else if (!obj.options.columns[i].type) {
                     obj.options.columns[i].type = 'text';
                 }
-                if (! obj.options.columns[i].name) {
+                if (!obj.options.columns[i].name) {
                     obj.options.columns[i].name = keys && keys[i] ? keys[i] : i;
                 }
-                if (! obj.options.columns[i].source) {
+                if (!obj.options.columns[i].source) {
                     obj.options.columns[i].source = [];
                 }
-                if (! obj.options.columns[i].options) {
+                if (!obj.options.columns[i].options) {
                     obj.options.columns[i].options = [];
                 }
-                if (! obj.options.columns[i].editor) {
+                if (!obj.options.columns[i].editor) {
                     obj.options.columns[i].editor = null;
                 }
-                if (! obj.options.columns[i].allowEmpty) {
+                if (!obj.options.columns[i].allowEmpty) {
                     obj.options.columns[i].allowEmpty = false;
                 }
-                if (! obj.options.columns[i].title) {
+                if (!obj.options.columns[i].title) {
                     obj.options.columns[i].title = obj.options.colHeaders[i] ? obj.options.colHeaders[i] : '';
                 }
-                if (! obj.options.columns[i].width) {
+                if (!obj.options.columns[i].width) {
                     obj.options.columns[i].width = obj.options.colWidths[i] ? obj.options.colWidths[i] : obj.options.defaultColWidth;
                 }
-                if (! obj.options.columns[i].align) {
+                if (!obj.options.columns[i].align) {
                     obj.options.columns[i].align = obj.options.colAlignments[i] ? obj.options.colAlignments[i] : 'center';
                 }
 
@@ -509,7 +509,7 @@ if (! formula && typeof(require) === 'function') {
                             index: i,
                             method: 'GET',
                             dataType: 'json',
-                            success: function(data) {
+                            success: function (data) {
                                 var source = [];
                                 for (var i = 0; i < data.length; i++) {
                                     obj.options.columns[this.index].source.push(data[i]);
@@ -519,22 +519,22 @@ if (! formula && typeof(require) === 'function') {
                     }
                 } else if (obj.options.columns[i].type == 'calendar') {
                     // Default format for date columns
-                    if (! obj.options.columns[i].options.format) {
+                    if (!obj.options.columns[i].options.format) {
                         obj.options.columns[i].options.format = 'DD/MM/YYYY';
                     }
                 }
             }
             // Create the table when is ready
-            if (! multiple.length) {
+            if (!multiple.length) {
                 obj.createTable();
             } else {
-                jSuites.ajax(multiple, function() {
+                jSuites.ajax(multiple, function () {
                     obj.createTable();
                 });
             }
         }
 
-        obj.createTable = function() {
+        obj.createTable = function () {
             // Elements
             obj.table = document.createElement('table');
             obj.thead = document.createElement('thead');
@@ -546,12 +546,12 @@ if (! formula && typeof(require) === 'function') {
 
             // Create table container
             obj.content = document.createElement('div');
-            
+
             obj.content.classList.add('jexcel_content');
-            obj.content.onscroll = function(e) {
+            obj.content.onscroll = function (e) {
                 obj.scrollControls(e);
             }
-            obj.content.onwheel = function(e) {
+            obj.content.onwheel = function (e) {
                 obj.wheelControls(e);
             }
 
@@ -566,7 +566,7 @@ if (! formula && typeof(require) === 'function') {
             obj.searchInput.classList.add('jexcel_search');
             searchContainer.appendChild(searchText);
             searchContainer.appendChild(obj.searchInput);
-            obj.searchInput.onfocus = function() {
+            obj.searchInput.onfocus = function () {
                 obj.resetSelection();
             }
 
@@ -576,7 +576,7 @@ if (! formula && typeof(require) === 'function') {
             if (obj.options.pagination > 0 && obj.options.paginationOptions && obj.options.paginationOptions.length > 0) {
                 obj.paginationDropdown = document.createElement('select');
                 obj.paginationDropdown.classList.add('jexcel_pagination_dropdown');
-                obj.paginationDropdown.onchange = function() {
+                obj.paginationDropdown.onchange = function () {
                     obj.options.pagination = parseInt(this.value);
                     obj.page(0);
                 }
@@ -667,7 +667,7 @@ if (! formula && typeof(require) === 'function') {
             obj.table.appendChild(obj.thead);
             obj.table.appendChild(obj.tbody);
 
-            if (! obj.options.textOverflow) {
+            if (!obj.options.textOverflow) {
                 obj.table.classList.add('jexcel_overflow');
             }
 
@@ -693,7 +693,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Create element
             jSuites.contextmenu(obj.contextMenu, {
-                onclick:function() {
+                onclick: function () {
                     obj.contextMenu.contextmenu.close(false);
                 }
             });
@@ -704,7 +704,7 @@ if (! formula && typeof(require) === 'function') {
             obj.ads = document.createElement('div');
             obj.ads.className = 'jexcel_about';
             try {
-                if (typeof(sessionStorage) !== "undefined" && ! sessionStorage.getItem('jexcel')) {
+                if (typeof (sessionStorage) !== "undefined" && !sessionStorage.getItem('jexcel')) {
                     sessionStorage.setItem('jexcel', true);
                     var img = document.createElement('img');
                     img.src = '//bossanova.uk/jspreadsheet/logo.png';
@@ -730,7 +730,7 @@ if (! formula && typeof(require) === 'function') {
             obj.pagination.appendChild(paginationPages);
 
             // Hide pagination if not in use
-            if (! obj.options.pagination) {
+            if (!obj.options.pagination) {
                 obj.pagination.style.display = 'none';
             }
 
@@ -814,7 +814,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.refresh = function() {
+        obj.refresh = function () {
             if (obj.options.url) {
                 // Loading
                 if (obj.options.loadingSpin == true) {
@@ -826,7 +826,7 @@ if (! formula && typeof(require) === 'function') {
                     method: obj.options.method,
                     data: obj.options.requestVariables,
                     dataType: 'json',
-                    success: function(result) {
+                    success: function (result) {
                         // Data
                         obj.options.data = (result.data) ? result.data : result;
                         // Prepare table
@@ -848,10 +848,10 @@ if (! formula && typeof(require) === 'function') {
          * @param array data In case no data is sent, default is reloaded
          * @return void
          */
-        obj.setData = function(data) {
+        obj.setData = function (data) {
             // Update data
             if (data) {
-                if (typeof(data) == 'string') {
+                if (typeof (data) == 'string') {
                     data = JSON.parse(data);
                 }
 
@@ -859,13 +859,13 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Data
-            if (! obj.options.data) {
+            if (!obj.options.data) {
                 obj.options.data = [];
             }
 
             // Prepare data
             if (obj.options.data && obj.options.data[0]) {
-                if (! Array.isArray(obj.options.data[0])) {
+                if (!Array.isArray(obj.options.data[0])) {
                     var data = [];
                     for (var j = 0; j < obj.options.data.length; j++) {
                         var row = [];
@@ -925,7 +925,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             } else if (obj.options.pagination) {
                 // Pagination
-                if (! obj.pageNumber) {
+                if (!obj.pageNumber) {
                     obj.pageNumber = 0;
                 }
                 var quantityPerPage = obj.options.pagination;
@@ -978,7 +978,7 @@ if (! formula && typeof(require) === 'function') {
          * @param bool get highlighted cells only
          * @return array data
          */
-        obj.getData = function(highlighted, dataOnly) {
+        obj.getData = function (highlighted, dataOnly) {
             // Control vars
             var dataset = [];
             var px = 0;
@@ -996,12 +996,12 @@ if (! formula && typeof(require) === 'function') {
                 px = 0;
                 for (var i = 0; i < x; i++) {
                     // Cell selected or fullset
-                    if (! highlighted || obj.records[j][i].classList.contains('highlight')) {
+                    if (!highlighted || obj.records[j][i].classList.contains('highlight')) {
                         // Get value
-                        if (! dataset[py]) {
+                        if (!dataset[py]) {
                             dataset[py] = [];
                         }
-                        if (! dataType) {
+                        if (!dataType) {
                             dataset[py][px] = obj.records[j][i].innerHTML;
                         } else {
                             dataset[py][px] = obj.options.data[j][i];
@@ -1012,9 +1012,9 @@ if (! formula && typeof(require) === 'function') {
                 if (px > 0) {
                     py++;
                 }
-           }
+            }
 
-           return dataset;
+            return dataset;
         }
 
         /**
@@ -1023,13 +1023,13 @@ if (! formula && typeof(require) === 'function') {
         * @param integer row number
         * @return object
         */
-        obj.getJsonRow = function(rowNumber) {
+        obj.getJsonRow = function (rowNumber) {
             var rowData = obj.options.data[rowNumber];
             var x = obj.options.columns.length
 
             var row = {};
             for (var i = 0; i < x; i++) {
-                if (! obj.options.columns[i].name) {
+                if (!obj.options.columns[i].name) {
                     obj.options.columns[i].name = i;
                 }
                 row[obj.options.columns[i].name] = rowData[i];
@@ -1044,7 +1044,7 @@ if (! formula && typeof(require) === 'function') {
          * @param bool highlighted cells only
          * @return string value
          */
-        obj.getJson = function(highlighted) {
+        obj.getJson = function (highlighted) {
             // Control vars
             var data = [];
 
@@ -1056,11 +1056,11 @@ if (! formula && typeof(require) === 'function') {
             for (var j = 0; j < y; j++) {
                 var row = null;
                 for (var i = 0; i < x; i++) {
-                    if (! highlighted || obj.records[j][i].classList.contains('highlight')) {
+                    if (!highlighted || obj.records[j][i].classList.contains('highlight')) {
                         if (row == null) {
                             row = {};
                         }
-                        if (! obj.options.columns[i].name) {
+                        if (!obj.options.columns[i].name) {
                             obj.options.columns[i].name = i;
                         }
                         row[obj.options.columns[i].name] = obj.options.data[j][i];
@@ -1070,15 +1070,15 @@ if (! formula && typeof(require) === 'function') {
                 if (row != null) {
                     data.push(row);
                 }
-           }
+            }
 
-           return data;
+            return data;
         }
 
         /**
          * Prepare JSON in the correct format
          */
-        obj.prepareJson = function(data) {
+        obj.prepareJson = function (data) {
             var rows = [];
             for (var i = 0; i < data.length; i++) {
                 var x = data[i].x;
@@ -1086,7 +1086,7 @@ if (! formula && typeof(require) === 'function') {
                 var k = obj.options.columns[x].name ? obj.options.columns[x].name : x;
 
                 // Create row
-                if (! rows[y]) {
+                if (!rows[y]) {
                     rows[y] = {
                         row: y,
                         data: {},
@@ -1104,7 +1104,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Post json to a remote server
          */
-        obj.save = function(url, data) {
+        obj.save = function (url, data) {
             // Parse anything in the data before sending to the server
             var ret = obj.dispatch('onbeforesave', el, obj, data);
             if (ret) {
@@ -1121,7 +1121,7 @@ if (! formula && typeof(require) === 'function') {
                 method: 'POST',
                 dataType: 'json',
                 data: { data: JSON.stringify(data) },
-                success: function(result) {
+                success: function (result) {
                     // Event
                     obj.dispatch('onsave', el, obj, data);
                 }
@@ -1131,17 +1131,17 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get a row data by rowNumber
          */
-        obj.getRowData = function(rowNumber) {
+        obj.getRowData = function (rowNumber) {
             return obj.options.data[rowNumber];
         }
 
         /**
          * Set a row data by rowNumber
          */
-        obj.setRowData = function(rowNumber, data) {
+        obj.setRowData = function (rowNumber, data) {
             for (var i = 0; i < obj.headers.length; i++) {
                 // Update cell
-                var columnName = jexcel.getColumnNameFromId([ i, rowNumber ]);
+                var columnName = jexcel.getColumnNameFromId([i, rowNumber]);
                 // Set value
                 if (data[i] != null) {
                     obj.setValue(columnName, data[i]);
@@ -1152,7 +1152,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get a column data by columnNumber
          */
-        obj.getColumnData = function(columnNumber) {
+        obj.getColumnData = function (columnNumber) {
             var dataset = [];
             // Go through the rows to get the data
             for (var j = 0; j < obj.options.data.length; j++) {
@@ -1164,10 +1164,10 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Set a column data by colNumber
          */
-        obj.setColumnData = function(colNumber, data) {
+        obj.setColumnData = function (colNumber, data) {
             for (var j = 0; j < obj.rows.length; j++) {
                 // Update cell
-                var columnName = jexcel.getColumnNameFromId([ colNumber, j ]);
+                var columnName = jexcel.getColumnNameFromId([colNumber, j]);
                 // Set value
                 if (data[j] != null) {
                     obj.setValue(columnName, data[j]);
@@ -1178,13 +1178,13 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Create row
          */
-        obj.createRow = function(j, data) {
+        obj.createRow = function (j, data) {
             // Create container
-            if (! obj.records[j]) {
+            if (!obj.records[j]) {
                 obj.records[j] = [];
             }
             // Default data
-            if (! data) {
+            if (!data) {
                 var data = obj.options.data[j];
             }
             // New line of data to be append in the table
@@ -1207,7 +1207,7 @@ if (! formula && typeof(require) === 'function') {
                     index = obj.options.rows[j].title;
                 }
             }
-            if (! index) {
+            if (!index) {
                 index = parseInt(j + 1);
             }
             // Row number label
@@ -1229,14 +1229,14 @@ if (! formula && typeof(require) === 'function') {
             return obj.rows[j];
         }
 
-        obj.parseValue = function(i, j, value, cell) {
-            if ((''+value).substr(0,1) == '=' && obj.options.parseFormulas == true) {
+        obj.parseValue = function (i, j, value, cell) {
+            if (('' + value).substr(0, 1) == '=' && obj.options.parseFormulas == true) {
                 value = obj.executeFormula(value, i, j)
             }
 
             // Column options
             var options = obj.options.columns[i];
-            if (options && ! isFormula(value)) {
+            if (options && !isFormula(value)) {
                 // Mask options
                 var opt = null;
                 if (opt = getMask(options)) {
@@ -1277,9 +1277,9 @@ if (! formula && typeof(require) === 'function') {
             return value;
         }
 
-        var validDate = function(date) {
-            date = ''+date;
-            if (date.substr(4,1) == '-' && date.substr(7,1) == '-') {
+        var validDate = function (date) {
+            date = '' + date;
+            if (date.substr(4, 1) == '-' && date.substr(7, 1) == '-') {
                 return true;
             } else {
                 date = date.split('-');
@@ -1293,14 +1293,14 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Create cell
          */
-        obj.createCell = function(i, j, value) {
+        obj.createCell = function (i, j, value) {
             // Create cell and properties
             var td = document.createElement('td');
             td.setAttribute('data-x', i);
             td.setAttribute('data-y', j);
 
             // Security
-            if ((''+value).substr(0,1) == '=' && obj.options.secureFormulas == true) {
+            if (('' + value).substr(0, 1) == '=' && obj.options.secureFormulas == true) {
                 var val = secureFormula(value);
                 if (val != value) {
                     // Update the data container
@@ -1315,7 +1315,7 @@ if (! formula && typeof(require) === 'function') {
                 } else {
                     td.textContent = value;
                 }
-                if (typeof(obj.options.columns[i].editor.createCell) == 'function') {
+                if (typeof (obj.options.columns[i].editor.createCell) == 'function') {
                     td = obj.options.columns[i].editor.createCell(td);
                 }
             } else {
@@ -1329,7 +1329,7 @@ if (! formula && typeof(require) === 'function') {
                     element.type = obj.options.columns[i].type;
                     element.name = 'c' + i;
                     element.checked = (value == 1 || value == true || value == 'true') ? true : false;
-                    element.onclick = function() {
+                    element.onclick = function () {
                         obj.setValue(td, this.checked);
                     }
 
@@ -1344,7 +1344,7 @@ if (! formula && typeof(require) === 'function') {
                 } else if (obj.options.columns[i].type == 'calendar') {
                     // Try formatted date
                     var formatted = null;
-                    if (! validDate(value)) {
+                    if (!validDate(value)) {
                         var tmp = jSuites.calendar.extractDateFromString(value, obj.options.columns[i].options.format);
                         if (tmp) {
                             formatted = tmp;
@@ -1403,7 +1403,7 @@ if (! formula && typeof(require) === 'function') {
             if (i > 0) {
                 if (this.options.textOverflow == true) {
                     if (value || td.innerHTML) {
-                        obj.records[j][i-1].style.overflow = 'hidden';
+                        obj.records[j][i - 1].style.overflow = 'hidden';
                     } else {
                         if (i == obj.options.columns.length - 1) {
                             td.style.overflow = 'hidden';
@@ -1414,7 +1414,7 @@ if (! formula && typeof(require) === 'function') {
             return td;
         }
 
-        obj.createCellHeader = function(colNumber) {
+        obj.createCellHeader = function (colNumber) {
             // Create col global control
             var colWidth = obj.options.columns[colNumber].width ? obj.options.columns[colNumber].width : obj.options.defaultColWidth;
             var colAlign = obj.options.columns[colNumber].align ? obj.options.columns[colNumber].align : obj.options.defaultColAlign;
@@ -1449,17 +1449,17 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update a nested header title
          */
-        obj.updateNestedHeader = function(x, y, title) {
+        obj.updateNestedHeader = function (x, y, title) {
             if (obj.options.nestedHeaders[y][x].title) {
                 obj.options.nestedHeaders[y][x].title = title;
-                obj.options.nestedHeaders[y].element.children[x+1].textContent = title;
+                obj.options.nestedHeaders[y].element.children[x + 1].textContent = title;
             }
         }
 
         /**
          * Create a nested header object
          */
-        obj.createNestedHeader = function(nestedInformation) {
+        obj.createNestedHeader = function (nestedInformation) {
             var tr = document.createElement('tr');
             tr.classList.add('jexcel_nested');
             var td = document.createElement('td');
@@ -1470,16 +1470,16 @@ if (! formula && typeof(require) === 'function') {
             var headerIndex = 0;
             for (var i = 0; i < nestedInformation.length; i++) {
                 // Default values
-                if (! nestedInformation[i].colspan) {
+                if (!nestedInformation[i].colspan) {
                     nestedInformation[i].colspan = 1;
                 }
-                if (! nestedInformation[i].align) {
+                if (!nestedInformation[i].align) {
                     nestedInformation[i].align = 'center';
                 }
-                if (! nestedInformation[i].title) {
+                if (!nestedInformation[i].title) {
                     nestedInformation[i].title = '';
                 }
-                if (! nestedInformation[i].id) {
+                if (!nestedInformation[i].id) {
                     nestedInformation[i].id = '';
                 }
 
@@ -1513,7 +1513,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Create toolbar
          */
-        obj.createToolbar = function(toolbar) {
+        obj.createToolbar = function (toolbar) {
             if (toolbar) {
                 obj.options.toolbar = toolbar;
             } else {
@@ -1533,7 +1533,7 @@ if (! formula && typeof(require) === 'function') {
                         toolbarItem.setAttribute('title', toolbar[i].tooltip);
                     }
                     // Handle click
-                    if (toolbar[i].onclick && typeof(toolbar[i].onclick)) {
+                    if (toolbar[i].onclick && typeof (toolbar[i].onclick)) {
                         toolbarItem.onclick = (function (a) {
                             var b = a;
                             return function () {
@@ -1541,7 +1541,7 @@ if (! formula && typeof(require) === 'function') {
                             };
                         })(i);
                     } else {
-                        toolbarItem.onclick = function() {
+                        toolbarItem.onclick = function () {
                             var k = this.getAttribute('data-k');
                             var v = this.getAttribute('data-v');
                             obj.setStyle(obj.highlighted, k, v);
@@ -1560,17 +1560,17 @@ if (! formula && typeof(require) === 'function') {
                         toolbarItem.setAttribute('title', toolbar[i].tooltip);
                     }
                     // Handle onchange
-                    if (toolbar[i].onchange && typeof(toolbar[i].onchange)) {
+                    if (toolbar[i].onchange && typeof (toolbar[i].onchange)) {
                         toolbarItem.onchange = toolbar[i].onchange;
                         raiseInitialOnChange = true;
                     } else {
-                        toolbarItem.onchange = function() {
+                        toolbarItem.onchange = function () {
                             var k = this.getAttribute('data-k');
                             obj.setStyle(obj.highlighted, k, this.value);
                         }
                     }
                     // Add options to the dropdown
-                    for(var j = 0; j < toolbar[i].v.length; j++) {
+                    for (var j = 0; j < toolbar[i].v.length; j++) {
                         var toolbarDropdownOption = document.createElement('option');
                         toolbarDropdownOption.value = toolbar[i].v[j];
                         toolbarDropdownOption.textContent = toolbar[i].v[j];
@@ -1584,23 +1584,23 @@ if (! formula && typeof(require) === 'function') {
                     }
                     obj.toolbar.appendChild(toolbarItem);
                 } else if (toolbar[i].type == 'color') {
-                     var toolbarItem = document.createElement('i');
-                     toolbarItem.classList.add('jexcel_toolbar_item');
-                     toolbarItem.classList.add('material-icons');
-                     toolbarItem.setAttribute('data-k', toolbar[i].k);
-                     toolbarItem.setAttribute('data-v', '');
-                     // Tooltip
-                     if (toolbar[i].tooltip) {
-                         toolbarItem.setAttribute('title', toolbar[i].tooltip);
-                     }
-                     obj.toolbar.appendChild(toolbarItem);
-                     toolbarItem.textContent = toolbar[i].content;
-                     jSuites.color(toolbarItem, {
-                         onchange:function(o, v) {
-                             var k = o.getAttribute('data-k');
-                             obj.setStyle(obj.highlighted, k, v);
-                         }
-                     });
+                    var toolbarItem = document.createElement('i');
+                    toolbarItem.classList.add('jexcel_toolbar_item');
+                    toolbarItem.classList.add('material-icons');
+                    toolbarItem.setAttribute('data-k', toolbar[i].k);
+                    toolbarItem.setAttribute('data-v', '');
+                    // Tooltip
+                    if (toolbar[i].tooltip) {
+                        toolbarItem.setAttribute('title', toolbar[i].tooltip);
+                    }
+                    obj.toolbar.appendChild(toolbarItem);
+                    toolbarItem.textContent = toolbar[i].content;
+                    jSuites.color(toolbarItem, {
+                        onchange: function (o, v) {
+                            var k = o.getAttribute('data-k');
+                            obj.setStyle(obj.highlighted, k, v);
+                        }
+                    });
                 }
             }
         }
@@ -1612,19 +1612,19 @@ if (! formula && typeof(require) === 'function') {
          * @param rowspan
          * @param ignoreHistoryAndEvents
          */
-        obj.setMerge = function(cellName, colspan, rowspan, ignoreHistoryAndEvents) {
+        obj.setMerge = function (cellName, colspan, rowspan, ignoreHistoryAndEvents) {
             var test = false;
 
-            if (! cellName) {
-                if (! obj.highlighted.length) {
+            if (!cellName) {
+                if (!obj.highlighted.length) {
                     alert(obj.options.text.noCellsSelected);
                     return null;
                 } else {
                     var x1 = parseInt(obj.highlighted[0].getAttribute('data-x'));
                     var y1 = parseInt(obj.highlighted[0].getAttribute('data-y'));
-                    var x2 = parseInt(obj.highlighted[obj.highlighted.length-1].getAttribute('data-x'));
-                    var y2 = parseInt(obj.highlighted[obj.highlighted.length-1].getAttribute('data-y'));
-                    var cellName = jexcel.getColumnNameFromId([ x1, y1 ]);
+                    var x2 = parseInt(obj.highlighted[obj.highlighted.length - 1].getAttribute('data-x'));
+                    var y2 = parseInt(obj.highlighted[obj.highlighted.length - 1].getAttribute('data-y'));
+                    var cellName = jexcel.getColumnNameFromId([x1, y1]);
                     var colspan = (x2 - x1) + 1;
                     var rowspan = (y2 - y1) + 1;
                 }
@@ -1636,7 +1636,7 @@ if (! formula && typeof(require) === 'function') {
                 if (obj.records[cell[1]][cell[0]].getAttribute('data-merged')) {
                     test = obj.options.text.cellAlreadyMerged;
                 }
-            } else if ((! colspan || colspan < 2) && (! rowspan || rowspan < 2)) {
+            } else if ((!colspan || colspan < 2) && (!rowspan || rowspan < 2)) {
                 test = obj.options.text.invalidMergeProperties;
             } else {
                 var cells = [];
@@ -1665,7 +1665,7 @@ if (! formula && typeof(require) === 'function') {
                     rowspan = 1;
                 }
                 // Keep links to the existing nodes
-                obj.options.mergeCells[cellName] = [ colspan, rowspan, [] ];
+                obj.options.mergeCells[cellName] = [colspan, rowspan, []];
                 // Mark cell as merged
                 obj.records[cell[1]][cell[0]].setAttribute('data-merged', 'true');
                 // Overflow
@@ -1675,7 +1675,7 @@ if (! formula && typeof(require) === 'function') {
                 // Adjust the nodes
                 for (var y = cell[1]; y < cell[1] + rowspan; y++) {
                     for (var x = cell[0]; x < cell[0] + colspan; x++) {
-                        if (! (cell[0] == x && cell[1] == y)) {
+                        if (!(cell[0] == x && cell[1] == y)) {
                             data.push(obj.options.data[y][x]);
                             obj.updateCell(x, y, '', true);
                             obj.options.mergeCells[cellName][2].push(obj.records[y][x]);
@@ -1687,13 +1687,13 @@ if (! formula && typeof(require) === 'function') {
                 // In the initialization is not necessary keep the history
                 obj.updateSelection(obj.records[cell[1]][cell[0]]);
 
-                if (! ignoreHistoryAndEvents) {
+                if (!ignoreHistoryAndEvents) {
                     obj.setHistory({
-                        action:'setMerge',
-                        column:cellName,
-                        colspan:colspan,
-                        rowspan:rowspan,
-                        data:data,
+                        action: 'setMerge',
+                        column: cellName,
+                        colspan: colspan,
+                        rowspan: rowspan,
+                        data: data,
                     });
 
                     obj.dispatch('onmerge', el, cellName, colspan, rowspan);
@@ -1708,11 +1708,11 @@ if (! formula && typeof(require) === 'function') {
          * @param rowspan
          * @param ignoreHistoryAndEvents
          */
-        obj.getMerge = function(cellName) {
+        obj.getMerge = function (cellName) {
             var data = {};
             if (cellName) {
                 if (obj.options.mergeCells[cellName]) {
-                    data = [ obj.options.mergeCells[cellName][0], obj.options.mergeCells[cellName][1] ];
+                    data = [obj.options.mergeCells[cellName][0], obj.options.mergeCells[cellName][1]];
                 } else {
                     data = null;
                 }
@@ -1721,7 +1721,7 @@ if (! formula && typeof(require) === 'function') {
                     var mergedCells = obj.options.mergeCells;
                     var keys = Object.keys(obj.options.mergeCells);
                     for (var i = 0; i < keys.length; i++) {
-                        data[keys[i]] = [ obj.options.mergeCells[keys[i]][0], obj.options.mergeCells[keys[i]][1] ];
+                        data[keys[i]] = [obj.options.mergeCells[keys[i]][0], obj.options.mergeCells[keys[i]][1]];
                     }
                 }
             }
@@ -1733,7 +1733,7 @@ if (! formula && typeof(require) === 'function') {
          * Remove merge by cellname
          * @param cellName
          */
-        obj.removeMerge = function(cellName, data, keepOptions) {
+        obj.removeMerge = function (cellName, data, keepOptions) {
             if (obj.options.mergeCells[cellName]) {
                 var cell = jexcel.getIdFromColumnName(cellName, true);
                 obj.records[cell[1]][cell[0]].removeAttribute('colspan');
@@ -1745,11 +1745,11 @@ if (! formula && typeof(require) === 'function') {
                 for (var j = 0; j < info[1]; j++) {
                     for (var i = 0; i < info[0]; i++) {
                         if (j > 0 || i > 0) {
-                            obj.records[cell[1]+j][cell[0]+i] = info[2][index];
-                            obj.records[cell[1]+j][cell[0]+i].style.display = '';
+                            obj.records[cell[1] + j][cell[0] + i] = info[2][index];
+                            obj.records[cell[1] + j][cell[0] + i].style.display = '';
                             // Recover data
                             if (data && data[index]) {
-                                obj.updateCell(cell[0]+i, cell[1]+j, data[index]);
+                                obj.updateCell(cell[0] + i, cell[1] + j, data[index]);
                             }
                             index++;
                         }
@@ -1757,10 +1757,10 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // Update selection
-                obj.updateSelection(obj.records[cell[1]][cell[0]], obj.records[cell[1]+j-1][cell[0]+i-1]);
+                obj.updateSelection(obj.records[cell[1]][cell[0]], obj.records[cell[1] + j - 1][cell[0] + i - 1]);
 
-                if (! keepOptions) {
-                    delete(obj.options.mergeCells[cellName]);
+                if (!keepOptions) {
+                    delete (obj.options.mergeCells[cellName]);
                 }
             }
         }
@@ -1768,7 +1768,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Remove all merged cells
          */
-        obj.destroyMerged = function(keepOptions) {
+        obj.destroyMerged = function (keepOptions) {
             // Remove any merged cells
             if (obj.options.mergeCells) {
                 var mergedCells = obj.options.mergeCells;
@@ -1782,7 +1782,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Is column merged
          */
-        obj.isColMerged = function(x, insertBefore) {
+        obj.isColMerged = function (x, insertBefore) {
             var cols = [];
             // Remove any merged cells
             if (obj.options.mergeCells) {
@@ -1817,7 +1817,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Is rows merged
          */
-        obj.isRowMerged = function(y, insertBefore) {
+        obj.isRowMerged = function (y, insertBefore) {
             var rows = [];
             // Remove any merged cells
             if (obj.options.mergeCells) {
@@ -1852,8 +1852,8 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Open the column filter
          */
-        obj.openFilter = function(columnId) {
-            if (! obj.options.filters) {
+        obj.openFilter = function (columnId) {
+            if (!obj.options.filters) {
                 console.log('Jspreadsheet: filters not enabled.');
             } else {
                 // Make sure is integer
@@ -1902,9 +1902,9 @@ if (! formula && typeof(require) === 'function') {
                     autocomplete: true,
                     opened: true,
                     value: obj.filters[columnId] !== undefined ? obj.filters[columnId] : null,
-                    width:'100%',
+                    width: '100%',
                     position: (obj.options.tableOverflow == true || obj.options.fullscreen == true) ? true : false,
-                    onclose: function(o) {
+                    onclose: function (o) {
                         obj.resetFilters();
                         obj.filters[columnId] = o.dropdown.getValue(true);
                         obj.filter.children[columnId + 1].innerHTML = o.dropdown.getText();
@@ -1921,7 +1921,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.resetFilters = function() {
+        obj.resetFilters = function () {
             if (obj.options.filters) {
                 for (var i = 0; i < obj.filter.children.length; i++) {
                     obj.filter.children[i].innerHTML = '&nbsp;';
@@ -1933,8 +1933,8 @@ if (! formula && typeof(require) === 'function') {
             obj.updateResult();
         }
 
-        obj.closeFilter = function(columnId) {
-            if (! columnId) {
+        obj.closeFilter = function (columnId) {
+            if (!columnId) {
                 for (var i = 0; i < obj.filter.children.length; i++) {
                     if (obj.filters[i]) {
                         columnId = i;
@@ -1943,10 +1943,10 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Search filter
-            var search = function(query, x, y) {
+            var search = function (query, x, y) {
                 for (var i = 0; i < query.length; i++) {
-                    var value = ''+obj.options.data[y][x];
-                    var label = ''+obj.records[y][x].innerHTML;
+                    var value = '' + obj.options.data[y][x];
+                    var label = '' + obj.records[y][x].innerHTML;
                     if (query[i] == value || query[i] == label) {
                         return true;
                     }
@@ -1961,7 +1961,7 @@ if (! formula && typeof(require) === 'function') {
                     obj.results.push(j);
                 }
             }
-            if (! obj.results.length) {
+            if (!obj.results.length) {
                 obj.results = null;
             }
 
@@ -1974,7 +1974,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return void
          */
-        obj.openEditor = function(cell, empty, e) {
+        obj.openEditor = function (cell, empty, e) {
             // Get cell position
             var y = cell.getAttribute('data-y');
             var x = cell.getAttribute('data-x');
@@ -1984,11 +1984,11 @@ if (! formula && typeof(require) === 'function') {
 
             // Overflow
             if (x > 0) {
-                obj.records[y][x-1].style.overflow = 'hidden';
+                obj.records[y][x - 1].style.overflow = 'hidden';
             }
 
             // Create editor
-            var createEditor = function(type) {
+            var createEditor = function (type) {
                 // Cell information
                 var info = cell.getBoundingClientRect();
 
@@ -2014,7 +2014,7 @@ if (! formula && typeof(require) === 'function') {
                 // Do nothing
             } else {
                 // Holder
-                obj.edition = [ obj.records[y][x], obj.records[y][x].innerHTML, x, y ];
+                obj.edition = [obj.records[y][x], obj.records[y][x].innerHTML, x, y];
 
                 // If there is a custom editor for it
                 if (obj.options.columns[x].editor) {
@@ -2039,7 +2039,7 @@ if (! formula && typeof(require) === 'function') {
                         }
 
                         // Create dropdown
-                        if (typeof(obj.options.columns[x].filter) == 'function') {
+                        if (typeof (obj.options.columns[x].filter) == 'function') {
                             var source = obj.options.columns[x].filter(el, cell, x, y, obj.options.columns[x].source);
                         } else {
                             var source = obj.options.columns[x].source;
@@ -2057,12 +2057,12 @@ if (! formula && typeof(require) === 'function') {
                             data: data,
                             multiple: obj.options.columns[x].multiple ? true : false,
                             autocomplete: obj.options.columns[x].autocomplete || obj.options.columns[x].type == 'autocomplete' ? true : false,
-                            opened:true,
+                            opened: true,
                             value: value,
-                            width:'100%',
-                            height:editor.style.minHeight,
+                            width: '100%',
+                            height: editor.style.minHeight,
                             position: (obj.options.tableOverflow == true || obj.options.fullscreen == true) ? true : false,
-                            onclose:function() {
+                            onclose: function () {
                                 obj.closeEditor(cell, true);
                             }
                         };
@@ -2082,7 +2082,7 @@ if (! formula && typeof(require) === 'function') {
                         }
                         obj.options.columns[x].options.value = obj.options.data[y][x];
                         obj.options.columns[x].options.opened = true;
-                        obj.options.columns[x].options.onclose = function(el, value) {
+                        obj.options.columns[x].options.onclose = function (el, value) {
                             obj.closeEditor(cell, true);
                         }
                         // Current value
@@ -2152,11 +2152,11 @@ if (! formula && typeof(require) === 'function') {
                         var opt = null;
 
                         // Apply format when is not a formula
-                        if (! isFormula(value)) {
+                        if (!isFormula(value)) {
                             // Format
                             if (opt = getMask(options)) {
                                 // Masking
-                                if (! options.disabledMaskOnEdition) {
+                                if (!options.disabledMaskOnEdition) {
                                     if (options.mask) {
                                         var m = options.mask.split(';')
                                         editor.setAttribute('data-mask', m[0]);
@@ -2173,7 +2173,7 @@ if (! formula && typeof(require) === 'function') {
                             }
                         }
 
-                        editor.onblur = function() {
+                        editor.onblur = function () {
                             obj.closeEditor(cell, true);
                         };
                         editor.scrollLeft = editor.scrollWidth;
@@ -2189,7 +2189,7 @@ if (! formula && typeof(require) === 'function') {
          * @param boolean save
          * @return void
          */
-        obj.closeEditor = function(cell, save) {
+        obj.closeEditor = function (cell, save) {
             var x = parseInt(cell.getAttribute('data-x'));
             var y = parseInt(cell.getAttribute('data-y'));
 
@@ -2216,7 +2216,7 @@ if (! formula && typeof(require) === 'function') {
                         var value = img && img.tagName == 'IMG' ? img.src : '';
                     } else if (obj.options.columns[x].type == 'numeric') {
                         var value = cell.children[0].value;
-                        if ((''+value).substr(0,1) != '=') {
+                        if (('' + value).substr(0, 1) != '=') {
                             if (value == '') {
                                 value = obj.options.columns[x].allowEmpty ? '' : 0;
                             }
@@ -2232,7 +2232,7 @@ if (! formula && typeof(require) === 'function') {
                         var opt = null;
                         if (opt = getMask(options)) {
                             // Keep numeric in the raw data
-                            if (value !== '' && ! isFormula(value) && typeof(value) !== 'number') {
+                            if (value !== '' && !isFormula(value) && typeof (value) !== 'number') {
                                 var t = jSuites.mask.extract(value, opt, true);
                                 if (t && t.value !== '') {
                                     value = t.value;
@@ -2284,7 +2284,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return string value
          */
-        obj.getCell = function(cell) {
+        obj.getCell = function (cell) {
             // Convert in case name is excel liked ex. A10, BB92
             cell = jexcel.getIdFromColumnName(cell, true);
             var x = cell[0];
@@ -2299,12 +2299,12 @@ if (! formula && typeof(require) === 'function') {
          * @param y
          * @returns {{type: string}}
          */
-        obj.getColumnOptions = function(x, y) {
+        obj.getColumnOptions = function (x, y) {
             // Type
             var options = obj.options.columns[x];
 
             // Cell type
-            if (! options) {
+            if (!options) {
                 options = { type: 'text' };
             }
 
@@ -2317,7 +2317,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return string value
          */
-        obj.getCellFromCoords = function(x, y) {
+        obj.getCellFromCoords = function (x, y) {
             return obj.records[y][x];
         }
 
@@ -2327,7 +2327,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return string value
          */
-        obj.getLabel = function(cell) {
+        obj.getLabel = function (cell) {
             // Convert in case name is excel liked ex. A10, BB92
             cell = jexcel.getIdFromColumnName(cell, true);
             var x = cell[0];
@@ -2342,7 +2342,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return string value
          */
-        obj.getLabelFromCoords = function(x, y) {
+        obj.getLabelFromCoords = function (x, y) {
             return obj.records[y][x].innerHTML;
         }
 
@@ -2352,8 +2352,8 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return string value
          */
-        obj.getValue = function(cell, processedValue) {
-            if (typeof(cell) == 'object') {
+        obj.getValue = function (cell, processedValue) {
+            if (typeof (cell) == 'object') {
                 var x = cell.getAttribute('data-x');
                 var y = cell.getAttribute('data-y');
             } else {
@@ -2384,7 +2384,7 @@ if (! formula && typeof(require) === 'function') {
          * @param int y
          * @return string value
          */
-        obj.getValueFromCoords = function(x, y, processedValue) {
+        obj.getValueFromCoords = function (x, y, processedValue) {
             var value = null;
 
             if (x != null && y != null) {
@@ -2406,10 +2406,10 @@ if (! formula && typeof(require) === 'function') {
          * @param string value value
          * @return void
          */
-        obj.setValue = function(cell, value, force) {
+        obj.setValue = function (cell, value, force) {
             var records = [];
 
-            if (typeof(cell) == 'string') {
+            if (typeof (cell) == 'string') {
                 var columnId = jexcel.getIdFromColumnName(cell, true);
                 var x = columnId[0];
                 var y = columnId[1];
@@ -2437,7 +2437,7 @@ if (! formula && typeof(require) === 'function') {
                     var keys = Object.keys(cell);
                     if (keys.length > 0) {
                         for (var i = 0; i < keys.length; i++) {
-                            if (typeof(cell[i]) == 'string') {
+                            if (typeof (cell[i]) == 'string') {
                                 var columnId = jexcel.getIdFromColumnName(cell[i], true);
                                 var x = columnId[0];
                                 var y = columnId[1];
@@ -2457,7 +2457,7 @@ if (! formula && typeof(require) === 'function') {
                                 }
                             }
 
-                             // Update cell
+                            // Update cell
                             if (x != null && y != null) {
                                 records.push(obj.updateCell(x, y, value, force));
 
@@ -2471,9 +2471,9 @@ if (! formula && typeof(require) === 'function') {
 
             // Update history
             obj.setHistory({
-                action:'setValue',
-                records:records,
-                selection:obj.selectedCell,
+                action: 'setValue',
+                records: records,
+                selection: obj.selectedCell,
             });
 
             // Update table with custom configurations if applicable
@@ -2491,7 +2491,7 @@ if (! formula && typeof(require) === 'function') {
          * @param string value
          * @return void
          */
-        obj.setValueFromCoords = function(x, y, value, force) {
+        obj.setValueFromCoords = function (x, y, value, force) {
             var records = [];
             records.push(obj.updateCell(x, y, value, force));
 
@@ -2500,9 +2500,9 @@ if (! formula && typeof(require) === 'function') {
 
             // Update history
             obj.setHistory({
-                action:'setValue',
-                records:records,
-                selection:obj.selectedCell,
+                action: 'setValue',
+                records: records,
+                selection: obj.selectedCell,
             });
 
             // Update table with custom configurations if applicable
@@ -2515,7 +2515,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Toogle
          */
-        obj.setCheckRadioValue = function() {
+        obj.setCheckRadioValue = function () {
             var records = [];
             var keys = Object.keys(obj.highlighted);
             for (var i = 0; i < keys.length; i++) {
@@ -2524,16 +2524,16 @@ if (! formula && typeof(require) === 'function') {
 
                 if (obj.options.columns[x].type == 'checkbox' || obj.options.columns[x].type == 'radio') {
                     // Update cell
-                    records.push(obj.updateCell(x, y, ! obj.options.data[y][x]));
+                    records.push(obj.updateCell(x, y, !obj.options.data[y][x]));
                 }
             }
 
             if (records.length) {
                 // Update history
                 obj.setHistory({
-                    action:'setValue',
-                    records:records,
-                    selection:obj.selectedCell,
+                    action: 'setValue',
+                    records: records,
+                    selection: obj.selectedCell,
                 });
 
                 // On after changes
@@ -2543,11 +2543,11 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Strip tags
          */
-        var stripScript = function(a) {
+        var stripScript = function (a) {
             var b = new Option;
             b.innerHTML = a;
             var c = null;
-            for (a = b.getElementsByTagName('script'); c=a[0];) c.parentNode.removeChild(c);
+            for (a = b.getElementsByTagName('script'); c = a[0];) c.parentNode.removeChild(c);
             return b.innerHTML;
         }
 
@@ -2557,9 +2557,9 @@ if (! formula && typeof(require) === 'function') {
          * @param object cell
          * @return void
          */
-        obj.updateCell = function(x, y, value, force) {
+        obj.updateCell = function (x, y, value, force) {
             // Changing value depending on the column type
-            if (obj.records[y][x].classList.contains('readonly') == true && ! force) {
+            if (obj.records[y][x].classList.contains('readonly') == true && !force) {
                 // Do nothing
                 var record = {
                     x: x,
@@ -2569,7 +2569,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             } else {
                 // Security
-                if ((''+value).substr(0,1) == '=' && obj.options.secureFormulas == true) {
+                if (('' + value).substr(0, 1) == '=' && obj.options.secureFormulas == true) {
                     var val = secureFormula(value);
                     if (val != value) {
                         // Update the data container
@@ -2585,7 +2585,7 @@ if (! formula && typeof(require) === 'function') {
                     value = val;
                 }
 
-                if (obj.options.columns[x].editor && typeof(obj.options.columns[x].editor.updateCell) == 'function') {
+                if (obj.options.columns[x].editor && typeof (obj.options.columns[x].editor.updateCell) == 'function') {
                     value = obj.options.columns[x].editor.updateCell(obj.records[y][x], value, force);
                 }
 
@@ -2603,7 +2603,7 @@ if (! formula && typeof(require) === 'function') {
                 if (editor) {
                     // Update data and cell
                     obj.options.data[y][x] = value;
-                    if (typeof(editor.setValue) === 'function') {
+                    if (typeof (editor.setValue) === 'function') {
                         editor.setValue(obj.records[y][x], value);
                     }
                 } else {
@@ -2626,7 +2626,7 @@ if (! formula && typeof(require) === 'function') {
                     } else if (obj.options.columns[x].type == 'calendar') {
                         // Try formatted date
                         var formatted = null;
-                        if (! validDate(value)) {
+                        if (!validDate(value)) {
                             var tmp = jSuites.calendar.extractDateFromString(value, obj.options.columns[x].options.format);
                             if (tmp) {
                                 formatted = tmp;
@@ -2650,7 +2650,7 @@ if (! formula && typeof(require) === 'function') {
                             obj.records[y][x].textContent = value;
                         }
                     } else if (obj.options.columns[x].type == 'image') {
-                        value = ''+value;
+                        value = '' + value;
                         obj.options.data[y][x] = value;
                         obj.records[y][x].innerHTML = '';
                         if (value && value.substr(0, 10) == 'data:image') {
@@ -2683,9 +2683,9 @@ if (! formula && typeof(require) === 'function') {
                 // Overflow
                 if (x > 0) {
                     if (value) {
-                        obj.records[y][x-1].style.overflow = 'hidden';
+                        obj.records[y][x - 1].style.overflow = 'hidden';
                     } else {
-                        obj.records[y][x-1].style.overflow = '';
+                        obj.records[y][x - 1].style.overflow = '';
                     }
                 }
 
@@ -2699,7 +2699,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Helper function to copy data using the corner icon
          */
-        obj.copyData = function(o, d) {
+        obj.copyData = function (o, d) {
             // Get data from all selected cells
             var data = obj.getData(true, true);
 
@@ -2760,9 +2760,9 @@ if (! formula && typeof(require) === 'function') {
                 // Data columns
                 for (var i = x1; i <= x2; i++) {
                     // Update non-readonly
-                    if (obj.records[j][i] && ! obj.records[j][i].classList.contains('readonly') && obj.records[j][i].style.display != 'none' && breakControl == false) {
+                    if (obj.records[j][i] && !obj.records[j][i].classList.contains('readonly') && obj.records[j][i].style.display != 'none' && breakControl == false) {
                         // Stop if contains value
-                        if (! obj.selection.length) {
+                        if (!obj.selection.length) {
                             if (obj.options.data[j][i] != '') {
                                 breakControl = true;
                                 continue;
@@ -2779,9 +2779,9 @@ if (! formula && typeof(require) === 'function') {
                         // Value
                         var value = data[posy][posx];
 
-                        if (value && ! data[1] && obj.options.autoIncrement == true) {
+                        if (value && !data[1] && obj.options.autoIncrement == true) {
                             if (obj.options.columns[i].type == 'text' || obj.options.columns[i].type == 'number') {
-                                if ((''+value).substr(0,1) == '=') {
+                                if (('' + value).substr(0, 1) == '=') {
                                     var tokens = value.match(/([A-Z]+[0-9]+)/g);
 
                                     if (tokens) {
@@ -2832,9 +2832,9 @@ if (! formula && typeof(require) === 'function') {
 
             // Update history
             obj.setHistory({
-                action:'setValue',
-                records:records,
-                selection:obj.selectedCell,
+                action: 'setValue',
+                records: records,
+                selection: obj.selectedCell,
             });
 
             // Update table with custom configuration if applicable
@@ -2847,7 +2847,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Refresh current selection
          */
-        obj.refreshSelection = function() {
+        obj.refreshSelection = function () {
             if (obj.selectedCell) {
                 obj.updateSelectionFromCoords(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3]);
             }
@@ -2856,7 +2856,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Move coords to A1 in case overlaps with an excluded cell
          */
-        obj.conditionalSelectionUpdate = function(type, o, d) {
+        obj.conditionalSelectionUpdate = function (type, o, d) {
             if (type == 1) {
                 if (obj.selectedCell && ((o >= obj.selectedCell[1] && o <= obj.selectedCell[3]) || (d >= obj.selectedCell[1] && d <= obj.selectedCell[3]))) {
                     obj.resetSelection();
@@ -2873,9 +2873,9 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Clear table selection
          */
-        obj.resetSelection = function(blur) {
+        obj.resetSelection = function (blur) {
             // Remove style
-            if (! obj.highlighted.length) {
+            if (!obj.highlighted.length) {
                 var previousStatus = 0;
             } else {
                 var previousStatus = 1;
@@ -2896,7 +2896,7 @@ if (! formula && typeof(require) === 'function') {
                         var colspan = parseInt(obj.highlighted[i].getAttribute('colspan'));
                         var rowspan = parseInt(obj.highlighted[i].getAttribute('rowspan'));
                         var ux = colspan > 0 ? px + (colspan - 1) : px;
-                        var uy = rowspan > 0 ? py + (rowspan - 1): py;
+                        var uy = rowspan > 0 ? py + (rowspan - 1) : py;
                     } else {
                         var ux = px;
                         var uy = py;
@@ -2938,7 +2938,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update selection based on two cells
          */
-        obj.updateSelection = function(el1, el2, origin) {
+        obj.updateSelection = function (el1, el2, origin) {
             var x1 = el1.getAttribute('data-x');
             var y1 = el1.getAttribute('data-y');
             if (el2) {
@@ -2955,7 +2955,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update selection from coords
          */
-        obj.updateSelectionFromCoords = function(x1, y1, x2, y2, origin) {
+        obj.updateSelectionFromCoords = function (x1, y1, x2, y2, origin) {
             // Reset Selection
             var updated = null;
             var previousState = obj.resetSelection();
@@ -3081,10 +3081,10 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // Create borders
-                if (! borderLeft) {
+                if (!borderLeft) {
                     borderLeft = 0;
                 }
-                if (! borderRight) {
+                if (!borderRight) {
                     borderRight = 0;
                 }
                 for (var i = borderLeft; i <= borderRight; i++) {
@@ -3113,7 +3113,7 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
 
-                obj.selectedContainer = [ borderLeft, borderTop, borderRight, borderBottom ];
+                obj.selectedContainer = [borderLeft, borderTop, borderRight, borderBottom];
             }
 
             // Handle events
@@ -3134,7 +3134,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.removeCopySelection = function() {
+        obj.removeCopySelection = function () {
             // Remove current selection
             for (var i = 0; i < obj.selection.length; i++) {
                 obj.selection[i].classList.remove('selection');
@@ -3153,7 +3153,7 @@ if (! formula && typeof(require) === 'function') {
          * @param int x, y
          * @return void
          */
-        obj.updateCopySelection = function(x3, y3) {
+        obj.updateCopySelection = function (x3, y3) {
             // Remove selection
             obj.removeCopySelection();
 
@@ -3210,17 +3210,17 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.updateCornerPosition = function() {
+        obj.updateCornerPosition = function () {
             // If any selected cells
-            if (! obj.highlighted.length) {
+            if (!obj.highlighted.length) {
                 obj.corner.style.top = '-2000px';
                 obj.corner.style.left = '-2000px';
             } else {
-                if(IS_TOUCH_DEVICE){
+                if (IS_TOUCH_DEVICE) {
                     obj.updateMultipleSelectionHandlesPosition(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3])
-                }else{
+                } else {
                     // Get last cell
-                    var last = obj.highlighted[obj.highlighted.length-1];
+                    var last = obj.highlighted[obj.highlighted.length - 1];
                     var lastX = last.getAttribute('data-x');
 
                     var contentRect = obj.content.getBoundingClientRect();
@@ -3231,17 +3231,17 @@ if (! formula && typeof(require) === 'function') {
                     var y2 = lastRect.top;
                     var w2 = lastRect.width;
                     var h2 = lastRect.height;
-                    var x = (x2 - x1)  + w2;
-                    var y = (y2 - y1)  + h2;
-                    y = jexcel.transformScaleTop(obj,y)+ obj.content.scrollTop -4;
-                    x = jexcel.transformScaleLeft(obj,x)+ obj.content.scrollLeft -4;
+                    var x = (x2 - x1) + w2;
+                    var y = (y2 - y1) + h2;
+                    y = jexcel.transformScaleTop(obj, y) + obj.content.scrollTop - 4;
+                    x = jexcel.transformScaleLeft(obj, x) + obj.content.scrollLeft - 4;
                     // Place the corner in the correct place
                     obj.corner.style.top = y + 'px';
                     obj.corner.style.left = x + 'px';
                     if (obj.options.freezeColumns) {
                         var width = obj.getFreezeWidth();
                         // Only check if the last column is not part of the merged cells
-                        if (lastX > obj.options.freezeColumns-1 && x2 - x1 + w2 < width) {
+                        if (lastX > obj.options.freezeColumns - 1 && x2 - x1 + w2 < width) {
                             obj.corner.style.display = 'none';
                         } else {
                             if (obj.options.selectionCopy == true) {
@@ -3255,13 +3255,13 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
             }
-            
+
         }
 
         /**
          * Update scroll position based on the selection
          */
-        obj.updateScroll = function(direction) {
+        obj.updateScroll = function (direction) {
             // Jspreadsheet Container information
             var contentRect = obj.content.getBoundingClientRect();
             var x1 = contentRect.left;
@@ -3327,7 +3327,7 @@ if (! formula && typeof(require) === 'function') {
          * @param int column column number (first column is: 0)
          * @return int current width
          */
-        obj.getWidth = function(column) {
+        obj.getWidth = function (column) {
             if (typeof column === 'undefined') {
                 // Get all headers
                 var data = [];
@@ -3336,7 +3336,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             } else {
                 // In case the column is an object
-                if (typeof(column) == 'object') {
+                if (typeof (column) == 'object') {
                     column = column.getAttribute('data-x');
                 }
 
@@ -3358,12 +3358,12 @@ if (! formula && typeof(require) === 'function') {
             if (width) {
                 if (Array.isArray(column)) {
                     // Oldwidth
-                    if (! oldWidth) {
+                    if (!oldWidth) {
                         var oldWidth = [];
                     }
                     // Set width
                     for (var i = 0; i < column.length; i++) {
-                        if (! oldWidth[i]) {
+                        if (!oldWidth[i]) {
                             oldWidth[i] = obj.colgroup[column[i]].getAttribute('width');
                         }
                         var w = Array.isArray(width) && width[i] ? width[i] : width;
@@ -3372,7 +3372,7 @@ if (! formula && typeof(require) === 'function') {
                     }
                 } else {
                     // Oldwidth
-                    if (! oldWidth) {
+                    if (!oldWidth) {
                         oldWidth = obj.colgroup[column].getAttribute('width');
                     }
                     // Set width
@@ -3382,10 +3382,10 @@ if (! formula && typeof(require) === 'function') {
 
                 // Keeping history of changes
                 obj.setHistory({
-                    action:'setWidth',
-                    column:column,
-                    oldValue:oldWidth,
-                    newValue:width,
+                    action: 'setWidth',
+                    column: column,
+                    oldValue: oldWidth,
+                    newValue: width,
                 });
 
                 // On resize column
@@ -3403,20 +3403,20 @@ if (! formula && typeof(require) === 'function') {
          * @returns {Array}
          */
         //設定の一時保存
-        obj.options.autoWidth={
-            saveIgnore:{
-                ignoreEvents:null,
-                ignoreHistory:null,
+        obj.options.autoWidth = {
+            saveIgnore: {
+                ignoreEvents: null,
+                ignoreHistory: null,
             },
-            columnsToResize:[],
-             min_W : 50,
-             max_w:190,
-             fullSizeTable:true,
+            columnsToResize: [],
+            min_W: 50,
+            max_w: 190,
+            fullSizeTable: true,
         }
-        obj.columnsAutoResize = function(){
-            for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+        obj.columnsAutoResize = function () {
+            for (let ite_col = 0; ite_col < obj.options.columns.length; ite_col++) {
                 const column = obj.options.columns[ite_col];
-                if(column.width == null || column.width === '' || column.width === 'auto') {
+                if (column.width == null || column.width === '' || column.width === 'auto') {
                     obj.options.autoWidth.columnsToResize.push(ite_col);
                     obj.options.columns[ite_col].width = obj.options.autoWidth.min_W;
                 }
@@ -3429,79 +3429,79 @@ if (! formula && typeof(require) === 'function') {
          * get Width offset of columns
          * @returns {Array}
          */
-        obj.getWidthColumns = function() {
+        obj.getWidthColumns = function () {
             const cols = [];
-            if(obj.rows.length === 0) {
+            if (obj.rows.length === 0) {
                 return cols;
             }
             const tr = obj.rows[0];
-            if(tr) {
-                for(let ite_td=0; ite_td < tr.children.length; ite_td++) {
-                    if(ite_td === 0) { // Skip index
+            if (tr) {
+                for (let ite_td = 0; ite_td < tr.children.length; ite_td++) {
+                    if (ite_td === 0) { // Skip index
                         continue;
                     }
                     const td = tr.children[ite_td];
                     let width = td.offsetWidth;
-                        let maxLength = tr.children[0].innerText.length;
-                        let widthInit = 12;//font-size
-                        for(let ite_row=0; ite_row<obj.rows.length; ite_row++) {
-                            let valueRow = obj.getValueFromCoords(ite_td-1, ite_row, true);
-                           
-                            if(typeof valueRow !== "string") {
-                                if(valueRow === null) {
-                                    valueRow = "";
-                                } else {
-                                    valueRow = "" + valueRow;
-                                }
-                            }else{
-                                //改行がある場合
-                                if(valueRow.match(/\n/)){
-                                    let valueAry = valueRow.split(/\n/);
-                                    valueRow = valueAry.sort(function(a, b) {return b.length - a.length;})[0];
-                                }
-                            }
-                            if(obj.rows[ite_row].element == null) {
-                                width = Math.max(Math.ceil((stringWidthCount(valueRow) / maxLength) * widthInit), width);
+                    let maxLength = tr.children[0].innerText.length;
+                    let widthInit = 12;//font-size
+                    for (let ite_row = 0; ite_row < obj.rows.length; ite_row++) {
+                        let valueRow = obj.getValueFromCoords(ite_td - 1, ite_row, true);
+
+                        if (typeof valueRow !== "string") {
+                            if (valueRow === null) {
+                                valueRow = "";
                             } else {
-                                maxLength = Math.max(stringWidthCount(valueRow), maxLength);
+                                valueRow = "" + valueRow;
+                            }
+                        } else {
+                            //改行がある場合
+                            if (valueRow.match(/\n/)) {
+                                let valueAry = valueRow.split(/\n/);
+                                valueRow = valueAry.sort(function (a, b) { return b.length - a.length; })[0];
                             }
                         }
-                        if(width < obj.options.autoWidth.min_W){
-                            width = obj.options.autoWidth.min_W;
-                        }else if(width > obj.options.autoWidth.max_w){
-                            width = obj.options.autoWidth.max_w;
+                        if (obj.rows[ite_row].element == null) {
+                            width = Math.max(Math.ceil((stringWidthCount(valueRow) / maxLength) * widthInit), width);
+                        } else {
+                            maxLength = Math.max(stringWidthCount(valueRow), maxLength);
                         }
+                    }
+                    if (width < obj.options.autoWidth.min_W) {
+                        width = obj.options.autoWidth.min_W;
+                    } else if (width > obj.options.autoWidth.max_w) {
+                        width = obj.options.autoWidth.max_w;
+                    }
                     cols.push(width);
                 }
             }
             return cols;
         };
-        function stringWidthCount (str) {
+        function stringWidthCount(str) {
 
             let len = 0;
-        
+
             for (let i = 0; i < str.length; i++) {
-            (str[i].match(/[ -~]/)) ? len += 1 : len += 2;
+                (str[i].match(/[ -~]/)) ? len += 1 : len += 2;
             }
-        
+
             return len;
-        
+
         }
         /**
          * defined new columns width
          * @param {array} colsWidth
          * @returns {undefined}
          */
-        obj.setWidthColumn = function(colsWidth) {
+        obj.setWidthColumn = function (colsWidth) {
 
             // Authorize edit colsWidth
             let editable = obj.options.editable;
             obj.options.editable = true;
             enableIgnoreDispatch(obj);
 
-            if(obj.options.defaultColWidth == null || obj.options.defaultColWidth === "" || obj.options.defaultColWidth === "auto") {
+            if (obj.options.defaultColWidth == null || obj.options.defaultColWidth === "" || obj.options.defaultColWidth === "auto") {
                 obj.options.defaultColWidth = obj.options.autoWidth.min_W;
-            } else if(typeof obj.options.defaultColWidth == "string") {
+            } else if (typeof obj.options.defaultColWidth == "string") {
                 obj.options.defaultColWidth = parseInt(obj.options.defaultColWidth);
             }
 
@@ -3510,21 +3510,21 @@ if (! formula && typeof(require) === 'function') {
             let cols_size_total = 0;
 
             // Manage Option fullsizeTable
-            if(obj.options.autoWidth.fullSizeTable) {
+            if (obj.options.autoWidth.fullSizeTable) {
                 width_table = obj.table.parentNode.parentNode.offsetWidth;
-                if(!obj.table.classList.contains("jss_hidden_index")) {
+                if (!obj.table.classList.contains("jss_hidden_index")) {
                     width_table -= 50;
                 }
 
-                cols_size_total = colsWidth.reduce(function(accVal,val, index) {
-                    if(obj.options.autoWidth.columnsToResize.indexOf(index) > -1) {
-                        if(index === 1 && obj.options.autoWidth.columnsToResize.indexOf(0) === -1) {
+                cols_size_total = colsWidth.reduce(function (accVal, val, index) {
+                    if (obj.options.autoWidth.columnsToResize.indexOf(index) > -1) {
+                        if (index === 1 && obj.options.autoWidth.columnsToResize.indexOf(0) === -1) {
                             return val;
                         } else {
-                            return accVal+val;
+                            return accVal + val;
                         }
                     } else {
-                        if(index === 1 && obj.columnsToResize.indexOf(0) === -1) {
+                        if (index === 1 && obj.columnsToResize.indexOf(0) === -1) {
                             return 0;
                         } else {
                             return accVal;
@@ -3532,17 +3532,17 @@ if (! formula && typeof(require) === 'function') {
                     }
                 });
 
-                for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+                for (let ite_col = 0; ite_col < obj.options.columns.length; ite_col++) {
                     const column = obj.options.columns[ite_col];
                     // Exclude hidden column
-                    if(column.type === "hidden") {
+                    if (column.type === "hidden") {
                         continue;
                     }
 
-                    if(obj.options.autoWidth.columnsToResize.indexOf(ite_col) === -1) {
+                    if (obj.options.autoWidth.columnsToResize.indexOf(ite_col) === -1) {
                         width_table = Math.max(0, width_table - parseFloat(column.width));
-                    } else if(colsWidth[ite_col]<obj.options.autoWidth.min_W) {
-                        cols_size_total = Math.max(0, cols_size_total + (obj.options.autoWidth.min_W-colsWidth[ite_col]));
+                    } else if (colsWidth[ite_col] < obj.options.autoWidth.min_W) {
+                        cols_size_total = Math.max(0, cols_size_total + (obj.options.autoWidth.min_W - colsWidth[ite_col]));
                     }
                 }
             }
@@ -3550,20 +3550,20 @@ if (! formula && typeof(require) === 'function') {
             width_table = width_table - 7;
 
             // Parse cols - set width
-            for(let ite_col=0; ite_col<obj.options.columns.length; ite_col++) {
+            for (let ite_col = 0; ite_col < obj.options.columns.length; ite_col++) {
                 const column = obj.options.columns[ite_col];
                 let newWidth;
                 // Exclude hidden column
-                if(column.type === "hidden") {
+                if (column.type === "hidden") {
                     continue;
                 }
-                if(obj.options.autoWidth.columnsToResize.indexOf(ite_col) > -1) {
-                    if(colsWidth[ite_col]) {
+                if (obj.options.autoWidth.columnsToResize.indexOf(ite_col) > -1) {
+                    if (colsWidth[ite_col]) {
                         newWidth = Math.max(obj.options.defaultColWidth, colsWidth[ite_col]);
                     } else {
                         newWidth = obj.options.defaultColWidth;
                     }
-                    if(obj.options.autoWidth.fullSizeTable && cols_size_total < width_table) {
+                    if (obj.options.autoWidth.fullSizeTable && cols_size_total < width_table) {
                         newWidth = (newWidth / cols_size_total) * width_table;
                     }
                     obj.setWidth(ite_col, newWidth);
@@ -3578,10 +3578,10 @@ if (! formula && typeof(require) === 'function') {
          * enableIgnoreDispatch
          * @param {object} inst
          */
-        const enableIgnoreDispatch = function(inst) {
-            if(obj.options.autoWidth.saveIgnore.ignoreEvents==null) {obj.options.autoWidth.saveIgnore.ignoreEvents = inst.ignoreEvents;}
+        const enableIgnoreDispatch = function (inst) {
+            if (obj.options.autoWidth.saveIgnore.ignoreEvents == null) { obj.options.autoWidth.saveIgnore.ignoreEvents = inst.ignoreEvents; }
             inst.ignoreEvents = true;
-            if(obj.options.autoWidth.saveIgnore.ignoreHistory==null) {obj.options.autoWidth.saveIgnore.ignoreHistory = inst.ignoreHistory;}
+            if (obj.options.autoWidth.saveIgnore.ignoreHistory == null) { obj.options.autoWidth.saveIgnore.ignoreHistory = inst.ignoreHistory; }
             inst.ignoreHistory = true;
         };
 
@@ -3589,7 +3589,7 @@ if (! formula && typeof(require) === 'function') {
          * disableIgnoreDispatch
          * @param {object} inst
          */
-        const disableIgnoreDispatch = function(inst) {
+        const disableIgnoreDispatch = function (inst) {
             inst.ignoreEvents = obj.options.autoWidth.saveIgnore.ignoreEvents;
             inst.ignoreHistory = obj.options.autoWidth.saveIgnore.ignoreHistory;
             obj.options.autoWidth.saveIgnore = {};
@@ -3604,15 +3604,15 @@ if (! formula && typeof(require) === 'function') {
         obj.setHeight = function (row, height, oldHeight) {
             if (height > 0) {
                 // In case the column is an object
-                if (typeof(row) == 'object') {
+                if (typeof (row) == 'object') {
                     row = row.getAttribute('data-y');
                 }
 
                 // Oldwidth
-                if (! oldHeight) {
+                if (!oldHeight) {
                     oldHeight = obj.rows[row].getAttribute('height');
 
-                    if (! oldHeight) {
+                    if (!oldHeight) {
                         var rect = obj.rows[row].getBoundingClientRect();
                         oldHeight = rect.height;
                     }
@@ -3625,17 +3625,17 @@ if (! formula && typeof(require) === 'function') {
                 obj.rows[row].style.height = height + 'px';
 
                 // Keep options updated
-                if (! obj.options.rows[row]) {
+                if (!obj.options.rows[row]) {
                     obj.options.rows[row] = {};
                 }
                 obj.options.rows[row].height = height;
 
                 // Keeping history of changes
                 obj.setHistory({
-                    action:'setHeight',
-                    row:row,
-                    oldValue:oldHeight,
-                    newValue:height,
+                    action: 'setHeight',
+                    row: row,
+                    oldValue: oldHeight,
+                    newValue: height,
                 });
 
                 // On resize column
@@ -3652,7 +3652,7 @@ if (! formula && typeof(require) === 'function') {
          * @param row - row number (first row is: 0)
          * @return height - current row height
          */
-        obj.getHeight = function(row) {
+        obj.getHeight = function (row) {
             if (typeof row === 'undefined') {
                 // Get height of all rows
                 var data = [];
@@ -3664,7 +3664,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             } else {
                 // In case the row is an object
-                if (typeof(row) == 'object') {
+                if (typeof (row) == 'object') {
                     row = $(row).getAttribute('data-y');
                 }
 
@@ -3674,13 +3674,13 @@ if (! formula && typeof(require) === 'function') {
             return data;
         }
 
-        obj.setFooter = function(data) {
+        obj.setFooter = function (data) {
             if (data) {
                 obj.options.footers = data;
             }
 
             if (obj.options.footers) {
-                if (! obj.tfoot) {
+                if (!obj.tfoot) {
                     obj.tfoot = document.createElement('tfoot');
                     obj.table.appendChild(obj.tfoot);
                 }
@@ -3695,11 +3695,11 @@ if (! formula && typeof(require) === 'function') {
                         obj.tfoot.appendChild(tr);
                     }
                     for (var i = 0; i < obj.headers.length; i++) {
-                        if (! obj.options.footers[j][i]) {
+                        if (!obj.options.footers[j][i]) {
                             obj.options.footers[j][i] = '';
                         }
-                        if (obj.tfoot.children[j].children[i+1]) {
-                            var td = obj.tfoot.children[j].children[i+1];
+                        if (obj.tfoot.children[j].children[i + 1]) {
+                            var td = obj.tfoot.children[j].children[i + 1];
                         } else {
                             var td = document.createElement('td');
                             tr.appendChild(td);
@@ -3723,7 +3723,7 @@ if (! formula && typeof(require) === 'function') {
          * @param column - column number (first column is: 0)
          * @param title - new column title
          */
-        obj.getHeader = function(column) {
+        obj.getHeader = function (column) {
             return obj.headers[column].textContent;
         }
 
@@ -3733,11 +3733,11 @@ if (! formula && typeof(require) === 'function') {
          * @param column - column number (first column is: 0)
          * @param title - new column title
          */
-        obj.setHeader = function(column, newValue) {
+        obj.setHeader = function (column, newValue) {
             if (obj.headers[column]) {
                 var oldValue = obj.headers[column].textContent;
 
-                if (! newValue) {
+                if (!newValue) {
                     newValue = prompt(obj.options.text.columnName, oldValue)
                 }
 
@@ -3782,8 +3782,8 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return integer
          */
-        obj.getMeta = function(cell, key) {
-            if (! cell) {
+        obj.getMeta = function (cell, key) {
+            if (!cell) {
                 return obj.options.meta;
             } else {
                 if (key) {
@@ -3799,14 +3799,14 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return integer
          */
-        obj.setMeta = function(o, k, v) {
-            if (! obj.options.meta) {
+        obj.setMeta = function (o, k, v) {
+            if (!obj.options.meta) {
                 obj.options.meta = {}
             }
 
             if (k && v) {
                 // Set data value
-                if (! obj.options.meta[o]) {
+                if (!obj.options.meta[o]) {
                     obj.options.meta[o] = {};
                 }
                 obj.options.meta[o][k] = v;
@@ -3814,7 +3814,7 @@ if (! formula && typeof(require) === 'function') {
                 // Apply that for all cells
                 var keys = Object.keys(o);
                 for (var i = 0; i < keys.length; i++) {
-                    if (! obj.options.meta[keys[i]]) {
+                    if (!obj.options.meta[keys[i]]) {
                         obj.options.meta[keys[i]] = {};
                     }
 
@@ -3833,7 +3833,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return integer
          */
-        obj.updateMeta = function(affectedCells) {
+        obj.updateMeta = function (affectedCells) {
             if (obj.options.meta) {
                 var newMeta = {};
                 var keys = Object.keys(obj.options.meta);
@@ -3854,9 +3854,9 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return integer
          */
-        obj.getStyle = function(cell, key) {
+        obj.getStyle = function (cell, key) {
             // Cell
-            if (! cell) {
+            if (!cell) {
                 // Control vars
                 var data = {};
 
@@ -3880,7 +3880,7 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
 
-               return data;
+                return data;
             } else {
                 cell = jexcel.getIdFromColumnName(cell, true);
 
@@ -3888,38 +3888,38 @@ if (! formula && typeof(require) === 'function') {
             }
         },
 
-        obj.resetStyle = function(o, ignoreHistoryAndEvents) {
-            var keys = Object.keys(o);
-            for (var i = 0; i < keys.length; i++) {
-                // Position
-                var cell = jexcel.getIdFromColumnName(keys[i], true);
-                if (obj.records[cell[1]] && obj.records[cell[1]][cell[0]]) {
-                    obj.records[cell[1]][cell[0]].setAttribute('style', '');
+            obj.resetStyle = function (o, ignoreHistoryAndEvents) {
+                var keys = Object.keys(o);
+                for (var i = 0; i < keys.length; i++) {
+                    // Position
+                    var cell = jexcel.getIdFromColumnName(keys[i], true);
+                    if (obj.records[cell[1]] && obj.records[cell[1]][cell[0]]) {
+                        obj.records[cell[1]][cell[0]].setAttribute('style', '');
+                    }
                 }
+                obj.setStyle(o, null, null, null, ignoreHistoryAndEvents);
             }
-            obj.setStyle(o, null, null, null, ignoreHistoryAndEvents);
-        }
 
         /**
          * Set meta information to cell(s)
          *
          * @return integer
          */
-        obj.setStyle = function(o, k, v, force, ignoreHistoryAndEvents) {
+        obj.setStyle = function (o, k, v, force, ignoreHistoryAndEvents) {
             var newValue = {};
             var oldValue = {};
 
             // Apply style
-            var applyStyle = function(cellId, key, value) {
+            var applyStyle = function (cellId, key, value) {
                 // Position
                 var cell = jexcel.getIdFromColumnName(cellId, true);
 
-                if (obj.records[cell[1]] && obj.records[cell[1]][cell[0]] && (obj.records[cell[1]][cell[0]].classList.contains('readonly')==false || force)) {
+                if (obj.records[cell[1]] && obj.records[cell[1]][cell[0]] && (obj.records[cell[1]][cell[0]].classList.contains('readonly') == false || force)) {
                     // Current value
                     var currentValue = obj.records[cell[1]][cell[0]].style[key];
 
                     // Change layout
-                    if (currentValue == value && ! force) {
+                    if (currentValue == value && !force) {
                         value = '';
                         obj.records[cell[1]][cell[0]].style[key] = '';
                     } else {
@@ -3927,10 +3927,10 @@ if (! formula && typeof(require) === 'function') {
                     }
 
                     // History
-                    if (! oldValue[cellId]) {
+                    if (!oldValue[cellId]) {
                         oldValue[cellId] = [];
                     }
-                    if (! newValue[cellId]) {
+                    if (!newValue[cellId]) {
                         newValue[cellId] = [];
                     }
 
@@ -3941,7 +3941,7 @@ if (! formula && typeof(require) === 'function') {
 
             if (k && v) {
                 // Get object from string
-                if (typeof(o) == 'string') {
+                if (typeof (o) == 'string') {
                     applyStyle(o, k, v);
                 } else {
                     // Avoid duplications
@@ -3952,7 +3952,7 @@ if (! formula && typeof(require) === 'function') {
                         var y = o[i].getAttribute('data-y');
                         var cellName = jexcel.getColumnNameFromId([x, y]);
                         // This happens when is a merged cell
-                        if (! oneApplication[cellName]) {
+                        if (!oneApplication[cellName]) {
                             applyStyle(cellName, k, v);
                             oneApplication[cellName] = true;
                         }
@@ -3962,11 +3962,11 @@ if (! formula && typeof(require) === 'function') {
                 var keys = Object.keys(o);
                 for (var i = 0; i < keys.length; i++) {
                     var style = o[keys[i]];
-                    if (typeof(style) == 'string') {
+                    if (typeof (style) == 'string') {
                         style = style.split(';');
                     }
                     for (var j = 0; j < style.length; j++) {
-                        if (typeof(style[j]) == 'string') {
+                        if (typeof (style[j]) == 'string') {
                             style[j] = style[j].split(':');
                         }
                         // Apply value
@@ -3986,7 +3986,7 @@ if (! formula && typeof(require) === 'function') {
                 newValue[keys[i]] = newValue[keys[i]].join(';');
             }
 
-            if (! ignoreHistoryAndEvents) {
+            if (!ignoreHistoryAndEvents) {
                 // Keeping history of changes
                 obj.setHistory({
                     action: 'setStyle',
@@ -4001,9 +4001,9 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get cell comments, null cell for all
          */
-        obj.getComments = function(cell, withAuthor) {
+        obj.getComments = function (cell, withAuthor) {
             if (cell) {
-                if (typeof(cell) == 'string') {
+                if (typeof (cell) == 'string') {
                     var cell = jexcel.getIdFromColumnName(cell, true);
                 }
 
@@ -4030,8 +4030,8 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Set cell comments
          */
-        obj.setComments = function(cellId, comments, author) {
-            if (typeof(cellId) == 'string') {
+        obj.setComments = function (cellId, comments, author) {
+            if (typeof (cellId) == 'string') {
                 var cell = jexcel.getIdFromColumnName(cellId, true);
             } else {
                 var cell = cellId;
@@ -4040,7 +4040,7 @@ if (! formula && typeof(require) === 'function') {
             // Keep old value
             var title = obj.records[cell[1]][cell[0]].getAttribute('title');
             var author = obj.records[cell[1]][cell[0]].getAttribute('data-author');
-            var oldValue = [ title, author ];
+            var oldValue = [title, author];
 
             // Set new values
             obj.records[cell[1]][cell[0]].setAttribute('title', comments ? comments : '');
@@ -4055,9 +4055,9 @@ if (! formula && typeof(require) === 'function') {
 
             // Save history
             obj.setHistory({
-                action:'setComments',
+                action: 'setComments',
                 column: cellId,
-                newValue: [ comments, author ],
+                newValue: [comments, author],
                 oldValue: oldValue,
             });
             // Set comments
@@ -4067,7 +4067,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get table config information
          */
-        obj.getConfig = function() {
+        obj.getConfig = function () {
             var options = obj.options;
             options.style = obj.getStyle();
             options.mergeCells = obj.getMerge();
@@ -4079,11 +4079,11 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Sort data and reload table
          */
-        obj.orderBy = function(column, order) {
+        obj.orderBy = function (column, order) {
             if (column >= 0) {
                 // Merged cells
                 if (Object.keys(obj.options.mergeCells).length > 0) {
-                    if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                    if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                         return false;
                     } else {
                         // Remove merged cells
@@ -4102,20 +4102,20 @@ if (! formula && typeof(require) === 'function') {
                 var temp = [];
                 if (obj.options.columns[column].type == 'number' || obj.options.columns[column].type == 'numeric' || obj.options.columns[column].type == 'percentage' || obj.options.columns[column].type == 'autonumber' || obj.options.columns[column].type == 'color') {
                     for (var j = 0; j < obj.options.data.length; j++) {
-                        temp[j] = [ j, Number(obj.options.data[j][column]) ];
+                        temp[j] = [j, Number(obj.options.data[j][column])];
                     }
                 } else if (obj.options.columns[column].type == 'calendar' || obj.options.columns[column].type == 'checkbox' || obj.options.columns[column].type == 'radio') {
                     for (var j = 0; j < obj.options.data.length; j++) {
-                        temp[j] = [ j, obj.options.data[j][column] ];
+                        temp[j] = [j, obj.options.data[j][column]];
                     }
                 } else {
                     for (var j = 0; j < obj.options.data.length; j++) {
-                        var val =obj.options.data[j][column];
+                        var val = obj.options.data[j][column];
                         //数値振り分け
-                        if((val!=="" && val !== null && val !== undefined) && isFinite(val)){
-                            temp[j] = [ j, Number(obj.options.data[j][column]) ];
-                        }else{
-                            temp[j] = [ j, obj.records[j][column].textContent.toLowerCase() ];
+                        if ((val !== "" && val !== null && val !== undefined) && isFinite(val)) {
+                            temp[j] = [j, Number(obj.options.data[j][column])];
+                        } else {
+                            temp[j] = [j, obj.records[j][column].textContent.toLowerCase()];
 
                         }
                     }
@@ -4123,16 +4123,16 @@ if (! formula && typeof(require) === 'function') {
                 //先頭行だけソート対象外にする
                 var headRow = temp.shift();
                 // Default sorting method
-                if (typeof(obj.options.sorting) !== 'function') {
-                    obj.options.sorting = function(direction) {
-                        return function(a, b) {
+                if (typeof (obj.options.sorting) !== 'function') {
+                    obj.options.sorting = function (direction) {
+                        return function (a, b) {
                             var valueA = a[1];
                             var valueB = b[1];
 
-                            if (! direction) {
-                                return (valueA === '' && valueB !== '') ? 1 : (valueA !== '' && valueB === '') ? -1 : (valueA > valueB) ? 1 : (valueA < valueB) ? -1 :  0;
+                            if (!direction) {
+                                return (valueA === '' && valueB !== '') ? 1 : (valueA !== '' && valueB === '') ? -1 : (valueA > valueB) ? 1 : (valueA < valueB) ? -1 : 0;
                             } else {
-                                return (valueA === '' && valueB !== '') ? 1 : (valueA !== '' && valueB === '') ? -1 : (valueA > valueB) ? -1 : (valueA < valueB) ? 1 :  0;
+                                return (valueA === '' && valueB !== '') ? 1 : (valueA !== '' && valueB === '') ? -1 : (valueA > valueB) ? -1 : (valueA < valueB) ? 1 : 0;
                             }
                         }
                     }
@@ -4168,7 +4168,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update order arrow
          */
-        obj.updateOrderArrow = function(column, order) {
+        obj.updateOrderArrow = function (column, order) {
             // Remove order
             for (var i = 0; i < obj.headers.length; i++) {
                 obj.headers[i].classList.remove('arrow-up');
@@ -4186,7 +4186,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update rows position
          */
-        obj.updateOrder = function(rows) {
+        obj.updateOrder = function (rows) {
             // History
             var data = []
             for (var j = 0; j < rows.length; j++) {
@@ -4238,7 +4238,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.moveRow = function(o, d, ignoreDom) {
+        obj.moveRow = function (o, d, ignoreDom) {
             if (Object.keys(obj.options.mergeCells).length > 0) {
                 if (o > d) {
                     var insertBefore = 1;
@@ -4247,7 +4247,7 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 if (obj.isRowMerged(o).length || obj.isRowMerged(d, insertBefore).length) {
-                    if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                    if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                         return false;
                     } else {
                         obj.destroyMerged();
@@ -4267,7 +4267,7 @@ if (! formula && typeof(require) === 'function') {
                 obj.results = null;
             }
 
-            if (! ignoreDom) {
+            if (!ignoreDom) {
                 if (Array.prototype.indexOf.call(obj.tbody.children, obj.rows[d]) >= 0) {
                     if (o > d) {
                         obj.tbody.insertBefore(obj.rows[o], obj.rows[d]);
@@ -4291,7 +4291,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Keeping history of changes
             obj.setHistory({
-                action:'moveRow',
+                action: 'moveRow',
                 oldValue: o,
                 newValue: d,
             });
@@ -4311,7 +4311,7 @@ if (! formula && typeof(require) === 'function') {
          * @param insertBefore
          * @return void
          */
-        obj.insertRow = function(mixed, rowNumber, insertBefore) {
+        obj.insertRow = function (mixed, rowNumber, insertBefore) {
             // Configuration
             if (obj.options.allowInsertRow == true) {
                 // Records
@@ -4349,7 +4349,7 @@ if (! formula && typeof(require) === 'function') {
                 // Merged cells
                 if (Object.keys(obj.options.mergeCells).length > 0) {
                     if (obj.isRowMerged(rowNumber, insertBefore).length) {
-                        if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                        if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                             return false;
                         } else {
                             obj.destroyMerged();
@@ -4371,7 +4371,7 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // Insertbefore
-                var rowIndex = (! insertBefore) ? rowNumber + 1 : rowNumber;
+                var rowIndex = (!insertBefore) ? rowNumber + 1 : rowNumber;
 
                 // Keep the current data
                 var currentRecords = obj.records.splice(rowIndex);
@@ -4387,7 +4387,7 @@ if (! formula && typeof(require) === 'function') {
                     // Push data to the data container
                     obj.options.data[row] = [];
                     for (var col = 0; col < obj.options.columns.length; col++) {
-                        obj.options.data[row][col]  = data[col] ? data[col] : '';
+                        obj.options.data[row][col] = data[col] ? data[col] : '';
                     }
                     // Create row
                     var tr = obj.createRow(row, obj.options.data[row]);
@@ -4443,7 +4443,7 @@ if (! formula && typeof(require) === 'function') {
          * @param integer numOfRows - number of lines
          * @return void
          */
-        obj.deleteRow = function(rowNumber, numOfRows) {
+        obj.deleteRow = function (rowNumber, numOfRows) {
             // Global Configuration
             if (obj.options.allowDeleteRow == true) {
                 if (obj.options.allowDeletingAllRows == true || obj.options.data.length > 1) {
@@ -4451,7 +4451,7 @@ if (! formula && typeof(require) === 'function') {
                     if (rowNumber == undefined) {
                         var number = obj.getSelectedRows();
 
-                        if (! number[0]) {
+                        if (!number[0]) {
                             rowNumber = obj.options.data.length - 1;
                             numOfRows = 1;
                         } else {
@@ -4467,7 +4467,7 @@ if (! formula && typeof(require) === 'function') {
                         rowNumber = lastRow;
                     }
 
-                    if (! numOfRows) {
+                    if (!numOfRows) {
                         numOfRows = 1;
                     }
 
@@ -4492,7 +4492,7 @@ if (! formula && typeof(require) === 'function') {
                             }
                         }
                         if (mergeExists) {
-                            if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                            if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                                 return false;
                             } else {
                                 obj.destroyMerged();
@@ -4568,7 +4568,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.moveColumn = function(o, d) {
+        obj.moveColumn = function (o, d) {
             if (Object.keys(obj.options.mergeCells).length > 0) {
                 if (o > d) {
                     var insertBefore = 1;
@@ -4577,7 +4577,7 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 if (obj.isColMerged(o).length || obj.isColMerged(d, insertBefore).length) {
-                    if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                    if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                         return false;
                     } else {
                         obj.destroyMerged();
@@ -4622,7 +4622,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Keeping history of changes
             obj.setHistory({
-                action:'moveColumn',
+                action: 'moveColumn',
                 oldValue: o,
                 newValue: d,
             });
@@ -4643,7 +4643,7 @@ if (! formula && typeof(require) === 'function') {
          * @param object properties - column properties
          * @return void
          */
-        obj.insertColumn = function(mixed, columnNumber, insertBefore, properties) {
+        obj.insertColumn = function (mixed, columnNumber, insertBefore, properties) {
             // Configuration
             if (obj.options.allowInsertColumn == true) {
                 // Records
@@ -4682,7 +4682,7 @@ if (! formula && typeof(require) === 'function') {
                 // Merged cells
                 if (Object.keys(obj.options.mergeCells).length > 0) {
                     if (obj.isColMerged(columnNumber, insertBefore).length) {
-                        if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                        if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                             return false;
                         } else {
                             obj.destroyMerged();
@@ -4691,18 +4691,18 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // Create default properties
-                if (! properties) {
+                if (!properties) {
                     properties = [];
                 }
 
                 for (var i = 0; i < numOfColumns; i++) {
-                    if (! properties[i]) {
-                        properties[i] = { type:'text', source:[], options:[], width:obj.options.defaultColWidth, align:obj.options.defaultColAlign };
+                    if (!properties[i]) {
+                        properties[i] = { type: 'text', source: [], options: [], width: obj.options.defaultColWidth, align: obj.options.defaultColAlign };
                     }
                 }
 
                 // Insert before
-                var columnIndex = (! insertBefore) ? columnNumber + 1 : columnNumber;
+                var columnIndex = (!insertBefore) ? columnNumber + 1 : columnNumber;
                 obj.options.columns = jexcel.injectArray(obj.options.columns, columnIndex, properties);
 
                 // Open space in the containers
@@ -4719,8 +4719,8 @@ if (! formula && typeof(require) === 'function') {
                 // Add new headers
                 for (var col = columnIndex; col < (numOfColumns + columnIndex); col++) {
                     obj.createCellHeader(col);
-                    obj.headerContainer.insertBefore(obj.headers[col], obj.headerContainer.children[col+1]);
-                    obj.colgroupContainer.insertBefore(obj.colgroup[col], obj.colgroupContainer.children[col+1]);
+                    obj.headerContainer.insertBefore(obj.headers[col], obj.headerContainer.children[col + 1]);
+                    obj.colgroupContainer.insertBefore(obj.colgroup[col], obj.colgroupContainer.children[col + 1]);
 
                     historyHeaders.push(obj.headers[col]);
                     historyColgroup.push(obj.colgroup[col]);
@@ -4756,7 +4756,7 @@ if (! formula && typeof(require) === 'function') {
                         obj.records[row][col] = td;
                         // Add cell to the row
                         if (obj.rows[row]) {
-                            obj.rows[row].insertBefore(td, obj.rows[row].children[col+1]);
+                            obj.rows[row].insertBefore(td, obj.rows[row].children[col + 1]);
                         }
 
                         // Record History
@@ -4777,35 +4777,35 @@ if (! formula && typeof(require) === 'function') {
                     // Flexible way to handle nestedheaders
                     if (obj.options.nestedHeaders[0] && obj.options.nestedHeaders[0][0]) {
                         for (var j = 0; j < obj.options.nestedHeaders.length; j++) {
-                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan) + numOfColumns;
-                            obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan = colspan;
-                            obj.thead.children[j].children[obj.thead.children[j].children.length-1].setAttribute('colspan', colspan);
-                            var o = obj.thead.children[j].children[obj.thead.children[j].children.length-1].getAttribute('data-column');
+                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan) + numOfColumns;
+                            obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan = colspan;
+                            obj.thead.children[j].children[obj.thead.children[j].children.length - 1].setAttribute('colspan', colspan);
+                            var o = obj.thead.children[j].children[obj.thead.children[j].children.length - 1].getAttribute('data-column');
                             o = o.split(',');
                             for (var col = columnIndex; col < (numOfColumns + columnIndex); col++) {
                                 o.push(col);
                             }
-                            obj.thead.children[j].children[obj.thead.children[j].children.length-1].setAttribute('data-column', o);
+                            obj.thead.children[j].children[obj.thead.children[j].children.length - 1].setAttribute('data-column', o);
                         }
                     } else {
                         var colspan = parseInt(obj.options.nestedHeaders[0].colspan) + numOfColumns;
                         obj.options.nestedHeaders[0].colspan = colspan;
-                        obj.thead.children[0].children[obj.thead.children[0].children.length-1].setAttribute('colspan', colspan);
+                        obj.thead.children[0].children[obj.thead.children[0].children.length - 1].setAttribute('colspan', colspan);
                     }
                 }
 
                 // Keep history
                 obj.setHistory({
                     action: 'insertColumn',
-                    columnNumber:columnNumber,
-                    numOfColumns:numOfColumns,
-                    insertBefore:insertBefore,
-                    columns:properties,
-                    headers:historyHeaders,
-                    colgroup:historyColgroup,
-                    records:historyRecords,
-                    footers:historyFooters,
-                    data:historyData,
+                    columnNumber: columnNumber,
+                    numOfColumns: numOfColumns,
+                    insertBefore: insertBefore,
+                    columns: properties,
+                    headers: historyHeaders,
+                    colgroup: historyColgroup,
+                    records: historyRecords,
+                    footers: historyFooters,
+                    data: historyData,
                 });
 
                 // Remove table references
@@ -4823,7 +4823,7 @@ if (! formula && typeof(require) === 'function') {
          * @param integer numOfColumns - number of columns to be excluded from the reference column
          * @return void
          */
-        obj.deleteColumn = function(columnNumber, numOfColumns) {
+        obj.deleteColumn = function (columnNumber, numOfColumns) {
             // Global Configuration
             if (obj.options.allowDeleteColumn == true) {
                 if (obj.headers.length > 1) {
@@ -4831,7 +4831,7 @@ if (! formula && typeof(require) === 'function') {
                     if (columnNumber == undefined) {
                         var number = obj.getSelectedColumns(true);
 
-                        if (! number.length) {
+                        if (!number.length) {
                             // Remove last column
                             columnNumber = obj.headers.length - 1;
                             numOfColumns = 1;
@@ -4850,7 +4850,7 @@ if (! formula && typeof(require) === 'function') {
                     }
 
                     // Minimum of columns to be delete is 1
-                    if (! numOfColumns) {
+                    if (!numOfColumns) {
                         numOfColumns = 1;
                     }
 
@@ -4860,9 +4860,9 @@ if (! formula && typeof(require) === 'function') {
                     }
 
                     // onbeforedeletecolumn
-                   if (obj.dispatch('onbeforedeletecolumn', el, columnNumber, numOfColumns) === false) {
-                      return false;
-                   }
+                    if (obj.dispatch('onbeforedeletecolumn', el, columnNumber, numOfColumns) === false) {
+                        return false;
+                    }
 
                     // Can't remove the last column
                     if (parseInt(columnNumber) > -1) {
@@ -4876,7 +4876,7 @@ if (! formula && typeof(require) === 'function') {
                             }
                         }
                         if (mergeExists) {
-                            if (! confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
+                            if (!confirm(obj.options.text.thisActionWillDestroyAnyExistingMergedCellsAreYouSure)) {
                                 return false;
                             } else {
                                 obj.destroyMerged();
@@ -4928,29 +4928,29 @@ if (! formula && typeof(require) === 'function') {
                             // Flexible way to handle nestedheaders
                             if (obj.options.nestedHeaders[0] && obj.options.nestedHeaders[0][0]) {
                                 for (var j = 0; j < obj.options.nestedHeaders.length; j++) {
-                                    var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan) - numOfColumns;
-                                    obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan = colspan;
-                                    obj.thead.children[j].children[obj.thead.children[j].children.length-1].setAttribute('colspan', colspan);
+                                    var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan) - numOfColumns;
+                                    obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan = colspan;
+                                    obj.thead.children[j].children[obj.thead.children[j].children.length - 1].setAttribute('colspan', colspan);
                                 }
                             } else {
                                 var colspan = parseInt(obj.options.nestedHeaders[0].colspan) - numOfColumns;
                                 obj.options.nestedHeaders[0].colspan = colspan;
-                                obj.thead.children[0].children[obj.thead.children[0].children.length-1].setAttribute('colspan', colspan);
+                                obj.thead.children[0].children[obj.thead.children[0].children.length - 1].setAttribute('colspan', colspan);
                             }
                         }
 
                         // Keeping history of changes
                         obj.setHistory({
-                            action:'deleteColumn',
-                            columnNumber:columnNumber,
-                            numOfColumns:numOfColumns,
+                            action: 'deleteColumn',
+                            columnNumber: columnNumber,
+                            numOfColumns: numOfColumns,
                             insertBefore: 1,
-                            columns:columns,
-                            headers:historyHeaders,
-                            colgroup:historyColgroup,
-                            records:historyRecords,
-                            footers:historyFooters,
-                            data:historyData,
+                            columns: columns,
+                            headers: historyHeaders,
+                            colgroup: historyColgroup,
+                            records: historyRecords,
+                            footers: historyFooters,
+                            data: historyData,
                         });
 
                         // Update table references
@@ -4970,7 +4970,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return array
          */
-        obj.getSelectedRows = function(asIds) {
+        obj.getSelectedRows = function (asIds) {
             var rows = [];
             // Get all selected rows
             for (var j = 0; j < obj.rows.length; j++) {
@@ -4986,29 +4986,29 @@ if (! formula && typeof(require) === 'function') {
             return rows;
         },
 
-        /**
-         * Get selected column numbers
-         *
-         * @return array
-         */
-        obj.getSelectedColumns = function() {
-            var cols = [];
-            // Get all selected cols
-            for (var i = 0; i < obj.headers.length; i++) {
-                if (obj.headers[i].classList.contains('selected')) {
-                    cols.push(i);
+            /**
+             * Get selected column numbers
+             *
+             * @return array
+             */
+            obj.getSelectedColumns = function () {
+                var cols = [];
+                // Get all selected cols
+                for (var i = 0; i < obj.headers.length; i++) {
+                    if (obj.headers[i].classList.contains('selected')) {
+                        cols.push(i);
+                    }
                 }
-            }
 
-            return cols;
-        }
+                return cols;
+            }
 
         /**
          * Get highlighted
          *
          * @return array
          */
-        obj.getHighlighted = function() {
+        obj.getHighlighted = function () {
             return obj.highlighted;
         }
 
@@ -5017,7 +5017,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return void
          */
-        obj.updateTableReferences = function() {
+        obj.updateTableReferences = function () {
             // Update headers
             for (var i = 0; i < obj.headers.length; i++) {
                 var x = obj.headers[i].getAttribute('data-x');
@@ -5026,7 +5026,7 @@ if (! formula && typeof(require) === 'function') {
                     // Update coords
                     obj.headers[i].setAttribute('data-x', i);
                     // Title
-                    if (! obj.headers[i].getAttribute('title')) {
+                    if (!obj.headers[i].getAttribute('title')) {
                         obj.headers[i].innerHTML = jexcel.getColumnName(i);
                     }
                 }
@@ -5052,7 +5052,7 @@ if (! formula && typeof(require) === 'function') {
             var mergeCellUpdates = [];
 
             // Update cell
-            var updatePosition = function(x,y,i,j) {
+            var updatePosition = function (x, y, i, j) {
                 if (x != i) {
                     obj.records[j][i].setAttribute('data-x', i);
                 }
@@ -5085,11 +5085,11 @@ if (! formula && typeof(require) === 'function') {
                                 } else {
                                     var totalX = parseInt(i - x);
                                     var totalY = parseInt(j - y);
-                                    mergeCellUpdates[columnIdFrom] = [ columnIdTo, totalX, totalY ];
+                                    mergeCellUpdates[columnIdFrom] = [columnIdTo, totalX, totalY];
                                 }
                             }
                         } else {
-                            updatePosition(x,y,i,j);
+                            updatePosition(x, y, i, j);
                         }
                     }
                 }
@@ -5103,7 +5103,7 @@ if (! formula && typeof(require) === 'function') {
                         var info = jexcel.getIdFromColumnName(keys[i], true)
                         var x = info[0];
                         var y = info[1];
-                        updatePosition(x,y,x + mergeCellUpdates[keys[i]][1],y + mergeCellUpdates[keys[i]][2]);
+                        updatePosition(x, y, x + mergeCellUpdates[keys[i]][1], y + mergeCellUpdates[keys[i]][2]);
 
                         var columnIdFrom = keys[i];
                         var columnIdTo = mergeCellUpdates[keys[i]][0];
@@ -5115,7 +5115,7 @@ if (! formula && typeof(require) === 'function') {
                         }
 
                         obj.options.mergeCells[columnIdTo] = obj.options.mergeCells[columnIdFrom];
-                        delete(obj.options.mergeCells[columnIdFrom]);
+                        delete (obj.options.mergeCells[columnIdFrom]);
                     }
                 }
             }
@@ -5136,7 +5136,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Custom settings for the cells
          */
-        obj.updateTable = function() {
+        obj.updateTable = function () {
             // Check for spare
             if (obj.options.minSpareRows > 0) {
                 var numBlankRows = 0;
@@ -5161,7 +5161,7 @@ if (! formula && typeof(require) === 'function') {
 
             if (obj.options.minSpareCols > 0) {
                 var numBlankCols = 0;
-                for (var i = obj.headers.length - 1; i >= 0 ; i--) {
+                for (var i = obj.headers.length - 1; i >= 0; i--) {
                     var test = false;
                     for (var j = 0; j < obj.rows.length; j++) {
                         if (obj.options.data[j][i]) {
@@ -5181,7 +5181,7 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Customizations by the developer
-            if (typeof(obj.options.updateTable) == 'function') {
+            if (typeof (obj.options.updateTable) == 'function') {
                 if (obj.options.detachForUpdates) {
                     el.removeChild(obj.content);
                 }
@@ -5203,15 +5203,15 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Update corner position
-            setTimeout(function() {
+            setTimeout(function () {
                 obj.updateCornerPosition();
-            },0);
+            }, 0);
         }
 
         /**
          * Readonly
          */
-        obj.isReadOnly = function(cell) {
+        obj.isReadOnly = function (cell) {
             if (cell = obj.getCell(cell)) {
                 return cell.classList.contains('readonly') ? true : false;
             }
@@ -5220,7 +5220,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Readonly
          */
-        obj.setReadOnly = function(cell, state) {
+        obj.setReadOnly = function (cell, state) {
             if (cell = obj.getCell(cell)) {
                 if (state) {
                     cell.classList.add('readonly');
@@ -5233,21 +5233,21 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Show row
          */
-        obj.showRow = function(rowNumber) {
+        obj.showRow = function (rowNumber) {
             obj.rows[rowNumber].style.display = '';
         }
 
         /**
          * Hide row
          */
-        obj.hideRow = function(rowNumber) {
+        obj.hideRow = function (rowNumber) {
             obj.rows[rowNumber].style.display = 'none';
         }
 
         /**
          * Show column
          */
-        obj.showColumn = function(colNumber) {
+        obj.showColumn = function (colNumber) {
             obj.headers[colNumber].style.display = '';
             obj.colgroup[colNumber].style.display = '';
             if (obj.filter && obj.filter.children.length > colNumber + 1) {
@@ -5268,7 +5268,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Hide column
          */
-        obj.hideColumn = function(colNumber) {
+        obj.hideColumn = function (colNumber) {
             obj.headers[colNumber].style.display = 'none';
             obj.colgroup[colNumber].style.display = 'none';
             if (obj.filter && obj.filter.children.length > colNumber + 1) {
@@ -5289,14 +5289,14 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Show index column
          */
-        obj.showIndex = function() {
+        obj.showIndex = function () {
             obj.table.classList.remove('jexcel_hidden_index');
         }
 
         /**
          * Hide index column
          */
-        obj.hideIndex = function() {
+        obj.hideIndex = function () {
             obj.table.classList.add('jexcel_hidden_index');
         }
 
@@ -5305,7 +5305,7 @@ if (! formula && typeof(require) === 'function') {
          */
         var chainLoopProtection = [];
 
-        obj.updateFormulaChain = function(x, y, records) {
+        obj.updateFormulaChain = function (x, y, records) {
             var cellId = jexcel.getColumnNameFromId([x, y]);
             if (obj.formula[cellId] && obj.formula[cellId].length > 0) {
                 if (chainLoopProtection[cellId]) {
@@ -5318,8 +5318,8 @@ if (! formula && typeof(require) === 'function') {
                     for (var i = 0; i < obj.formula[cellId].length; i++) {
                         var cell = jexcel.getIdFromColumnName(obj.formula[cellId][i], true);
                         // Update cell
-                        var value = ''+obj.options.data[cell[1]][cell[0]];
-                        if (value.substr(0,1) == '=') {
+                        var value = '' + obj.options.data[cell[1]][cell[0]];
+                        if (value.substr(0, 1) == '=') {
                             records.push(obj.updateCell(cell[0], cell[1], value, true));
                         } else {
                             // No longer a formula, remove from the chain
@@ -5336,13 +5336,13 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update formulas
          */
-        obj.updateFormulas = function(referencesToUpdate) {
+        obj.updateFormulas = function (referencesToUpdate) {
             // Update formulas
             for (var j = 0; j < obj.options.data.length; j++) {
                 for (var i = 0; i < obj.options.data[0].length; i++) {
                     var value = '' + obj.options.data[j][i];
                     // Is formula
-                    if (value.substr(0,1) == '=') {
+                    if (value.substr(0, 1) == '=') {
                         // Replace tokens
                         var newFormula = obj.updateFormula(value, referencesToUpdate);
                         if (newFormula != value) {
@@ -5379,7 +5379,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update formula
          */
-        obj.updateFormula = function(formula, referencesToUpdate) {
+        obj.updateFormula = function (formula, referencesToUpdate) {
             var testLetter = /[A-Z]/;
             var testNumber = /[0-9]/;
 
@@ -5421,7 +5421,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Secure formula
          */
-        var secureFormula = function(oldValue) {
+        var secureFormula = function (oldValue) {
             var newValue = '';
             var inside = 0;
 
@@ -5447,14 +5447,14 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Parse formulas
          */
-        obj.executeFormula = function(expression, x, y) {
+        obj.executeFormula = function (expression, x, y) {
 
             var formulaResults = [];
             var formulaLoopProtection = [];
 
             // Execute formula with loop protection
-            var execute = function(expression, x, y) {
-             // Parent column identification
+            var execute = function (expression, x, y) {
+                // Parent column identification
                 var parentId = jexcel.getColumnNameFromId([x, y]);
 
                 // Code protection
@@ -5466,7 +5466,7 @@ if (! formula && typeof(require) === 'function') {
                 formulaLoopProtection[parentId] = true;
 
                 // Convert range tokens
-                var tokensUpdate = function(tokens) {
+                var tokensUpdate = function (tokens) {
                     for (var index = 0; index < tokens.length; index++) {
                         var f = [];
                         var token = tokens[index].split(':');
@@ -5521,7 +5521,7 @@ if (! formula && typeof(require) === 'function') {
                     if (tokens) {
                         for (var i = 0; i < tokens.length; i++) {
                             // Keep chain
-                            if (! obj.formula[tokens[i]]) {
+                            if (!obj.formula[tokens[i]]) {
                                 obj.formula[tokens[i]] = [];
                             }
                             // Is already in the register
@@ -5534,13 +5534,13 @@ if (! formula && typeof(require) === 'function') {
                                 // Coords
                                 var position = jexcel.getIdFromColumnName(tokens[i], 1);
                                 // Get value
-                                if (typeof(obj.options.data[position[1]]) != 'undefined' && typeof(obj.options.data[position[1]][position[0]]) != 'undefined') {
+                                if (typeof (obj.options.data[position[1]]) != 'undefined' && typeof (obj.options.data[position[1]][position[0]]) != 'undefined') {
                                     var value = obj.options.data[position[1]][position[0]];
                                 } else {
                                     var value = '';
                                 }
                                 // Get column data
-                                if ((''+value).substr(0,1) == '=') {
+                                if (('' + value).substr(0, 1) == '=') {
                                     if (typeof formulaResults[tokens[i]] !== 'undefined') {
                                         value = formulaResults[tokens[i]];
                                     } else {
@@ -5549,7 +5549,7 @@ if (! formula && typeof(require) === 'function') {
                                     }
                                 }
                                 // Type!
-                                if ((''+value).trim() == '') {
+                                if (('' + value).trim() == '') {
                                     // Null
                                     formulaExpressions[tokens[i]] = null;
                                 } else {
@@ -5588,7 +5588,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Trying to extract a number from a string
          */
-        obj.parseNumber = function(value, columnNumber) {
+        obj.parseNumber = function (value, columnNumber) {
             // Decimal point
             var decimal = columnNumber && obj.options.columns[columnNumber].decimal ? obj.options.columns[columnNumber].decimal : '.';
 
@@ -5605,7 +5605,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Is a valid number
             if (number[0] && Number.isInteger(Number(number[0]))) {
-                if (! number[1]) {
+                if (!number[1]) {
                     var value = Number(number[0] + '.00');
                 } else {
                     var value = Number(number[0] + '.' + number[1]);
@@ -5620,16 +5620,16 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get row number
          */
-        obj.row = function(cell) {
+        obj.row = function (cell) {
         }
 
         /**
          * Get col number
          */
-        obj.col = function(cell) {
+        obj.col = function (cell) {
         }
 
-        obj.up = function(shiftKey, ctrlKey) {
+        obj.up = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (obj.selectedCell[3] > 0) {
                     obj.up.visible(1, ctrlKey ? 0 : 1)
@@ -5671,7 +5671,7 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(1);
         }
 
-        obj.up.visible = function(group, direction) {
+        obj.up.visible = function (group, direction) {
             if (group == 0) {
                 var x = parseInt(obj.selectedCell[0]);
                 var y = parseInt(obj.selectedCell[1]);
@@ -5700,7 +5700,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.up.get = function(x, y) {
+        obj.up.get = function (x, y) {
             var x = parseInt(x);
             var y = parseInt(y);
             for (var j = (y - 1); j >= 0; j--) {
@@ -5718,7 +5718,7 @@ if (! formula && typeof(require) === 'function') {
             return y;
         }
 
-        obj.down = function(shiftKey, ctrlKey) {
+        obj.down = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (obj.selectedCell[3] < obj.records.length - 1) {
                     obj.down.visible(1, ctrlKey ? 0 : 1)
@@ -5759,7 +5759,7 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(3);
         }
 
-        obj.down.visible = function(group, direction) {
+        obj.down.visible = function (group, direction) {
             if (group == 0) {
                 var x = parseInt(obj.selectedCell[0]);
                 var y = parseInt(obj.selectedCell[1]);
@@ -5788,7 +5788,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.down.get = function(x, y) {
+        obj.down.get = function (x, y) {
             var x = parseInt(x);
             var y = parseInt(y);
             for (var j = (y + 1); j < obj.rows.length; j++) {
@@ -5806,7 +5806,7 @@ if (! formula && typeof(require) === 'function') {
             return y;
         }
 
-        obj.right = function(shiftKey, ctrlKey) {
+        obj.right = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (obj.selectedCell[2] < obj.headers.length - 1) {
                     obj.right.visible(1, ctrlKey ? 0 : 1)
@@ -5823,7 +5823,7 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(2);
         }
 
-        obj.right.visible = function(group, direction) {
+        obj.right.visible = function (group, direction) {
             if (group == 0) {
                 var x = parseInt(obj.selectedCell[0]);
                 var y = parseInt(obj.selectedCell[1]);
@@ -5852,7 +5852,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.right.get = function(x, y) {
+        obj.right.get = function (x, y) {
             var x = parseInt(x);
             var y = parseInt(y);
 
@@ -5871,7 +5871,7 @@ if (! formula && typeof(require) === 'function') {
             return x;
         }
 
-        obj.left = function(shiftKey, ctrlKey) {
+        obj.left = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (obj.selectedCell[2] > 0) {
                     obj.left.visible(1, ctrlKey ? 0 : 1)
@@ -5888,7 +5888,7 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(0);
         }
 
-        obj.left.visible = function(group, direction) {
+        obj.left.visible = function (group, direction) {
             if (group == 0) {
                 var x = parseInt(obj.selectedCell[0]);
                 var y = parseInt(obj.selectedCell[1]);
@@ -5917,7 +5917,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.left.get = function(x, y) {
+        obj.left.get = function (x, y) {
             var x = parseInt(x);
             var y = parseInt(y);
             for (var i = (x - 1); i >= 0; i--) {
@@ -5935,7 +5935,7 @@ if (! formula && typeof(require) === 'function') {
             return x;
         }
 
-        obj.first = function(shiftKey, ctrlKey) {
+        obj.first = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (ctrlKey) {
                     obj.selectedCell[3] = 0;
@@ -5966,7 +5966,7 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(1);
         }
 
-        obj.last = function(shiftKey, ctrlKey) {
+        obj.last = function (shiftKey, ctrlKey) {
             if (shiftKey) {
                 if (ctrlKey) {
                     obj.selectedCell[3] = obj.records.length - 1;
@@ -5997,8 +5997,8 @@ if (! formula && typeof(require) === 'function') {
             obj.updateScroll(3);
         }
 
-        obj.selectAll = function() {
-            if (! obj.selectedCell) {
+        obj.selectAll = function () {
+            if (!obj.selectedCell) {
                 obj.selectedCell = [];
             }
 
@@ -6013,7 +6013,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Go to a page in a lazyLoading
          */
-        obj.loadPage = function(pageNumber) {
+        obj.loadPage = function (pageNumber) {
             // Search
             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                 var results = obj.results;
@@ -6054,7 +6054,7 @@ if (! formula && typeof(require) === 'function') {
             }
         }
 
-        obj.loadUp = function() {
+        obj.loadUp = function () {
             // Search
             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                 var results = obj.results;
@@ -6088,7 +6088,7 @@ if (! formula && typeof(require) === 'function') {
             return test;
         }
 
-        obj.loadDown = function() {
+        obj.loadDown = function () {
             // Search
             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                 var results = obj.results;
@@ -6123,14 +6123,14 @@ if (! formula && typeof(require) === 'function') {
             return test;
         }
 
-        obj.loadValidation = function() {
+        obj.loadValidation = function () {
             if (obj.selectedCell) {
                 var currentPage = parseInt(obj.tbody.firstChild.getAttribute('data-y')) / 100;
                 var selectedPage = parseInt(obj.selectedCell[3] / 100);
                 var totalPages = parseInt(obj.rows.length / 100);
 
                 if (currentPage != selectedPage && selectedPage <= totalPages) {
-                    if (! Array.prototype.indexOf.call(obj.tbody.children, obj.rows[obj.selectedCell[3]])) {
+                    if (!Array.prototype.indexOf.call(obj.tbody.children, obj.rows[obj.selectedCell[3]])) {
                         obj.loadPage(selectedPage);
                         return true;
                     }
@@ -6143,7 +6143,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Reset search
          */
-        obj.resetSearch = function() {
+        obj.resetSearch = function () {
             obj.searchInput.value = '';
             obj.search('');
             obj.results = null;
@@ -6152,7 +6152,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Search
          */
-        obj.search = function(query) {
+        obj.search = function (query) {
             // Reset any filter
             if (obj.options.filters) {
                 obj.resetFilters();
@@ -6167,10 +6167,10 @@ if (! formula && typeof(require) === 'function') {
 
             if (query) {
                 // Search filter
-                var search = function(item, query, index) {
+                var search = function (item, query, index) {
                     for (var i = 0; i < item.length; i++) {
-                        if ((''+item[i]).toLowerCase().search(query) >= 0 ||
-                            (''+obj.records[index][i].innerHTML).toLowerCase().search(query) >= 0) {
+                        if (('' + item[i]).toLowerCase().search(query) >= 0 ||
+                            ('' + obj.records[index][i].innerHTML).toLowerCase().search(query) >= 0) {
                             return true;
                         }
                     }
@@ -6178,7 +6178,7 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // Result
-                var addToResult = function(k) {
+                var addToResult = function (k) {
                     if (obj.results.indexOf(k) == -1) {
                         obj.results.push(k);
                     }
@@ -6188,7 +6188,7 @@ if (! formula && typeof(require) === 'function') {
                 parsedQuery = new RegExp(parsedQuery, "i");
 
                 // Filter
-                obj.options.data.forEach(function(v, k) {
+                obj.options.data.forEach(function (v, k) {
                     if (search(v, parsedQuery, k)) {
                         // Merged rows found
                         var rows = obj.isRowMerged(k);
@@ -6196,7 +6196,7 @@ if (! formula && typeof(require) === 'function') {
                             for (var i = 0; i < rows.length; i++) {
                                 var row = jexcel.getIdFromColumnName(rows[i], true);
                                 for (var j = 0; j < obj.options.mergeCells[rows[i]][1]; j++) {
-                                    addToResult(row[1]+j);
+                                    addToResult(row[1] + j);
                                 }
                             }
                         } else {
@@ -6212,7 +6212,7 @@ if (! formula && typeof(require) === 'function') {
             return obj.updateResult();
         }
 
-        obj.updateResult = function() {
+        obj.updateResult = function () {
             var total = 0;
             var index = 0;
 
@@ -6236,7 +6236,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Hide all records from the table
             for (var j = 0; j < obj.rows.length; j++) {
-                if (! obj.results || obj.results.indexOf(j) > -1) {
+                if (!obj.results || obj.results.indexOf(j) > -1) {
                     if (index < total) {
                         obj.tbody.appendChild(obj.rows[j]);
                         index++;
@@ -6260,7 +6260,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Which page the cell is
          */
-        obj.whichPage = function(cell) {
+        obj.whichPage = function (cell) {
             // Search
             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                 cell = obj.results.indexOf(cell);
@@ -6272,7 +6272,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Go to page
          */
-        obj.page = function(pageNumber) {
+        obj.page = function (pageNumber) {
             var oldPage = obj.pageNumber;
 
             // Search
@@ -6331,7 +6331,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Update the pagination
          */
-        obj.updatePagination = function() {
+        obj.updatePagination = function () {
             // Reset container
             obj.pagination.children[0].innerHTML = '';
             obj.pagination.children[1].innerHTML = '';
@@ -6345,7 +6345,7 @@ if (! formula && typeof(require) === 'function') {
                     var results = obj.rows.length;
                 }
 
-                if (! results) {
+                if (!results) {
                     // No records found
                     obj.pagination.children[0].innerHTML = obj.options.text.noRecordsFound;
                 } else {
@@ -6382,7 +6382,7 @@ if (! formula && typeof(require) === 'function') {
                         paginationItem.innerHTML = i;
                         obj.pagination.children[1].appendChild(paginationItem);
 
-                        if (obj.pageNumber == (i-1)) {
+                        if (obj.pageNumber == (i - 1)) {
                             paginationItem.classList.add('jexcel_page_selected');
                         }
                     }
@@ -6397,13 +6397,13 @@ if (! formula && typeof(require) === 'function') {
                     }
 
                     // Text
-                    var format = function(format) {
+                    var format = function (format) {
                         var args = Array.prototype.slice.call(arguments, 1);
-                        return format.replace(/{(\d+)}/g, function(match, number) {
-                          return typeof args[number] != 'undefined'
-                            ? args[number]
-                            : match
-                          ;
+                        return format.replace(/{(\d+)}/g, function (match, number) {
+                            return typeof args[number] != 'undefined'
+                                ? args[number]
+                                : match
+                                ;
                         });
                     };
 
@@ -6417,7 +6417,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return null
          */
-        obj.download = function(includeHeaders) {
+        obj.download = function (includeHeaders) {
             if (obj.options.allowExport == false) {
                 console.error('Export not allowed');
             } else {
@@ -6428,7 +6428,7 @@ if (! formula && typeof(require) === 'function') {
                 data += obj.copy(false, obj.options.csvDelimiter, true, includeHeaders, true);
 
                 // Download element
-                var blob = new Blob(["\uFEFF"+data], {type: 'text/csv;charset=utf-8;'});
+                var blob = new Blob(["\uFEFF" + data], { type: 'text/csv;charset=utf-8;' });
 
                 // IE Compatibility
                 if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -6451,7 +6451,7 @@ if (! formula && typeof(require) === 'function') {
          *
          * @return null
          */
-        obj.setHistory = function(changes) {
+        obj.setHistory = function (changes) {
             if (obj.ignoreHistory != true) {
                 // Increment and get the current history index
                 var index = ++obj.historyIndex;
@@ -6471,8 +6471,8 @@ if (! formula && typeof(require) === 'function') {
          * @param delimiter - \t default to keep compatibility with excel
          * @return string value
          */
-        obj.copy = function(highlighted, delimiter, returnData, includeHeaders, download) {
-            if (! delimiter) {
+        obj.copy = function (highlighted, delimiter, returnData, includeHeaders, download) {
+            if (!delimiter) {
                 delimiter = "\t";
             }
 
@@ -6501,7 +6501,7 @@ if (! formula && typeof(require) === 'function') {
             for (var j = 0; j < y; j++) {
                 for (var i = 0; i < x; i++) {
                     // If cell is highlighted
-                    if (! highlighted || obj.records[j][i].classList.contains('highlight')) {
+                    if (!highlighted || obj.records[j][i].classList.contains('highlight')) {
                         if (copyX <= i) {
                             copyX = i;
                         }
@@ -6511,16 +6511,16 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
             }
-            if (x === copyX+1 && y === copyY+1) {
+            if (x === copyX + 1 && y === copyY + 1) {
                 isPartialCopy = false;
             }
 
             if ((download && obj.options.includeHeadersOnDownload == true) ||
-                (! download && obj.options.includeHeadersOnCopy == true && ! isPartialCopy) || (includeHeaders)) {
+                (!download && obj.options.includeHeadersOnCopy == true && !isPartialCopy) || (includeHeaders)) {
                 // Nested headers
                 if (obj.options.nestedHeaders && obj.options.nestedHeaders.length > 0) {
                     // Flexible way to handle nestedheaders
-                    if (! (obj.options.nestedHeaders[0] && obj.options.nestedHeaders[0][0])) {
+                    if (!(obj.options.nestedHeaders[0] && obj.options.nestedHeaders[0][0])) {
                         tmp = [obj.options.nestedHeaders];
                     } else {
                         tmp = obj.options.nestedHeaders;
@@ -6552,7 +6552,7 @@ if (! formula && typeof(require) === 'function') {
 
                 for (var i = 0; i < x; i++) {
                     // If cell is highlighted
-                    if (! highlighted || obj.records[j][i].classList.contains('highlight')) {
+                    if (!highlighted || obj.records[j][i].classList.contains('highlight')) {
                         if (copyHeader == true) {
                             header.push(obj.headers[i].textContent);
                         }
@@ -6605,7 +6605,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             }
 
-            if (x == numOfCols &&  y == numOfRows) {
+            if (x == numOfCols && y == numOfRows) {
                 headers = nestedHeaders;
             }
 
@@ -6614,7 +6614,7 @@ if (! formula && typeof(require) === 'function') {
             var strLabel = headers + rowLabel.join("\r\n");
 
             // Create a hidden textarea to copy the values
-            if (! returnData) {
+            if (!returnData) {
                 if (obj.options.copyCompatibility == true) {
                     obj.textarea.value = strLabel;
                 } else {
@@ -6623,7 +6623,7 @@ if (! formula && typeof(require) === 'function') {
                 obj.textarea.select();
                 if (!navigator.clipboard) {
                     document.execCommand("copy");
-                }else{
+                } else {
                     navigator.clipboard.writeText(obj.textarea.value);
                 }
             }
@@ -6638,7 +6638,7 @@ if (! formula && typeof(require) === 'function') {
             obj.hashString = obj.hash(obj.data);
 
             // Any exiting border should go
-            if (! returnData) {
+            if (!returnData) {
                 obj.removeCopyingSelection();
 
                 // Border
@@ -6673,7 +6673,7 @@ if (! formula && typeof(require) === 'function') {
          * @param integer row number
          * @return string value
          */
-        obj.paste = function(x, y, data) {
+        obj.paste = function (x, y, data) {
             // Paste filter
             var ret = obj.dispatch('onbeforepaste', el, data, x, y);
 
@@ -6746,7 +6746,7 @@ if (! formula && typeof(require) === 'function') {
 
                     j++;
                     if (data[j]) {
-                        if (rowIndex >= obj.rows.length-1) {
+                        if (rowIndex >= obj.rows.length - 1) {
                             // If the pasted row is out of range, create it if possible
                             if (obj.options.allowInsertRow == true) {
                                 obj.insertRow();
@@ -6764,11 +6764,11 @@ if (! formula && typeof(require) === 'function') {
 
                 // Update history
                 obj.setHistory({
-                    action:'setValue',
-                    records:records,
-                    selection:obj.selectedCell,
-                    newStyle:newStyle,
-                    oldStyle:oldStyle,
+                    action: 'setValue',
+                    records: records,
+                    selection: obj.selectedCell,
+                    newStyle: newStyle,
+                    oldStyle: oldStyle,
                 });
 
                 // Update table
@@ -6787,7 +6787,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Remove copying border
          */
-        obj.removeCopyingSelection = function() {
+        obj.removeCopyingSelection = function () {
             var copying = document.querySelectorAll('.jexcel .copying');
             for (var i = 0; i < copying.length; i++) {
                 copying[i].classList.remove('copying');
@@ -6801,8 +6801,8 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Process row
          */
-        obj.historyProcessRow = function(type, historyRecord) {
-            var rowIndex = (! historyRecord.insertBefore) ? historyRecord.rowNumber + 1 : +historyRecord.rowNumber;
+        obj.historyProcessRow = function (type, historyRecord) {
+            var rowIndex = (!historyRecord.insertBefore) ? historyRecord.rowNumber + 1 : +historyRecord.rowNumber;
 
             if (obj.options.search == true) {
                 if (obj.results && obj.results.length != obj.rows.length) {
@@ -6847,8 +6847,8 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Process column
          */
-        obj.historyProcessColumn = function(type, historyRecord) {
-            var columnIndex = (! historyRecord.insertBefore) ? historyRecord.columnNumber + 1 : historyRecord.columnNumber;
+        obj.historyProcessColumn = function (type, historyRecord) {
+            var columnIndex = (!historyRecord.insertBefore) ? historyRecord.columnNumber + 1 : historyRecord.columnNumber;
 
             // Remove column
             if (type == 1) {
@@ -6882,8 +6882,8 @@ if (! formula && typeof(require) === 'function') {
 
                 var index = 0
                 for (var i = columnIndex; i < (historyRecord.numOfColumns + columnIndex); i++) {
-                    obj.headerContainer.insertBefore(historyRecord.headers[index], obj.headerContainer.children[i+1]);
-                    obj.colgroupContainer.insertBefore(historyRecord.colgroup[index], obj.colgroupContainer.children[i+1]);
+                    obj.headerContainer.insertBefore(historyRecord.headers[index], obj.headerContainer.children[i + 1]);
+                    obj.colgroupContainer.insertBefore(historyRecord.colgroup[index], obj.colgroupContainer.children[i + 1]);
                     index++;
                 }
 
@@ -6892,7 +6892,7 @@ if (! formula && typeof(require) === 'function') {
                     obj.records[j] = jexcel.injectArray(obj.records[j], columnIndex, historyRecord.records[j]);
                     var index = 0
                     for (var i = columnIndex; i < (historyRecord.numOfColumns + columnIndex); i++) {
-                        obj.rows[j].insertBefore(historyRecord.records[j][index], obj.rows[j].children[i+1]);
+                        obj.rows[j].insertBefore(historyRecord.records[j][index], obj.rows[j].children[i + 1]);
                         index++;
                     }
                 }
@@ -6910,12 +6910,12 @@ if (! formula && typeof(require) === 'function') {
                 if (obj.options.nestedHeaders[0] && obj.options.nestedHeaders[0][0]) {
                     for (var j = 0; j < obj.options.nestedHeaders.length; j++) {
                         if (type == 1) {
-                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan) - historyRecord.numOfColumns;
+                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan) - historyRecord.numOfColumns;
                         } else {
-                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan) + historyRecord.numOfColumns;
+                            var colspan = parseInt(obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan) + historyRecord.numOfColumns;
                         }
-                        obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length-1].colspan = colspan;
-                        obj.thead.children[j].children[obj.thead.children[j].children.length-1].setAttribute('colspan', colspan);
+                        obj.options.nestedHeaders[j][obj.options.nestedHeaders[j].length - 1].colspan = colspan;
+                        obj.thead.children[j].children[obj.thead.children[j].children.length - 1].setAttribute('colspan', colspan);
                     }
                 } else {
                     if (type == 1) {
@@ -6924,7 +6924,7 @@ if (! formula && typeof(require) === 'function') {
                         var colspan = parseInt(obj.options.nestedHeaders[0].colspan) + historyRecord.numOfColumns;
                     }
                     obj.options.nestedHeaders[0].colspan = colspan;
-                    obj.thead.children[0].children[obj.thead.children[0].children.length-1].setAttribute('colspan', colspan);
+                    obj.thead.children[0].children[obj.thead.children[0].children.length - 1].setAttribute('colspan', colspan);
                 }
             }
 
@@ -6934,7 +6934,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Undo last action
          */
-        obj.undo = function() {
+        obj.undo = function () {
             // Ignore events and history
             var ignoreEvents = obj.ignoreEvents ? true : false;
             var ignoreHistory = obj.ignoreHistory ? true : false;
@@ -7013,7 +7013,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Redo previously undone action
          */
-        obj.redo = function() {
+        obj.redo = function () {
             // Ignore events and history
             var ignoreEvents = obj.ignoreEvents ? true : false;
             var ignoreHistory = obj.ignoreHistory ? true : false;
@@ -7081,7 +7081,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get dropdown value from key
          */
-        obj.getDropDownValue = function(column, key) {
+        obj.getDropDownValue = function (column, key) {
             var value = [];
 
             if (obj.options.columns[column] && obj.options.columns[column].source) {
@@ -7090,7 +7090,7 @@ if (! formula && typeof(require) === 'function') {
                 var source = obj.options.columns[column].source;
 
                 for (var i = 0; i < source.length; i++) {
-                    if (typeof(source[i]) == 'object') {
+                    if (typeof (source[i]) == 'object') {
                         combo[source[i].id] = source[i].name;
                     } else {
                         combo[source[i]] = source[i];
@@ -7101,7 +7101,7 @@ if (! formula && typeof(require) === 'function') {
                 var keys = Array.isArray(key) ? key : ('' + key).split(';');
 
                 for (var i = 0; i < keys.length; i++) {
-                    if (typeof(keys[i]) === 'object') {
+                    if (typeof (keys[i]) === 'object') {
                         value.push(combo[keys[i].id]);
                     } else {
                         if (combo[keys[i]]) {
@@ -7119,11 +7119,11 @@ if (! formula && typeof(require) === 'function') {
         /**
          * From stack overflow contributions
          */
-        obj.parseCSV = function(str, delimiter) {
+        obj.parseCSV = function (str, delimiter) {
             // Remove last line break
             str = str.replace(/\r?\n$|\r$|\n$/g, "");
             // Last caracter is the delimiter
-            if (str.charCodeAt(str.length-1) == 9) {
+            if (str.charCodeAt(str.length - 1) == 9) {
                 str += "\0";
             }
             // user-supplied delimeter or default comma
@@ -7133,7 +7133,7 @@ if (! formula && typeof(require) === 'function') {
             var quote = false;  // true means we're inside a quoted field
             // iterate over each character, keep track of current row and column (of the returned array)
             for (var row = 0, col = 0, c = 0; c < str.length; c++) {
-                var cc = str[c], nc = str[c+1];
+                var cc = str[c], nc = str[c + 1];
                 arr[row] = arr[row] || [];
                 arr[row][col] = arr[row][col] || '';
 
@@ -7159,39 +7159,39 @@ if (! formula && typeof(require) === 'function') {
             return arr;
         }
 
-        obj.hash = function(str) {
+        obj.hash = function (str) {
             var hash = 0, i, chr;
 
             if (str.length === 0) {
                 return hash;
             } else {
                 for (i = 0; i < str.length; i++) {
-                  chr = str.charCodeAt(i);
-                  hash = ((hash << 5) - hash) + chr;
-                  hash |= 0;
+                    chr = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + chr;
+                    hash |= 0;
                 }
             }
             return hash;
         }
 
-        obj.onafterchanges = function(el, records) {
+        obj.onafterchanges = function (el, records) {
             // Events
             obj.dispatch('onafterchanges', el, records);
         }
 
-        obj.destroy = function() {
+        obj.destroy = function () {
             jexcel.destroy(el);
         }
 
         /**
          * Initialization method
          */
-        obj.init = function() {
+        obj.init = function () {
             jexcel.current = obj;
 
- 
+
             // Build handlers
-            if (typeof(jexcel.build) == 'function') {
+            if (typeof (jexcel.build) == 'function') {
                 if (obj.options.root) {
                     jexcel.build(obj.options.root);
                 } else {
@@ -7225,20 +7225,20 @@ if (! formula && typeof(require) === 'function') {
                     method: obj.options.method,
                     data: obj.options.requestVariables,
                     dataType: 'text',
-                    success: function(result) {
+                    success: function (result) {
                         // Convert data
                         var newData = obj.parseCSV(result, obj.options.csvDelimiter)
 
                         // Headers
                         if (obj.options.csvHeaders == true && newData.length > 0) {
                             var headers = newData.shift();
-                            for(var i = 0; i < headers.length; i++) {
-                                if (! obj.options.columns[i]) {
-                                    obj.options.columns[i] = { type:'text', align:obj.options.defaultColAlign, width:obj.options.defaultColWidth };
+                            for (var i = 0; i < headers.length; i++) {
+                                if (!obj.options.columns[i]) {
+                                    obj.options.columns[i] = { type: 'text', align: obj.options.defaultColAlign, width: obj.options.defaultColWidth };
                                 }
                                 // Precedence over pre-configurated titles
                                 if (typeof obj.options.columns[i].title === 'undefined') {
-                                  obj.options.columns[i].title = headers[i];
+                                    obj.options.columns[i].title = headers[i];
                                 }
                             }
                         }
@@ -7263,7 +7263,7 @@ if (! formula && typeof(require) === 'function') {
                     method: obj.options.method,
                     data: obj.options.requestVariables,
                     dataType: 'json',
-                    success: function(result) {
+                    success: function (result) {
                         // Data
                         obj.options.data = (result.data) ? result.data : result;
                         // Prepare table
@@ -7278,9 +7278,9 @@ if (! formula && typeof(require) === 'function') {
                 // Prepare table
                 obj.prepareTable();
             }
-            if(IS_TOUCH_DEVICE){
+            if (IS_TOUCH_DEVICE) {
                 obj.createMultipleSelectorHandles();
-                console.log('obj.selectionHandles',obj.selectionHandles);
+                console.log('obj.selectionHandles', obj.selectionHandles);
             }
         }
 
@@ -7289,191 +7289,191 @@ if (! formula && typeof(require) === 'function') {
         //     obj.options.contextMenu = options.contextMenu;
         //     console.log('test2',options.contextMenu);
         // } else {
-            obj.options.contextMenu = function(el, x, y, e) {
-                var items = [];
+        obj.options.contextMenu = function (el, x, y, e) {
+            var items = [];
 
-                if (y == null) {
-                    // Insert a new column
-                    if (obj.options.allowInsertColumn == true) {
+            if (y == null) {
+                // Insert a new column
+                if (obj.options.allowInsertColumn == true) {
+                    items.push({
+                        title: obj.options.text.insertANewColumnBefore,
+                        onclick: function () {
+                            obj.insertColumn(1, parseInt(x), 1);
+                        }
+                    });
+                }
+
+                if (obj.options.allowInsertColumn == true) {
+                    items.push({
+                        title: obj.options.text.insertANewColumnAfter,
+                        onclick: function () {
+                            obj.insertColumn(1, parseInt(x), 0);
+                        }
+                    });
+                }
+
+                // Delete a column
+                if (obj.options.allowDeleteColumn == true) {
+                    items.push({
+                        title: obj.options.text.deleteSelectedColumns,
+                        onclick: function () {
+                            obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
+                        }
+                    });
+                }
+
+                // Rename column
+                if (obj.options.allowRenameColumn == true) {
+                    items.push({
+                        title: obj.options.text.renameThisColumn,
+                        onclick: function () {
+                            obj.setHeader(x);
+                        }
+                    });
+                }
+
+                // Sorting
+                if (obj.options.columnSorting == true) {
+                    // Line
+                    // items.push({ type:'line' });
+                    //降順昇順機能削除
+                    // items.push({
+                    //     title:obj.options.text.orderAscending,
+                    //     onclick:function() {
+                    //         obj.orderBy(x, 0);
+                    //     }
+                    // });
+                    // items.push({
+                    //     title:obj.options.text.orderDescending,
+                    //     onclick:function() {
+                    //         obj.orderBy(x, 1);
+                    //     }
+                    // });
+                }
+            } else {
+                // Insert new row
+                if (obj.options.allowInsertRow == true) {
+                    items.push({
+                        title: obj.options.text.insertANewRowBefore,
+                        onclick: function () {
+                            obj.insertRow(1, parseInt(y), 1);
+                        }
+                    });
+
+                    items.push({
+                        title: obj.options.text.insertANewRowAfter,
+                        onclick: function () {
+                            obj.insertRow(1, parseInt(y));
+                        }
+                    });
+                }
+
+                if (obj.options.allowDeleteRow == true) {
+                    items.push({
+                        title: obj.options.text.deleteSelectedRows,
+                        onclick: function () {
+                            obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                        }
+                    });
+                }
+
+                if (x) {
+                    if (obj.options.allowComments == true) {
+                        items.push({ type: 'line' });
+
+                        var title = obj.records[y][x].getAttribute('title') || '';
+
                         items.push({
-                            title:obj.options.text.insertANewColumnBefore,
-                            onclick:function() {
-                                obj.insertColumn(1, parseInt(x), 1);
+                            title: title ? obj.options.text.editComments : obj.options.text.addComments,
+                            onclick: function () {
+                                var comment = prompt(obj.options.text.comments, title);
+                                if (comment) {
+                                    obj.setComments([x, y], comment);
+                                }
                             }
                         });
-                    }
 
-                    if (obj.options.allowInsertColumn == true) {
-                        items.push({
-                            title:obj.options.text.insertANewColumnAfter,
-                            onclick:function() {
-                                obj.insertColumn(1, parseInt(x), 0);
-                            }
-                        });
-                    }
-
-                    // Delete a column
-                    if (obj.options.allowDeleteColumn == true) {
-                        items.push({
-                            title:obj.options.text.deleteSelectedColumns,
-                            onclick:function() {
-                                obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
-                            }
-                        });
-                    }
-
-                    // Rename column
-                    if (obj.options.allowRenameColumn == true) {
-                        items.push({
-                            title:obj.options.text.renameThisColumn,
-                            onclick:function() {
-                                obj.setHeader(x);
-                            }
-                        });
-                    }
-
-                    // Sorting
-                    if (obj.options.columnSorting == true) {
-                        // Line
-                        // items.push({ type:'line' });
-                        //降順昇順機能削除
-                        // items.push({
-                        //     title:obj.options.text.orderAscending,
-                        //     onclick:function() {
-                        //         obj.orderBy(x, 0);
-                        //     }
-                        // });
-                        // items.push({
-                        //     title:obj.options.text.orderDescending,
-                        //     onclick:function() {
-                        //         obj.orderBy(x, 1);
-                        //     }
-                        // });
-                    }
-                } else {
-                    // Insert new row
-                    if (obj.options.allowInsertRow == true) {
-                        items.push({
-                            title:obj.options.text.insertANewRowBefore,
-                            onclick:function() {
-                                obj.insertRow(1, parseInt(y), 1);
-                            }
-                        });
-
-                        items.push({
-                            title:obj.options.text.insertANewRowAfter,
-                            onclick:function() {
-                                obj.insertRow(1, parseInt(y));
-                            }
-                        });
-                    }
-
-                    if (obj.options.allowDeleteRow == true) {
-                        items.push({
-                            title:obj.options.text.deleteSelectedRows,
-                            onclick:function() {
-                                obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
-                            }
-                        });
-                    }
-
-                    if (x) {
-                        if (obj.options.allowComments == true) {
-                            items.push({ type:'line' });
-
-                            var title = obj.records[y][x].getAttribute('title') || '';
-
+                        if (title) {
                             items.push({
-                                title: title ? obj.options.text.editComments : obj.options.text.addComments,
-                                onclick:function() {
-                                    var comment = prompt(obj.options.text.comments, title);
-                                    if (comment) {
-                                        obj.setComments([ x, y ], comment);
-                                    }
+                                title: obj.options.text.clearComments,
+                                onclick: function () {
+                                    obj.setComments([x, y], '');
                                 }
                             });
-
-                            if (title) {
-                                items.push({
-                                    title:obj.options.text.clearComments,
-                                    onclick:function() {
-                                        obj.setComments([ x, y ], '');
-                                    }
-                                });
-                            }
                         }
                     }
                 }
-
-                // Line
-                items.push({ type:'line' });
-
-                // Copy
-                items.push({
-                    title:obj.options.text.copy,
-                    //shortcut:'Ctrl + C',
-                    onclick:function() {
-                        obj.copy(true);
-                    }
-                });
-
-                // Paste
-                if (navigator && navigator.clipboard) {
-                    items.push({
-                        title:obj.options.text.paste,
-                        //shortcut:'Ctrl + V',
-                        onclick:function() {
-                            if (obj.selectedCell) {
-                                navigator.clipboard.readText().then(function(text) {
-                                    if (text) {
-                                        jexcel.current.paste(obj.selectedCell[0], obj.selectedCell[1], text);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-
-                // Save
-                if (obj.options.allowExport) {
-                    items.push({
-                        title: obj.options.text.saveAs,
-                        shortcut: 'Ctrl + S',
-                        onclick: function () {
-                            obj.download();
-                        }
-                    });
-                }
-                items.push({
-                    title:"元に戻す",
-                    onclick:function() {
-                        obj.undo();
-                    }
-                });
-                items.push({
-                    title:"やり直し",
-                    onclick:function() {
-                        obj.redo();
-                    }
-                });
-                // About
-                if (obj.options.about) {
-                    items.push({
-                        title:obj.options.text.about,
-                        onclick:function() {
-                            if (obj.options.about === true) {
-                                alert(Version().print());
-                            } else {
-                                alert(obj.options.about);
-                            }
-                        }
-                    });
-                }
-                return items;
             }
+
+            // Line
+            items.push({ type: 'line' });
+
+            // Copy
+            items.push({
+                title: obj.options.text.copy,
+                //shortcut:'Ctrl + C',
+                onclick: function () {
+                    obj.copy(true);
+                }
+            });
+
+            // Paste
+            if (navigator && navigator.clipboard) {
+                items.push({
+                    title: obj.options.text.paste,
+                    //shortcut:'Ctrl + V',
+                    onclick: function () {
+                        if (obj.selectedCell) {
+                            navigator.clipboard.readText().then(function (text) {
+                                if (text) {
+                                    jexcel.current.paste(obj.selectedCell[0], obj.selectedCell[1], text);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Save
+            if (obj.options.allowExport) {
+                items.push({
+                    title: obj.options.text.saveAs,
+                    shortcut: 'Ctrl + S',
+                    onclick: function () {
+                        obj.download();
+                    }
+                });
+            }
+            items.push({
+                title: "元に戻す",
+                onclick: function () {
+                    obj.undo();
+                }
+            });
+            items.push({
+                title: "やり直し",
+                onclick: function () {
+                    obj.redo();
+                }
+            });
+            // About
+            if (obj.options.about) {
+                items.push({
+                    title: obj.options.text.about,
+                    onclick: function () {
+                        if (obj.options.about === true) {
+                            alert(Version().print());
+                        } else {
+                            alert(obj.options.about);
+                        }
+                    }
+                });
+            }
+            return items;
+        }
         //}
 
-        obj.scrollControls = function(e) {
+        obj.scrollControls = function (e) {
             obj.wheelControls();
 
             if (obj.options.freezeColumns > 0 && obj.content.scrollLeft != scrollLeft) {
@@ -7482,16 +7482,16 @@ if (! formula && typeof(require) === 'function') {
 
             // Close editor
             if (obj.options.lazyLoading == true || obj.options.tableOverflow == true) {
-                if (obj.edition && e.target.className.substr(0,9) != 'jdropdown') {
+                if (obj.edition && e.target.className.substr(0, 9) != 'jdropdown') {
                     obj.closeEditor(obj.edition[0], true);
                 }
             }
         }
 
-        obj.wheelControls = function(e) {
+        obj.wheelControls = function (e) {
             if (obj.options.lazyLoading == true) {
                 if (jexcel.timeControlLoading == null) {
-                    jexcel.timeControlLoading = setTimeout(function() {
+                    jexcel.timeControlLoading = setTimeout(function () {
                         if (obj.content.scrollTop + obj.content.clientHeight >= obj.content.scrollHeight - 10) {
                             if (obj.loadDown()) {
                                 if (obj.content.scrollTop + obj.content.clientHeight > obj.content.scrollHeight - 10) {
@@ -7515,7 +7515,7 @@ if (! formula && typeof(require) === 'function') {
         }
 
         // Get width of all freezed cells together
-        obj.getFreezeWidth = function() {
+        obj.getFreezeWidth = function () {
             var width = 0;
             if (obj.options.freezeColumns > 0) {
                 for (var i = 0; i < obj.options.freezeColumns; i++) {
@@ -7527,22 +7527,22 @@ if (! formula && typeof(require) === 'function') {
 
         var scrollLeft = 0;
 
-        obj.updateFreezePosition = function() {
+        obj.updateFreezePosition = function () {
             scrollLeft = obj.content.scrollLeft;
             var width = 0;
             if (scrollLeft > 50) {
                 for (var i = 0; i < obj.options.freezeColumns; i++) {
                     if (i > 0) {
                         // Must check if the previous column is hidden or not to determin whether the width shoule be added or not!
-                        if (obj.options.columns[i-1].type !== "hidden") {
-                            width += parseInt(obj.options.columns[i-1].width);
+                        if (obj.options.columns[i - 1].type !== "hidden") {
+                            width += parseInt(obj.options.columns[i - 1].width);
                         }
                     }
                     obj.headers[i].classList.add('jexcel_freezed');
                     obj.headers[i].style.left = width + 'px';
                     for (var j = 0; j < obj.rows.length; j++) {
                         if (obj.rows[j] && obj.records[j][i]) {
-                            var shifted = (scrollLeft + (i > 0 ? obj.records[j][i-1].style.width : 0)) - 51 + 'px';
+                            var shifted = (scrollLeft + (i > 0 ? obj.records[j][i - 1].style.width : 0)) - 51 + 'px';
                             obj.records[j][i].classList.add('jexcel_freezed');
                             obj.records[j][i].style.left = shifted;
                         }
@@ -7564,7 +7564,7 @@ if (! formula && typeof(require) === 'function') {
             // Place the corner in the correct place
             obj.updateCornerPosition();
         }
-        obj.updateTransform = function(transformOption) {
+        obj.updateTransform = function (transformOption) {
             // Remove any merged cells
             if (obj.options.transform) {
                 obj.options.transform.x = transformOption.x;
@@ -7577,93 +7577,93 @@ if (! formula && typeof(require) === 'function') {
          */
         //
         var nIntervScroll;
-        var scrollCount=0;
-        
-        obj.scrollUpdateControls = function(event){
-            if(jexcel.isMouseAction){
+        var scrollCount = 0;
+
+        obj.scrollUpdateControls = function (event) {
+            if (jexcel.isMouseAction) {
                 //移動方向を判定
                 // Jspreadsheet Container information
                 var contentRect = obj.content.getBoundingClientRect();
                 //移動量
-                if(event.pageY+5 > contentRect.bottom){
+                if (event.pageY + 5 > contentRect.bottom) {
                     if (!nIntervScroll) {
-                        nIntervScroll = setInterval(()=>{
+                        nIntervScroll = setInterval(() => {
                             scrollCount++;
                             var moveing = 4;
-                            if(scrollCount > 200){
+                            if (scrollCount > 200) {
                                 moveing = 56;
-                            }else if(scrollCount > 100){
+                            } else if (scrollCount > 100) {
                                 moveing = 12;
                             }
                             obj.content.scrollTop += moveing
                         }, 10);
                     }
-                }else if(event.pageX+5 > contentRect.right){
+                } else if (event.pageX + 5 > contentRect.right) {
                     if (!nIntervScroll) {
-                        nIntervScroll = setInterval(()=>{
+                        nIntervScroll = setInterval(() => {
                             scrollCount++;
                             var moveing = 4;
-                            if(scrollCount > 200){
+                            if (scrollCount > 200) {
                                 moveing = 56;
-                            }else if(scrollCount > 100){
+                            } else if (scrollCount > 100) {
                                 moveing = 12;
                             }
                             obj.content.scrollLeft += moveing
                         }, 10);
                     }
-                }else if(event.pageX-5 < contentRect.left){
+                } else if (event.pageX - 5 < contentRect.left) {
                     if (!nIntervScroll) {
-                        nIntervScroll = setInterval(()=>{
+                        nIntervScroll = setInterval(() => {
                             scrollCount++;
                             var moveing = 4;
-                            if(scrollCount > 200){
+                            if (scrollCount > 200) {
                                 moveing = 56;
-                            }else if(scrollCount > 100){
+                            } else if (scrollCount > 100) {
                                 moveing = 12;
                             }
                             obj.content.scrollLeft -= moveing
                         }, 10);
-                        }
-                }else if(event.pageY-5 < contentRect.top){
+                    }
+                } else if (event.pageY - 5 < contentRect.top) {
                     if (!nIntervScroll) {
-                        nIntervScroll = setInterval(()=>{
+                        nIntervScroll = setInterval(() => {
                             scrollCount++;
                             var moveing = 4;
-                            if(scrollCount > 200){
+                            if (scrollCount > 200) {
                                 moveing = 56;
-                            }else if(scrollCount > 100){
+                            } else if (scrollCount > 100) {
                                 moveing = 12;
                             }
                             obj.content.scrollTop -= moveing
                         }, 10);
-                        }
-                    
-                }else{
+                    }
+
+                } else {
                     // console.log("in")
                     clearInterval(nIntervScroll);
                     nIntervScroll = null;
-                    scrollCount=0;
+                    scrollCount = 0;
                 }
 
             }
         }
-        obj.scrollEndControls = function(){
+        obj.scrollEndControls = function () {
             clearInterval(nIntervScroll);
             nIntervScroll = null;
-            scrollCount=0;
+            scrollCount = 0;
         }
         /**
          * Create multiple selector handler for mobile devices
          */
         obj.selectionHandles = {}
-        obj.createMultipleSelectorHandles = function() {
+        obj.createMultipleSelectorHandles = function () {
             obj.selectionHandles = {
-            topLeft: document.createElement('DIV'),
-            topLeftHitArea: document.createElement('DIV'),
-            bottomRight: document.createElement('DIV'),
-            bottomRightHitArea: document.createElement('DIV'),
-            topRight: document.createElement('DIV'),
-            topRightHitArea: document.createElement('DIV'),
+                topLeft: document.createElement('DIV'),
+                topLeftHitArea: document.createElement('DIV'),
+                bottomRight: document.createElement('DIV'),
+                bottomRightHitArea: document.createElement('DIV'),
+                topRight: document.createElement('DIV'),
+                topRightHitArea: document.createElement('DIV'),
             };
             const width = 10;
             const hitAreaWidth = 40;
@@ -7675,37 +7675,37 @@ if (! formula && typeof(require) === 'function') {
             obj.selectionHandles.topRight.className = 'topRightSelectionHandle';
             obj.selectionHandles.topRightHitArea.className = 'topRightSelectionHandle-HitArea';
             obj.selectionHandles.styles = {
-            topLeft: obj.selectionHandles.topLeft.style,
-            topLeftHitArea: obj.selectionHandles.topLeftHitArea.style,
-            bottomRight: obj.selectionHandles.bottomRight.style,
-            bottomRightHitArea: obj.selectionHandles.bottomRightHitArea.style,
-            topRight: obj.selectionHandles.topRight.style,
-            topRightHitArea: obj.selectionHandles.topRightHitArea.style
+                topLeft: obj.selectionHandles.topLeft.style,
+                topLeftHitArea: obj.selectionHandles.topLeftHitArea.style,
+                bottomRight: obj.selectionHandles.bottomRight.style,
+                bottomRightHitArea: obj.selectionHandles.bottomRightHitArea.style,
+                topRight: obj.selectionHandles.topRight.style,
+                topRightHitArea: obj.selectionHandles.topRightHitArea.style
             };
 
             const hitAreaStyle = {
-            position: 'absolute',
-            height: `${hitAreaWidth}px`,
-            width: `${hitAreaWidth}px`,
-            'border-radius': `${parseInt(hitAreaWidth / 1.5, 10)}px`,
+                position: 'absolute',
+                height: `${hitAreaWidth}px`,
+                width: `${hitAreaWidth}px`,
+                'border-radius': `${parseInt(hitAreaWidth / 1.5, 10)}px`,
             };
 
             jexcel.objectEach(hitAreaStyle, (value, key) => {
-            obj.selectionHandles.styles.bottomRightHitArea[key] = value;
-            obj.selectionHandles.styles.topLeftHitArea[key] = value;
-            obj.selectionHandles.styles.topRightHitArea[key] = value;
+                obj.selectionHandles.styles.bottomRightHitArea[key] = value;
+                obj.selectionHandles.styles.topLeftHitArea[key] = value;
+                obj.selectionHandles.styles.topRightHitArea[key] = value;
             });
 
             const handleStyle = {
-            position: 'absolute',
-            height: `${width}px`,
-            width: `${width}px`,
-            'border-radius': `${parseInt(width / 1.5, 10)}px`,
-            background: '#F5F5FF',
-            border: '1px solid #4285c8'
+                position: 'absolute',
+                height: `${width}px`,
+                width: `${width}px`,
+                'border-radius': `${parseInt(width / 1.5, 10)}px`,
+                background: '#F5F5FF',
+                border: '1px solid #4285c8'
             };
-            let contextButtonStyle = {display: 'none'};
-            if(jexcel.current.options.contextMenu){
+            let contextButtonStyle = { display: 'none' };
+            if (jexcel.current.options.contextMenu) {
                 contextButtonStyle = {
                     position: 'absolute',
                     height: `${width}px`,
@@ -7716,8 +7716,8 @@ if (! formula && typeof(require) === 'function') {
             }
 
             jexcel.objectEach(handleStyle, (value, key) => {
-            obj.selectionHandles.styles.bottomRight[key] = value;
-            obj.selectionHandles.styles.topLeft[key] = value;
+                obj.selectionHandles.styles.bottomRight[key] = value;
+                obj.selectionHandles.styles.topLeft[key] = value;
             });
             jexcel.objectEach(contextButtonStyle, (value, key) => {
                 obj.selectionHandles.styles.topRight[key] = value;
@@ -7729,27 +7729,27 @@ if (! formula && typeof(require) === 'function') {
             obj.content.appendChild(obj.selectionHandles.topRight);
             obj.content.appendChild(obj.selectionHandles.topRightHitArea);
         }
-        
-        obj.updateMultipleSelectionHandlesPosition = function(x1, y1, x2, y2) {
+
+        obj.updateMultipleSelectionHandlesPosition = function (x1, y1, x2, y2) {
             var tX = x1;
             var tY = y1;
             var bX = x2;
             var bY = y2;
-            if(parseInt(x1) > parseInt(x2)){
+            if (parseInt(x1) > parseInt(x2)) {
                 tX = x2;
                 bX = x1;
             }
-            if(parseInt(y1) > parseInt(y2)){
+            if (parseInt(y1) > parseInt(y2)) {
                 tY = y2;
                 bY = y1;
             }
             const hitAreaWidth = parseInt(obj.selectionHandles.styles.topLeftHitArea.width, 10);
-            
-            var cellTopLeft = obj.getCellFromCoords(tX,tY).getBoundingClientRect();
-            var cellBottomRight = obj.getCellFromCoords(bX,bY).getBoundingClientRect();
+
+            var cellTopLeft = obj.getCellFromCoords(tX, tY).getBoundingClientRect();
+            var cellBottomRight = obj.getCellFromCoords(bX, bY).getBoundingClientRect();
             // console.log('cellTopLeft',cellTopLeft);
             // console.log('cellBottomRight',cellBottomRight);
-            
+
             var x1pos = cellTopLeft.left;
             var y1pos = cellTopLeft.top;
             var x2pos = cellBottomRight.right;
@@ -7761,25 +7761,25 @@ if (! formula && typeof(require) === 'function') {
             var h2 = contentRect.height;
             var topLeftX = (x1pos - offsetX);
             var topLeftY = (y1pos - offsetY);
-            topLeftY = jexcel.transformScaleTop(obj,topLeftY)+ obj.content.scrollTop -4;
-            topLeftX = jexcel.transformScaleLeft(obj,topLeftX)+ obj.content.scrollLeft -4;
+            topLeftY = jexcel.transformScaleTop(obj, topLeftY) + obj.content.scrollTop - 4;
+            topLeftX = jexcel.transformScaleLeft(obj, topLeftX) + obj.content.scrollLeft - 4;
             // Place the corner in the correct place
             obj.selectionHandles.styles.topLeft.top = topLeftY + 'px';
             obj.selectionHandles.styles.topLeft.left = topLeftX + 'px';
-        
+
             obj.selectionHandles.styles.topLeftHitArea.top = `${parseInt(topLeftY - ((hitAreaWidth / 4) * 3), 10)}px`;
             obj.selectionHandles.styles.topLeftHitArea.left = `${parseInt(topLeftX - ((hitAreaWidth / 4) * 3), 10)}px`;
             //右下
-            var bottomRightX = (x2pos- offsetX);
-            var bottomRightY = (y2pos -offsetY);
-            bottomRightY = jexcel.transformScaleTop(obj,bottomRightY)+ obj.content.scrollTop -4;
-            bottomRightX = jexcel.transformScaleLeft(obj,bottomRightX)+ obj.content.scrollLeft -4;
+            var bottomRightX = (x2pos - offsetX);
+            var bottomRightY = (y2pos - offsetY);
+            bottomRightY = jexcel.transformScaleTop(obj, bottomRightY) + obj.content.scrollTop - 4;
+            bottomRightX = jexcel.transformScaleLeft(obj, bottomRightX) + obj.content.scrollLeft - 4;
 
             obj.selectionHandles.styles.bottomRight.top = bottomRightY + 'px';
             obj.selectionHandles.styles.bottomRight.left = bottomRightX + 'px';
-        
-            obj.selectionHandles.styles.bottomRightHitArea.top = `${parseInt(bottomRightY - (hitAreaWidth / 4) , 10)}px`;
-            obj.selectionHandles.styles.bottomRightHitArea.left = `${parseInt(bottomRightX - (hitAreaWidth / 4) , 10)}px`;
+
+            obj.selectionHandles.styles.bottomRightHitArea.top = `${parseInt(bottomRightY - (hitAreaWidth / 4), 10)}px`;
+            obj.selectionHandles.styles.bottomRightHitArea.left = `${parseInt(bottomRightX - (hitAreaWidth / 4), 10)}px`;
             //右上
             var topRightX = bottomRightX;
             var topRightY = topLeftY;
@@ -7787,8 +7787,8 @@ if (! formula && typeof(require) === 'function') {
             obj.selectionHandles.styles.topRight.left = topRightX + 'px';
             obj.selectionHandles.styles.topRightHitArea.top = `${parseInt(topRightY - ((hitAreaWidth / 2)), 10)}px`;
             obj.selectionHandles.styles.topRightHitArea.left = `${parseInt(topRightX - ((hitAreaWidth / 2)), 10)}px`;
-            
-          }
+
+        }
         el.addEventListener("DOMMouseScroll", obj.wheelControls);
         el.addEventListener("mousewheel", obj.wheelControls);
         el.addEventListener("mouseout", obj.scrollUpdateControls);
@@ -7808,30 +7808,30 @@ if (! formula && typeof(require) === 'function') {
      * @param {Function} iteratee The function invoked per iteration.
      * @returns {Object} Returns `object`.
      */
-    jexcel.objectEach = function(object, iteratee) {
+    jexcel.objectEach = function (object, iteratee) {
         // eslint-disable-next-line no-restricted-syntax
         for (const key in object) {
-        if (!object.hasOwnProperty || (object.hasOwnProperty && Object.prototype.hasOwnProperty.call(object, key))) {
-            if (iteratee(object[key], key, object) === false) {
-            break;
+            if (!object.hasOwnProperty || (object.hasOwnProperty && Object.prototype.hasOwnProperty.call(object, key))) {
+                if (iteratee(object[key], key, object) === false) {
+                    break;
+                }
             }
         }
-        }
-    
+
         return object;
     }
     // Define dictionary
-    jexcel.setDictionary = function(o) {
+    jexcel.setDictionary = function (o) {
         jSuites.setDictionary(o);
     }
 
     // Define extensions
-    jexcel.setExtensions = function(o) {
+    jexcel.setExtensions = function (o) {
         var k = Object.keys(o);
         for (var i = 0; i < k.length; i++) {
-            if (typeof(o[k[i]]) === 'function') {
+            if (typeof (o[k[i]]) === 'function') {
                 jexcel[k[i]] = o[k[i]];
-                if (jexcel.license && typeof(o[k[i]].license) == 'function') {
+                if (jexcel.license && typeof (o[k[i]].license) == 'function') {
                     o[k[i]].license(jexcel.license);
                 }
             }
@@ -7841,7 +7841,7 @@ if (! formula && typeof(require) === 'function') {
     /**
      * Formulas
      */
-    if (typeof(formula) !== 'undefined') {
+    if (typeof (formula) !== 'undefined') {
         jexcel.formula = formula;
     }
     jexcel.version = Version;
@@ -7850,7 +7850,7 @@ if (! formula && typeof(require) === 'function') {
     jexcel.timeControl = null;
     jexcel.timeControlLoading = null;
 
-    const destroyEvents = function(root) {
+    const destroyEvents = function (root) {
         root.removeEventListener("mouseup", jexcel.mouseUpControls);
         root.removeEventListener("mousedown", jexcel.mouseDownControls);
         root.removeEventListener("mousemove", jexcel.mouseMoveControls);
@@ -7858,14 +7858,14 @@ if (! formula && typeof(require) === 'function') {
         root.removeEventListener("dblclick", jexcel.doubleClickControls);
         root.removeEventListener("paste", jexcel.pasteControls);
         root.removeEventListener("contextmenu", jexcel.contextMenuControls);
-        root.removeEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
-        root.removeEventListener("touchend", jexcel.touchEndControls,{ passive: false });
-        root.removeEventListener("touchcancel", jexcel.touchEndControls,{ passive: false });
-        root.removeEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
+        root.removeEventListener("touchstart", jexcel.touchStartControls, { passive: false });
+        root.removeEventListener("touchend", jexcel.touchEndControls, { passive: false });
+        root.removeEventListener("touchcancel", jexcel.touchEndControls, { passive: false });
+        root.removeEventListener("touchmove", jexcel.touchmoveControls, { passive: false });
         document.removeEventListener("keydown", jexcel.keyDownControls);
     }
 
-    jexcel.destroy = function(element, destroyEventHandlers) {
+    jexcel.destroy = function (element, destroyEventHandlers) {
         if (element.jexcel) {
             var root = element.jexcel.options.root ? element.jexcel.options.root : document;
             element.removeEventListener("DOMMouseScroll", element.jexcel.scrollControls);
@@ -7882,7 +7882,7 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.build = function(root) {
+    jexcel.build = function (root) {
         destroyEvents(root);
         root.addEventListener("mouseup", jexcel.mouseUpControls);
         root.addEventListener("mousedown", jexcel.mouseDownControls);
@@ -7891,16 +7891,16 @@ if (! formula && typeof(require) === 'function') {
         root.addEventListener("dblclick", jexcel.doubleClickControls);
         root.addEventListener("paste", jexcel.pasteControls);
         root.addEventListener("contextmenu", jexcel.contextMenuControls);
-        root.addEventListener("touchstart", jexcel.touchStartControls,{ passive: false });
-        root.addEventListener("touchend", jexcel.touchEndControls,{ passive: false });
-        root.addEventListener("touchcancel", jexcel.touchEndControls,{ passive: false });
-        root.addEventListener("touchmove", jexcel.touchmoveControls,{ passive: false });
+        root.addEventListener("touchstart", jexcel.touchStartControls, { passive: false });
+        root.addEventListener("touchend", jexcel.touchEndControls, { passive: false });
+        root.addEventListener("touchcancel", jexcel.touchEndControls, { passive: false });
+        root.addEventListener("touchmove", jexcel.touchmoveControls, { passive: false });
         document.addEventListener("keydown", jexcel.keyDownControls);
     }
     /**
      * Events
      */
-    jexcel.keyDownControls = function(e) {
+    jexcel.keyDownControls = function (e) {
         if (jexcel.current) {
             if (jexcel.current.edition) {
                 if (e.which == 27) {
@@ -7915,13 +7915,13 @@ if (! formula && typeof(require) === 'function') {
                     if (jexcel.current.options.columns[jexcel.current.edition[2]].type == 'calendar') {
                         jexcel.current.closeEditor(jexcel.current.edition[0], true);
                     } else if (jexcel.current.options.columns[jexcel.current.edition[2]].type == 'dropdown' ||
-                               jexcel.current.options.columns[jexcel.current.edition[2]].type == 'autocomplete') {
+                        jexcel.current.options.columns[jexcel.current.edition[2]].type == 'autocomplete') {
                         // Do nothing
                     } else {
                         // Alt enter -> do not close editor
                         if ((jexcel.current.options.wordWrap == true ||
-                             jexcel.current.options.columns[jexcel.current.edition[2]].wordWrap == true ||
-                             jexcel.current.options.data[jexcel.current.edition[3]][jexcel.current.edition[2]].length > 200) && e.altKey) {
+                            jexcel.current.options.columns[jexcel.current.edition[2]].wordWrap == true ||
+                            jexcel.current.options.data[jexcel.current.edition[3]][jexcel.current.edition[2]].length > 200) && e.altKey) {
                             // Add new line to the editor
                             var editorTextarea = jexcel.current.edition[0].children[0];
                             var editorValue = jexcel.current.edition[0].children[0].value;
@@ -7938,7 +7938,7 @@ if (! formula && typeof(require) === 'function') {
                 } else if (e.which == 9) {
                     // Tab
                     if (['calendar', 'html'].includes(
-                    jexcel.current.options.columns[jexcel.current.edition[2]].type)) {
+                        jexcel.current.options.columns[jexcel.current.edition[2]].type)) {
                         jexcel.current.closeEditor(jexcel.current.edition[0], true);
                     } else {
                         jexcel.current.edition[0].children[0].blur();
@@ -7946,7 +7946,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             }
 
-            if (! jexcel.current.edition && jexcel.current.selectedCell) {
+            if (!jexcel.current.edition && jexcel.current.selectedCell) {
                 // Which key
                 if (e.which == 37) {
                     jexcel.current.left(e.shiftKey, e.ctrlKey);
@@ -8021,7 +8021,7 @@ if (! formula && typeof(require) === 'function') {
                     }
                     e.preventDefault();
                 } else {
-                    if ((e.ctrlKey || e.metaKey) && ! e.shiftKey) {
+                    if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
                         if (e.which == 65) {
                             // Ctrl + A
                             jexcel.current.selectAll();
@@ -8077,10 +8077,10 @@ if (! formula && typeof(require) === 'function') {
                                         // Start edition with current content F2
                                         jexcel.current.openEditor(jexcel.current.records[rowId][columnId], false);
                                     } else if ((e.keyCode == 8) ||
-                                               (e.keyCode >= 48 && e.keyCode <= 57) ||
-                                               (e.keyCode >= 96 && e.keyCode <= 111) ||
-                                               (e.keyCode >= 187 && e.keyCode <= 190) ||
-                                               ((String.fromCharCode(e.keyCode) == e.key || String.fromCharCode(e.keyCode).toLowerCase() == e.key.toLowerCase()) && jexcel.validLetter(String.fromCharCode(e.keyCode)))) {
+                                        (e.keyCode >= 48 && e.keyCode <= 57) ||
+                                        (e.keyCode >= 96 && e.keyCode <= 111) ||
+                                        (e.keyCode >= 187 && e.keyCode <= 190) ||
+                                        ((String.fromCharCode(e.keyCode) == e.key || String.fromCharCode(e.keyCode).toLowerCase() == e.key.toLowerCase()) && jexcel.validLetter(String.fromCharCode(e.keyCode)))) {
                                         // Start edition
                                         jexcel.current.openEditor(jexcel.current.records[rowId][columnId], true);
                                         // Prevent entries in the calendar
@@ -8099,7 +8099,7 @@ if (! formula && typeof(require) === 'function') {
                         clearTimeout(jexcel.timeControl);
                     }
 
-                    jexcel.timeControl = setTimeout(function() {
+                    jexcel.timeControl = setTimeout(function () {
                         jexcel.current.search(e.target.value);
                     }, 200);
                 }
@@ -8109,7 +8109,7 @@ if (! formula && typeof(require) === 'function') {
 
     jexcel.isMouseAction = false;
 
-    jexcel.mouseDownControls = function(e) {
+    jexcel.mouseDownControls = function (e) {
         e = e || window.event;
         if (e.buttons) {
             var mouseButton = e.buttons;
@@ -8157,14 +8157,14 @@ if (! formula && typeof(require) === 'function') {
                     if (columnId) {
                         // Update cursor
                         var info = e.target.getBoundingClientRect();
-                      
+
                         //リサイズ対応
-                        
-                        const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
-                        const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
-                        console.log('infoH',infoH);
+
+                        const infoH = jexcel.transformScaleTop(jexcel.current, info.height);
+                        const infoW = jexcel.transformScaleLeft(jexcel.current, info.width);
+                        console.log('infoH', infoH);
                         if (jexcel.current.options.columnResize == true && (infoW - e.offsetX < 10)) {
-                            console.log('columnResize'); 
+                            console.log('columnResize');
                             // Resize helper
                             jexcel.current.resizing = {
                                 mousePosition: e.pageX,
@@ -8180,11 +8180,11 @@ if (! formula && typeof(require) === 'function') {
                                 }
                             }
                         } else if (jexcel.current.options.columnDrag == true && (infoH - e.offsetY < 10)) {
-                            console.log('columnDrag'); 
+                            console.log('columnDrag');
                             if (jexcel.current.isColMerged(columnId).length) {
                                 console.error('Jspreadsheet: This column is part of a merged cell.');
                             } else {
-                                
+
                                 // Reset selection
                                 jexcel.current.resetSelection();
                                 // Drag helper
@@ -8208,7 +8208,7 @@ if (! formula && typeof(require) === 'function') {
                             } else {
                                 // Press to rename
                                 if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
-                                    jexcel.timeControl = setTimeout(function() {
+                                    jexcel.timeControl = setTimeout(function () {
                                         jexcel.current.setHeader(columnId);
                                     }, 800);
                                 }
@@ -8229,7 +8229,7 @@ if (! formula && typeof(require) === 'function') {
                             if (e.target.getAttribute('data-column')) {
                                 var column = e.target.getAttribute('data-column').split(',');
                                 var c1 = parseInt(column[0]);
-                                var c2 = parseInt(column[column.length-1]);
+                                var c2 = parseInt(column[column.length - 1]);
                             } else {
                                 var c1 = 0;
                                 var c2 = jexcel.current.options.columns.length - 1;
@@ -8248,10 +8248,10 @@ if (! formula && typeof(require) === 'function') {
                     if (e.target.classList.contains('jexcel_row')) {
                         var info = e.target.getBoundingClientRect();
                         //リサイズ対応
-                        
-                        const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
-                        const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
-                        console.log('infoH',infoH);
+
+                        const infoH = jexcel.transformScaleTop(jexcel.current, info.height);
+                        const infoW = jexcel.transformScaleLeft(jexcel.current, info.width);
+                        console.log('infoH', infoH);
                         if (jexcel.current.options.rowResize == true && infoH - e.offsetY < 10) {
                             // Resize helper
                             jexcel.current.resizing = {
@@ -8274,8 +8274,8 @@ if (! formula && typeof(require) === 'function') {
                                 // Drag helper
                                 jexcel.current.dragging = {
                                     element: e.target.parentNode,
-                                    row:rowId,
-                                    destination:rowId,
+                                    row: rowId,
+                                    destination: rowId,
                                 };
                                 // Border indication
                                 e.target.parentNode.classList.add('dragging');
@@ -8300,7 +8300,7 @@ if (! formula && typeof(require) === 'function') {
                         if (e.target.classList.contains('jclose') && e.target.clientWidth - e.offsetX < 50 && e.offsetY < 50) {
                             jexcel.current.closeEditor(jexcel.current.edition[0], true);
                         } else {
-                            var getCellCoords = function(element) {
+                            var getCellCoords = function (element) {
                                 var x = element.getAttribute('data-x');
                                 var y = element.getAttribute('data-y');
                                 if (x && y) {
@@ -8324,7 +8324,7 @@ if (! formula && typeof(require) === 'function') {
                                     }
                                 }
 
-                                if (! jexcel.current.edition) {
+                                if (!jexcel.current.edition) {
                                     // Update cell selection
                                     if (e.shiftKey) {
                                         jexcel.current.updateSelectionFromCoords(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], columnId, rowId);
@@ -8364,7 +8364,7 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.mouseUpControls = function(e) {
+    jexcel.mouseUpControls = function (e) {
         if (jexcel.current) {
             // Update cell size
             if (jexcel.current.resizing) {
@@ -8470,7 +8470,7 @@ if (! formula && typeof(require) === 'function') {
     }
 
     // Mouse move controls
-    jexcel.mouseMoveControls = function(e) {
+    jexcel.mouseMoveControls = function (e) {
         e = e || window.event;
         if (e.buttons) {
             var mouseButton = e.buttons;
@@ -8480,7 +8480,7 @@ if (! formula && typeof(require) === 'function') {
             var mouseButton = e.which;
         }
 
-        if (! mouseButton) {
+        if (!mouseButton) {
             jexcel.isMouseAction = false;
         }
 
@@ -8556,7 +8556,7 @@ if (! formula && typeof(require) === 'function') {
                         }
                     }
                 }
-                
+
             } else {
                 var x = e.target.getAttribute('data-x');
                 var y = e.target.getAttribute('data-y');
@@ -8569,20 +8569,20 @@ if (! formula && typeof(require) === 'function') {
 
                 if (e.target.parentNode.parentNode && e.target.parentNode.parentNode.className) {
                     if (e.target.parentNode.parentNode.classList.contains('resizable')) {
-                        if (e.target && x && ! y && (rect.width - (e.clientX - rect.left) < 6)) {
+                        if (e.target && x && !y && (rect.width - (e.clientX - rect.left) < 6)) {
                             jexcel.current.cursor = e.target;
                             jexcel.current.cursor.style.cursor = 'col-resize';
-                        } else if (e.target && ! x && y && (rect.height - (e.clientY - rect.top) < 6)) {
+                        } else if (e.target && !x && y && (rect.height - (e.clientY - rect.top) < 6)) {
                             jexcel.current.cursor = e.target;
                             jexcel.current.cursor.style.cursor = 'row-resize';
                         }
                     }
 
                     if (e.target.parentNode.parentNode.classList.contains('draggable')) {
-                        if (e.target && ! x && y && (rect.width - (e.clientX - rect.left) < 6)) {
+                        if (e.target && !x && y && (rect.width - (e.clientX - rect.left) < 6)) {
                             jexcel.current.cursor = e.target;
                             jexcel.current.cursor.style.cursor = 'move';
-                        } else if (e.target && x && ! y && (rect.height - (e.clientY - rect.top) < 6)) {
+                        } else if (e.target && x && !y && (rect.height - (e.clientY - rect.top) < 6)) {
                             jexcel.current.cursor = e.target;
                             jexcel.current.cursor.style.cursor = 'move';
                         }
@@ -8592,7 +8592,7 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.mouseOverControls = function(e) {
+    jexcel.mouseOverControls = function (e) {
         e = e || window.event;
         if (e.buttons) {
             var mouseButton = e.buttons;
@@ -8602,7 +8602,7 @@ if (! formula && typeof(require) === 'function') {
             var mouseButton = e.which;
         }
 
-        if (! mouseButton) {
+        if (!mouseButton) {
             jexcel.isMouseAction = false;
         }
         if (jexcel.current && jexcel.isMouseAction == true) {
@@ -8643,7 +8643,7 @@ if (! formula && typeof(require) === 'function') {
                             }
                         } else {
                             // Do not select edtion is in progress
-                            if (! jexcel.current.edition) {
+                            if (!jexcel.current.edition) {
                                 if (columnId && rowId) {
                                     if (jexcel.current.selectedCorner) {
                                         jexcel.current.updateCopySelection(columnId, rowId);
@@ -8670,7 +8670,7 @@ if (! formula && typeof(require) === 'function') {
     /**
      * Double click event handler: controls the double click in the corner, cell edition or column re-ordering.
      */
-    jexcel.doubleClickControls = function(e) {
+    jexcel.doubleClickControls = function (e) {
         // Jexcel is selected
         if (jexcel.current) {
             // Corner action
@@ -8708,8 +8708,8 @@ if (! formula && typeof(require) === 'function') {
 
                 // Double click over body
                 if (jexcelTable[1] == 2 && jexcel.current.options.editable == true) {
-                    if (! jexcel.current.edition) {
-                        var getCellCoords = function(element) {
+                    if (!jexcel.current.edition) {
+                        var getCellCoords = function (element) {
                             if (element.parentNode) {
                                 var x = element.getAttribute('data-x');
                                 var y = element.getAttribute('data-y');
@@ -8730,17 +8730,17 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.copyControls = function(e) {
+    jexcel.copyControls = function (e) {
         if (jexcel.current && jexcel.copyControls.enabled) {
-            if (! jexcel.current.edition) {
+            if (!jexcel.current.edition) {
                 jexcel.current.copy(true);
             }
         }
     }
 
-    jexcel.cutControls = function(e) {
+    jexcel.cutControls = function (e) {
         if (jexcel.current) {
-            if (! jexcel.current.edition) {
+            if (!jexcel.current.edition) {
                 jexcel.current.copy(true);
                 if (jexcel.current.options.editable == true) {
                     jexcel.current.setValue(jexcel.current.highlighted, '');
@@ -8749,9 +8749,9 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.pasteControls = function(e) {
+    jexcel.pasteControls = function (e) {
         if (jexcel.current && jexcel.current.selectedCell) {
-            if (! jexcel.current.edition) {
+            if (!jexcel.current.edition) {
                 if (jexcel.current.options.editable == true) {
                     if (e && e.clipboardData) {
                         jexcel.current.paste(jexcel.current.selectedCell[0], jexcel.current.selectedCell[1], e.clipboardData.getData('text'));
@@ -8764,8 +8764,8 @@ if (! formula && typeof(require) === 'function') {
         }
     }
 
-    jexcel.contextMenuControls = function(e) {
-        console.log('contextMenuControls'); 
+    jexcel.contextMenuControls = function (e) {
+        console.log('contextMenuControls');
         e = e || window.event;
         if ("buttons" in e) {
             var mouseButton = e.buttons;
@@ -8785,8 +8785,7 @@ if (! formula && typeof(require) === 'function') {
 
                     if (x || y) {
                         if ((x < parseInt(jexcel.current.selectedCell[0])) || (x > parseInt(jexcel.current.selectedCell[2])) ||
-                            (y < parseInt(jexcel.current.selectedCell[1])) || (y > parseInt(jexcel.current.selectedCell[3])))
-                        {
+                            (y < parseInt(jexcel.current.selectedCell[1])) || (y > parseInt(jexcel.current.selectedCell[3]))) {
                             jexcel.current.updateSelectionFromCoords(x, y, x, y);
                         }
 
@@ -8795,77 +8794,77 @@ if (! formula && typeof(require) === 'function') {
                         // The id is depending on header and body
                         jexcel.current.contextMenu.contextmenu.open(e, items);
                         // transform scale position
-                        
-                            var rect = jexcel.current.contextMenu.getBoundingClientRect();
-                            var offsetX = window.scrollX;
-                            var offsetY = window.scrollY;
-                            if (e.target) {
-                                switch (e.type) {
-                                    case "touchstart" :
-                                        var touches = e.touches;
-                                    case "touchmove" :
-                                        var touches = e.touches;
-                                        break;
-                                    case "touchcancel" :
-                                        if (!_cancelReport) {
-                                        var touches = e.changedTouches;
-                            
-                                        }
-                                    case "touchend" :
-                                        var touches = e.changedTouches;
-                            
-                                        break;
-                                }
-                            }else{
-                                var touches = e;
-                            }
-                        
-                            var x;
-                            var y;
-                            var ua = navigator.userAgent;
 
-                            if (ua.indexOf('iPhone') > 0 || ua.indexOf('iPod') > 0 || ua.indexOf('Android') > 0 && ua.indexOf('Mobile') > 0) {
-                                x = touches[0].clientX;
-                                y = touches[0].clientY;
-                            } else if (ua.indexOf('iPad') > 0 || ua.indexOf('Android') > 0) {
-                                x = touches[0].clientX;
-                                y = touches[0].clientY;
+                        var rect = jexcel.current.contextMenu.getBoundingClientRect();
+                        var offsetX = window.scrollX;
+                        var offsetY = window.scrollY;
+                        if (e.target) {
+                            switch (e.type) {
+                                case "touchstart":
+                                    var touches = e.touches;
+                                case "touchmove":
+                                    var touches = e.touches;
+                                    break;
+                                case "touchcancel":
+                                    if (!_cancelReport) {
+                                        var touches = e.changedTouches;
+
+                                    }
+                                case "touchend":
+                                    var touches = e.changedTouches;
+
+                                    break;
+                            }
+                        } else {
+                            var touches = e;
+                        }
+
+                        var x;
+                        var y;
+                        var ua = navigator.userAgent;
+
+                        if (ua.indexOf('iPhone') > 0 || ua.indexOf('iPod') > 0 || ua.indexOf('Android') > 0 && ua.indexOf('Mobile') > 0) {
+                            x = touches[0].clientX;
+                            y = touches[0].clientY;
+                        } else if (ua.indexOf('iPad') > 0 || ua.indexOf('Android') > 0) {
+                            x = touches[0].clientX;
+                            y = touches[0].clientY;
+                        } else {
+                            if (e.type.indexOf("touch")) {
+                                x = e.clientX;
+                                y = e.clientY;
                             } else {
-                                if(e.type.indexOf("touch")) {
-                                    x = e.clientX;
-                                    y = e.clientY;
-                                } else {
-                                    x = touches.x;
-                                    y = touches.y;
-                                }
+                                x = touches.x;
+                                y = touches.y;
                             }
-                            x = x - jexcel.current.options.transform.x + offsetX;
-                            y = y - jexcel.current.options.transform.y + offsetY;
-                            var t = y;
-                            // var rectH = rect.height / jexcel.current.options.transform.scale
-                            if (window.innerHeight < y + rect.height) {
-                                var h = y - rect.height;
-                                if (h < 0) {
-                                    t = 0;
-                                }else{
-                                    t = h;
-                                }
+                        }
+                        x = x - jexcel.current.options.transform.x + offsetX;
+                        y = y - jexcel.current.options.transform.y + offsetY;
+                        var t = y;
+                        // var rectH = rect.height / jexcel.current.options.transform.scale
+                        if (window.innerHeight < y + rect.height) {
+                            var h = y - rect.height;
+                            if (h < 0) {
+                                t = 0;
+                            } else {
+                                t = h;
                             }
-                                
-                            jexcel.current.contextMenu.style.top = jexcel.transformScaleTop(jexcel.current,t) + 'px';
+                        }
 
-                            var l = x;
-                            // var rectW = rect.width / jexcel.current.options.transform.scale
-                            if (window.innerWidth < x + rect.width) {
-                                var w = x - rect.width;
-                                if (w > 0) {
-                                    l = w;
-                                } else {
-                                    l = 10;
-                                }
+                        jexcel.current.contextMenu.style.top = jexcel.transformScaleTop(jexcel.current, t) + 'px';
+
+                        var l = x;
+                        // var rectW = rect.width / jexcel.current.options.transform.scale
+                        if (window.innerWidth < x + rect.width) {
+                            var w = x - rect.width;
+                            if (w > 0) {
+                                l = w;
+                            } else {
+                                l = 10;
                             }
-                            
-                            jexcel.current.contextMenu.style.left = jexcel.transformScaleTop(jexcel.current,l) + 'px';
+                        }
+
+                        jexcel.current.contextMenu.style.left = jexcel.transformScaleTop(jexcel.current, l) + 'px';
                         // Avoid the real one
                         e.preventDefault();
                     }
@@ -8875,25 +8874,25 @@ if (! formula && typeof(require) === 'function') {
     }
     jexcel.isTouchAction = false;
     jexcel.isTouchContextMenu = false;
-    jexcel.touchStartControls = function(e) {
+    jexcel.touchStartControls = function (e) {
         e = e || window.event;
         switch (e.type) {
-            case "touchstart" :
+            case "touchstart":
                 var touchButton = e.touches;
-            case "touchmove" :
+            case "touchmove":
                 var touchButton = e.touches;
                 break;
-            case "touchcancel" :
+            case "touchcancel":
                 if (!_cancelReport) {
-                var touchButton = e.changedTouches;
-    
+                    var touchButton = e.changedTouches;
+
                 }
-            case "touchend" :
+            case "touchend":
                 var touchButton = e.changedTouches;
-    
+
                 break;
         }
-        
+
         var jexcelTable = jexcel.getElement(e.target);
         // if (jexcelTable[0]) {
         //     if (jexcel.current != jexcelTable[0].jexcel) {
@@ -8911,11 +8910,11 @@ if (! formula && typeof(require) === 'function') {
 
         if (jexcel.current) {
 
-        
+
             //mobile用範囲選択
             if (touchButton) {
 
-                if(e.target.classList.contains('topLeftSelectionHandle-HitArea') || e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                if (e.target.classList.contains('topLeftSelectionHandle-HitArea') || e.target.classList.contains('bottomRightSelectionHandle-HitArea')) {
                     e.preventDefault();
                     jexcel.isTouchAction = true;
                     //既存の選択状態
@@ -8924,80 +8923,80 @@ if (! formula && typeof(require) === 'function') {
                     var oldX2 = jexcel.current.selectedCell[2];
                     var oldY2 = jexcel.current.selectedCell[3];
                     var HL = jexcel.current.getHighlighted();
-                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
+                    if (e.target.classList.contains('topLeftSelectionHandle-HitArea')) {
                         var last = HL[0];
-                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
-                        var last = HL[HL.length-1];
+                    } else if (e.target.classList.contains('bottomRightSelectionHandle-HitArea')) {
+                        var last = HL[HL.length - 1];
                     }
                     var jexcelTable = jexcel.getElement(last);
                     jexcel.current.SelectionHandle = true;
 
-                                        // Header found
-                                        // if (jexcelTable[1] == 1) {
-                                        //     var columnId = last.getAttribute('data-x');
-                                        //     console.log('columnId',columnId);
-                                        //     if (columnId) {
-                                        //         // Update cursor
-                                        //         var info = last.getBoundingClientRect();
-                                        //         //リサイズ対応 
-                                            
-                                        //         const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
-                                        //         const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
-                                        //         console.log('infoH',infoH);
-                                        //         if (jexcel.current.options.columnDrag == true && infoH - e.offsetY < 10) {
-                                        //             if (jexcel.current.isColMerged(columnId).length) {
-                                        //                 console.error('Jspreadsheet: This column is part of a merged cell.');
-                                        //             } else {
-                                        //                 // Reset selection
-                                        //                 jexcel.current.resetSelection();
-                                        //                 // Drag helper
-                                        //                 jexcel.current.dragging = {
-                                        //                     element: last,
-                                        //                     column: columnId,
-                                        //                     destination: columnId,
-                                        //                 };
-                                        //                 // Border indication
-                                        //                 jexcel.current.headers[columnId].classList.add('dragging');
-                                        //                 for (var j = 0; j < jexcel.current.records.length; j++) {
-                                        //                     if (jexcel.current.records[j][columnId]) {
-                                        //                         jexcel.current.records[j][columnId].classList.add('dragging');
-                                        //                     }
-                                        //                 }
-                                        //             }
-                                        //         } else {
-                                        //             if (jexcel.current.selectedHeader && (e.shiftKey || e.ctrlKey)) {
-                                        //                 var o = jexcel.current.selectedHeader;
-                                        //                 var d = columnId;
-                                        //             } else {
-                                        //                 // Press to rename
-                                        //                 if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
-                                        //                     jexcel.timeControl = setTimeout(function() {
-                                        //                         jexcel.current.setHeader(columnId);
-                                        //                     }, 800);
-                                        //                 }
-                    
-                                        //                 // Keep track of which header was selected first
-                                        //                 jexcel.current.selectedHeader = columnId;
-                    
-                                        //                 // Update selection single column
-                                        //                 var o = columnId;
-                                        //                 var d = columnId;
-                                        //             }
-                    
-                                        //             // Update selection
-                                        //             jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
-                                        //         }
-                                        //     }
-                                        // } else {
-                                        //     jexcel.current.selectedHeader = false;
-                                        // }
+                    // Header found
+                    // if (jexcelTable[1] == 1) {
+                    //     var columnId = last.getAttribute('data-x');
+                    //     console.log('columnId',columnId);
+                    //     if (columnId) {
+                    //         // Update cursor
+                    //         var info = last.getBoundingClientRect();
+                    //         //リサイズ対応 
+
+                    //         const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
+                    //         const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
+                    //         console.log('infoH',infoH);
+                    //         if (jexcel.current.options.columnDrag == true && infoH - e.offsetY < 10) {
+                    //             if (jexcel.current.isColMerged(columnId).length) {
+                    //                 console.error('Jspreadsheet: This column is part of a merged cell.');
+                    //             } else {
+                    //                 // Reset selection
+                    //                 jexcel.current.resetSelection();
+                    //                 // Drag helper
+                    //                 jexcel.current.dragging = {
+                    //                     element: last,
+                    //                     column: columnId,
+                    //                     destination: columnId,
+                    //                 };
+                    //                 // Border indication
+                    //                 jexcel.current.headers[columnId].classList.add('dragging');
+                    //                 for (var j = 0; j < jexcel.current.records.length; j++) {
+                    //                     if (jexcel.current.records[j][columnId]) {
+                    //                         jexcel.current.records[j][columnId].classList.add('dragging');
+                    //                     }
+                    //                 }
+                    //             }
+                    //         } else {
+                    //             if (jexcel.current.selectedHeader && (e.shiftKey || e.ctrlKey)) {
+                    //                 var o = jexcel.current.selectedHeader;
+                    //                 var d = columnId;
+                    //             } else {
+                    //                 // Press to rename
+                    //                 if (jexcel.current.selectedHeader == columnId && jexcel.current.options.allowRenameColumn == true) {
+                    //                     jexcel.timeControl = setTimeout(function() {
+                    //                         jexcel.current.setHeader(columnId);
+                    //                     }, 800);
+                    //                 }
+
+                    //                 // Keep track of which header was selected first
+                    //                 jexcel.current.selectedHeader = columnId;
+
+                    //                 // Update selection single column
+                    //                 var o = columnId;
+                    //                 var d = columnId;
+                    //             }
+
+                    //             // Update selection
+                    //             jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
+                    //         }
+                    //     }
+                    // } else {
+                    //     jexcel.current.selectedHeader = false;
+                    // }
                     // Body found
                     if (jexcelTable[1] == 2) {
                         var rowId = last.getAttribute('data-y');
                         if (last.classList.contains('jexcel_row')) {
                             // var info = last.getBoundingClientRect();
                             // //リサイズ対応 
-                        
+
                             // const infoH = jexcel.transformScaleTop(jexcel.current,info.height);
                             // const infoW = jexcel.transformScaleLeft(jexcel.current,info.width);
                             // if (jexcel.current.options.rowDrag == true && infoW - e.offsetX < 10) {
@@ -9018,12 +9017,12 @@ if (! formula && typeof(require) === 'function') {
                             //         last.parentNode.classList.add('dragging');
                             //     }
                             // } else {
-                                
+
                             //     if (jexcel.current.selectedRow && (e.shiftKey || e.ctrlKey)) {
                             //         var o = jexcel.current.selectedRow;
                             //         var d = rowId;
                             //     } else {
-                                
+
                             //         // Keep track of which header was selected first
                             //         jexcel.current.selectedRow = rowId;
 
@@ -9036,61 +9035,61 @@ if (! formula && typeof(require) === 'function') {
                             //     jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
                             // }
                         } else {
-                        
-                                var getCellCoords = function(element) {
-                                    var x = element.getAttribute('data-x');
-                                    var y = element.getAttribute('data-y');
-                                    if (x && y) {
-                                        return [x, y];
-                                    } else {
-                                        if (element.parentNode) {
-                                            return getCellCoords(element.parentNode);
-                                        }
-                                    }
-                                };
-                                
-                                var position = getCellCoords(last);
-                                if (position) {
-                                    var newX1 = oldX1;
-                                    var newY1 = oldY1;
-                                    var newX2 = oldX2;
-                                    var newY2 = oldY2;
-                                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
-                                        newX1 = position[0];
-                                        newY1 = position[1];
-                                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
-                                        newX2 = position[0];
-                                        newY2 = position[1];
-                                    }
-                                    
-                                    // Close edition
-                                    if (jexcel.current.edition) {
-                                        if (jexcel.current.edition[2] != columnId || jexcel.current.edition[3] != rowId) {
-                                            jexcel.current.closeEditor(jexcel.current.edition[0], true);
-                                        }
-                                    }
-                                    if (! jexcel.current.edition) {
-                                        // Update cell selection
-                                            jexcel.current.updateSelectionFromCoords(newX1, newY1, newX2, newY2);
-                                        
-                                    }
 
-                                    // No full row selected
-                                    jexcel.current.selectedHeader = null;
-                                    jexcel.current.selectedRow = null;
+                            var getCellCoords = function (element) {
+                                var x = element.getAttribute('data-x');
+                                var y = element.getAttribute('data-y');
+                                if (x && y) {
+                                    return [x, y];
+                                } else {
+                                    if (element.parentNode) {
+                                        return getCellCoords(element.parentNode);
+                                    }
                                 }
-                            
+                            };
+
+                            var position = getCellCoords(last);
+                            if (position) {
+                                var newX1 = oldX1;
+                                var newY1 = oldY1;
+                                var newX2 = oldX2;
+                                var newY2 = oldY2;
+                                if (e.target.classList.contains('topLeftSelectionHandle-HitArea')) {
+                                    newX1 = position[0];
+                                    newY1 = position[1];
+                                } else if (e.target.classList.contains('bottomRightSelectionHandle-HitArea')) {
+                                    newX2 = position[0];
+                                    newY2 = position[1];
+                                }
+
+                                // Close edition
+                                if (jexcel.current.edition) {
+                                    if (jexcel.current.edition[2] != columnId || jexcel.current.edition[3] != rowId) {
+                                        jexcel.current.closeEditor(jexcel.current.edition[0], true);
+                                    }
+                                }
+                                if (!jexcel.current.edition) {
+                                    // Update cell selection
+                                    jexcel.current.updateSelectionFromCoords(newX1, newY1, newX2, newY2);
+
+                                }
+
+                                // No full row selected
+                                jexcel.current.selectedHeader = null;
+                                jexcel.current.selectedRow = null;
+                            }
+
                         }
                     } else {
                         jexcel.current.selectedRow = false;
                     }
 
-                    
-                }else if(e.target.classList.contains('topRightSelectionHandle-HitArea')){
+
+                } else if (e.target.classList.contains('topRightSelectionHandle-HitArea')) {
                     e.preventDefault();
                     jexcel.isTouchAction = true;
                     jexcel.isTouchContextMenu = true;
-                    console.log('touchStartControls isTouchContextMenu',jexcel.isTouchContextMenu);
+                    console.log('touchStartControls isTouchContextMenu', jexcel.isTouchContextMenu);
 
                 }
 
@@ -9104,40 +9103,40 @@ if (! formula && typeof(require) === 'function') {
         // console.log('jexcel.isTouchAction',jexcel.isTouchAction);
     }
     // Mouse move controls
-    jexcel.touchmoveControls = function(e) {
+    jexcel.touchmoveControls = function (e) {
         e = e || window.event;
         switch (e.type) {
-            case "touchstart" :
+            case "touchstart":
                 var touchButton = e.touches;
-            case "touchmove" :
+            case "touchmove":
                 var touchButton = e.touches;
                 break;
-            case "touchcancel" :
+            case "touchcancel":
                 if (!_cancelReport) {
-                var touchButton = e.changedTouches;
-    
+                    var touchButton = e.changedTouches;
+
                 }
-            case "touchend" :
+            case "touchend":
                 var touchButton = e.changedTouches;
-    
+
                 break;
         }
-        
-        if (! touchButton) {
+
+        if (!touchButton) {
             jexcel.isTouchAction = false;
         }
 
         if (jexcel.current) {
             if (jexcel.isTouchAction == true) {
-                if(jexcel.isTouchContextMenu == true){
+                if (jexcel.isTouchContextMenu == true) {
                     jexcel.isTouchContextMenu = false;
-                    console.log('touchmoveControls isTouchContextMenu',jexcel.isTouchContextMenu);
+                    console.log('touchmoveControls isTouchContextMenu', jexcel.isTouchContextMenu);
                     jexcel.current.contextMenu.contextmenu.close();
                 }
                 // Resizing is ongoing
                 e.preventDefault();
                 var HL = jexcel.current.getHighlighted();
-                var last = HL[HL.length-1];
+                var last = HL[HL.length - 1];
                 var jexcelTable = jexcel.getElement(last);
                 if (jexcelTable[0]) {
                     // Avoid cross reference
@@ -9147,26 +9146,26 @@ if (! formula && typeof(require) === 'function') {
                         }
                     }
                     var lastRect = last.getBoundingClientRect();
-                    
-                    let target = document.elementFromPoint(touchButton[0].pageX,touchButton[0].pageY);
+
+                    let target = document.elementFromPoint(touchButton[0].pageX, touchButton[0].pageY);
                     var columnId = target.getAttribute('data-x');
                     var rowId = target.getAttribute('data-y');
-   
+
                     var newX1 = jexcel.current.selectedCell[0];
                     var newY1 = jexcel.current.selectedCell[1];
                     var newX2 = jexcel.current.selectedCell[2];
                     var newY2 = jexcel.current.selectedCell[3];
-                    if(e.target.classList.contains('topLeftSelectionHandle-HitArea')){
+                    if (e.target.classList.contains('topLeftSelectionHandle-HitArea')) {
                         newX1 = columnId;
                         newY1 = rowId;
-                    }else if(e.target.classList.contains('bottomRightSelectionHandle-HitArea')){
+                    } else if (e.target.classList.contains('bottomRightSelectionHandle-HitArea')) {
                         newX2 = columnId;
                         newY2 = rowId;
                     }
                     if (jexcel.current.dragging) {
                         // if (jexcel.current.dragging.column) {
                         //     if (columnId) {
-    
+
                         //         if (jexcel.current.isColMerged(columnId).length) {
                         //             console.error('Jspreadsheet: This column is part of a merged cell.');
                         //         } else {
@@ -9174,7 +9173,7 @@ if (! formula && typeof(require) === 'function') {
                         //                 jexcel.current.headers[i].classList.remove('dragging-left');
                         //                 jexcel.current.headers[i].classList.remove('dragging-right');
                         //             }
-    
+
                         //             if (jexcel.current.dragging.column == columnId) {
                         //                 jexcel.current.dragging.destination = parseInt(columnId);
                         //             } else {
@@ -9210,7 +9209,7 @@ if (! formula && typeof(require) === 'function') {
                         //     }
                         // }
                     } else {
-                        
+
                         // Header found
                         if (jexcelTable[1] == 1) {
                             if (jexcel.current.selectedHeader) {
@@ -9221,7 +9220,7 @@ if (! formula && typeof(require) === 'function') {
                                 jexcel.current.updateSelectionFromCoords(o, 0, d, jexcel.current.options.data.length - 1);
                             }
                         }
-    
+
                         // Body found
                         if (jexcelTable[1] == 2) {
                             if (last.classList.contains('jexcel_row')) {
@@ -9229,12 +9228,12 @@ if (! formula && typeof(require) === 'function') {
                                     var o = jexcel.current.selectedRow;
                                     var d = rowId;
                                     // Update selection
-                                    
+
                                     jexcel.current.updateSelectionFromCoords(0, o, jexcel.current.options.data[0].length - 1, d);
                                 }
                             } else {
                                 // Do not select edtion is in progress
-                                if (! jexcel.current.edition) {
+                                if (!jexcel.current.edition) {
                                     if (columnId && rowId) {
                                         if (jexcel.current.selectedCorner) {
                                             jexcel.current.updateCopySelection(columnId, rowId);
@@ -9250,10 +9249,10 @@ if (! formula && typeof(require) === 'function') {
                     }
                 }
             }
-            
+
         }
     }
-    jexcel.touchEndControls = function(e) {
+    jexcel.touchEndControls = function (e) {
         if (jexcel.current.selectedCorner) {
             jexcel.current.selectedCorner = false;
 
@@ -9266,35 +9265,35 @@ if (! formula && typeof(require) === 'function') {
                 jexcel.current.removeCopySelection();
             }
         }
-        if(jexcel.isTouchContextMenu == true){
+        if (jexcel.isTouchContextMenu == true) {
             jexcel.isTouchContextMenu = false;
             jexcel.current.contextMenu.contextmenu.close();
             if (jexcel.current) {
-                console.log('selectedCell',jexcel.current);
+                console.log('selectedCell', jexcel.current);
                 var y = jexcel.current.selectedCell[1];
                 var x = jexcel.current.selectedCell[2];
-                var cellTopRight = jexcel.current.getCellFromCoords(x,y).getBoundingClientRect();
-            console.log('cellTopRight',cellTopRight);
-            
+                var cellTopRight = jexcel.current.getCellFromCoords(x, y).getBoundingClientRect();
+                console.log('cellTopRight', cellTopRight);
+
                 var x1pos = cellTopRight.left;
                 var y1pos = cellTopRight.top;
                 var contentRect = jexcel.current.content.getBoundingClientRect();
-                console.log('contentRect',contentRect);
+                console.log('contentRect', contentRect);
                 var offsetX = contentRect.left;
                 var offsetY = contentRect.top;
                 var topRightY = (y1pos - offsetY);//
-                var topRightX = (x1pos- offsetX);//
-                topRightY = jexcel.transformScaleTop(jexcel.current,topRightY - cellTopRight.height)+ ($(".jexcel_contextmenu").height()/2);
-                topRightX = jexcel.transformScaleLeft(jexcel.current,topRightX)- ($(".jexcel_contextmenu").width()/2);
-                
-                console.log('topRightY',topRightY);
-                console.log('touchEndControls isTouchContextMenu',jexcel.isTouchContextMenu);
-                if(jexcel.current.selectedHeader && jexcel.current.selectedHeader != null){
+                var topRightX = (x1pos - offsetX);//
+                topRightY = jexcel.transformScaleTop(jexcel.current, topRightY - cellTopRight.height) + ($(".jexcel_contextmenu").height() / 2);
+                topRightX = jexcel.transformScaleLeft(jexcel.current, topRightX) - ($(".jexcel_contextmenu").width() / 2);
+
+                console.log('topRightY', topRightY);
+                console.log('touchEndControls isTouchContextMenu', jexcel.isTouchContextMenu);
+                if (jexcel.current.selectedHeader && jexcel.current.selectedHeader != null) {
                     y = null;
                 }
                 var items = jexcel.current.options.contextMenu(jexcel.current, x, y, e);
-                console.log('e',e);
-                if(jexcel.current.selectedHeader != null){
+                console.log('e', e);
+                if (jexcel.current.selectedHeader != null) {
                     // items.splice(0,1,({
                     //     title:jexcel.current.options.text.insertANewColumnBefore,
                     //     onclick:function() {
@@ -9314,14 +9313,14 @@ if (! formula && typeof(require) === 'function') {
                     //     }
                     // })) 
                 }
-                console.log('items',items);
+                console.log('items', items);
                 // The id is depending on header and body
                 jexcel.current.contextMenu.contextmenu.open(e, items);
                 // topRightY = jexcel.transformScaleTop(jexcel.current,topRightY)+ jexcel.current.content.scrollTop -4 + ($(".jexcel_contextmenu").height()/2);
                 // topRightX = jexcel.transformScaleLeft(jexcel.current,topRightX)+ jexcel.current.content.scrollLeft -4  + ($(".jexcel_contextmenu").width()/2);
-                $(".jexcel_contextmenu").css({top:topRightY,left:topRightX});
+                $(".jexcel_contextmenu").css({ top: topRightY, left: topRightX });
             }
-            
+
         }
         // Clear any time control
         if (jexcel.timeControl) {
@@ -9341,10 +9340,10 @@ if (! formula && typeof(require) === 'function') {
      * Jexcel extensions
      */
 
-    jexcel.tabs = function(tabs, result) {
+    jexcel.tabs = function (tabs, result) {
         var instances = [];
         // Create tab container
-        if (! tabs.classList.contains('jexcel_tabs')) {
+        if (!tabs.classList.contains('jexcel_tabs')) {
             tabs.innerHTML = '';
             tabs.classList.add('jexcel_tabs')
             tabs.jexcel = [];
@@ -9371,9 +9370,9 @@ if (! formula && typeof(require) === 'function') {
             // Tab link
             link[i] = document.createElement('div');
             link[i].classList.add('jexcel_tab_link');
-            link[i].setAttribute('data-spreadsheet', tabs.jexcel.length-1);
+            link[i].setAttribute('data-spreadsheet', tabs.jexcel.length - 1);
             link[i].innerHTML = result[i].sheetName;
-            link[i].onclick = function() {
+            link[i].onclick = function () {
                 for (var j = 0; j < headers.children.length; j++) {
                     headers.children[j].classList.remove('selected');
                     content.children[j].style.display = 'none';
@@ -9399,10 +9398,10 @@ if (! formula && typeof(require) === 'function') {
     // Compability to older versions
     jexcel.createTabs = jexcel.tabs;
 
-    jexcel.fromSpreadsheet = function(file, __callback) {
-        var convert = function(workbook) {
+    jexcel.fromSpreadsheet = function (file, __callback) {
+        var convert = function (workbook) {
             var spreadsheets = [];
-            workbook.SheetNames.forEach(function(sheetName) {
+            workbook.SheetNames.forEach(function (sheetName) {
                 var spreadsheet = {};
                 spreadsheet.rows = [];
                 spreadsheet.columns = [];
@@ -9418,7 +9417,7 @@ if (! formula && typeof(require) === 'function') {
                         if (temp[i] && temp[i].wpx) {
                             spreadsheet.columns[i].width = temp[i].wpx + 'px';
                         }
-                     }
+                    }
                 }
                 // Rows heights
                 var temp = workbook.Sheets[sheetName]['!rows'];
@@ -9439,8 +9438,8 @@ if (! formula && typeof(require) === 'function') {
                         var y1 = temp[i].s.r;
                         var x2 = temp[i].e.c;
                         var y2 = temp[i].e.r;
-                        var key = jexcel.getColumnNameFromId([x1,y1]);
-                        spreadsheet.mergeCells[key] = [ x2-x1+1, y2-y1+1 ];
+                        var key = jexcel.getColumnNameFromId([x1, y1]);
+                        spreadsheet.mergeCells[key] = [x2 - x1 + 1, y2 - y1 + 1];
                     }
                 }
                 // Data container
@@ -9448,10 +9447,10 @@ if (! formula && typeof(require) === 'function') {
                 var max_y = 0;
                 var temp = Object.keys(workbook.Sheets[sheetName]);
                 for (var i = 0; i < temp.length; i++) {
-                    if (temp[i].substr(0,1) != '!') {
+                    if (temp[i].substr(0, 1) != '!') {
                         var cell = workbook.Sheets[sheetName][temp[i]];
                         var info = jexcel.getIdFromColumnName(temp[i], true);
-                        if (! spreadsheet.data[info[1]]) {
+                        if (!spreadsheet.data[info[1]]) {
                             spreadsheet.data[info[1]] = [];
                         }
                         spreadsheet.data[info[1]][info[0]] = cell.f ? '=' + cell.f : cell.w;
@@ -9476,10 +9475,10 @@ if (! formula && typeof(require) === 'function') {
                 var numColumns = spreadsheet.columns;
                 for (var j = 0; j <= max_y; j++) {
                     for (var i = 0; i <= max_x; i++) {
-                        if (! spreadsheet.data[j]) {
+                        if (!spreadsheet.data[j]) {
                             spreadsheet.data[j] = [];
                         }
-                        if (! spreadsheet.data[j][i]) {
+                        if (!spreadsheet.data[j][i]) {
                             if (numColumns < i) {
                                 spreadsheet.data[j][i] = '';
                             }
@@ -9496,21 +9495,23 @@ if (! formula && typeof(require) === 'function') {
         oReq = new XMLHttpRequest();
         oReq.open("GET", file, true);
 
-        if(typeof Uint8Array !== 'undefined') {
+        if (typeof Uint8Array !== 'undefined') {
             oReq.responseType = "arraybuffer";
-            oReq.onload = function(e) {
+            oReq.onload = function (e) {
                 var arraybuffer = oReq.response;
                 var data = new Uint8Array(arraybuffer);
-                var wb = XLSX.read(data, {type:"array", cellFormula:true, cellStyles:true });
+                var wb = XLSX.read(data, { type: "array", cellFormula: true, cellStyles: true });
                 __callback(convert(wb))
             };
         } else {
             oReq.setRequestHeader("Accept-Charset", "x-user-defined");
-            oReq.onreadystatechange = function() { if(oReq.readyState == 4 && oReq.status == 200) {
-                var ff = convertResponseBodyToText(oReq.responseBody);
-                var wb = XLSX.read(ff, {type:"binary", cellFormula:true, cellStyles:true });
-                __callback(convert(wb))
-            }};
+            oReq.onreadystatechange = function () {
+                if (oReq.readyState == 4 && oReq.status == 200) {
+                    var ff = convertResponseBodyToText(oReq.responseBody);
+                    var wb = XLSX.read(ff, { type: "binary", cellFormula: true, cellStyles: true });
+                    __callback(convert(wb))
+                }
+            };
         }
 
         oReq.send();
@@ -9528,7 +9529,7 @@ if (! formula && typeof(require) === 'function') {
     /**
      * Helper injectArray
      */
-    jexcel.injectArray = function(o, idx, arr) {
+    jexcel.injectArray = function (o, idx, arr) {
         return o.slice(0, idx).concat(arr).concat(o.slice(idx));
     }
 
@@ -9538,7 +9539,7 @@ if (! formula && typeof(require) === 'function') {
      * @param integer i
      * @return string letter
      */
-    jexcel.getColumnName = function(i) {
+    jexcel.getColumnName = function (i) {
         var letter = '';
         if (i > 701) {
             letter += String.fromCharCode(64 + parseInt(i / 676));
@@ -9580,7 +9581,7 @@ if (! formula && typeof(require) === 'function') {
             }
 
             if (arr == true) {
-                id = [ code, number ];
+                id = [code, number];
             } else {
                 id = code + '-' + number;
             }
@@ -9596,7 +9597,7 @@ if (! formula && typeof(require) === 'function') {
      * @return string id
      */
     jexcel.getColumnNameFromId = function (cellId) {
-        if (! Array.isArray(cellId)) {
+        if (!Array.isArray(cellId)) {
             cellId = cellId.split('-');
         }
 
@@ -9609,11 +9610,11 @@ if (! formula && typeof(require) === 'function') {
      * @param string id
      * @return string id
      */
-    jexcel.getElement = function(element) {
+    jexcel.getElement = function (element) {
         var jexcelSection = 0;
         var jexcelElement = 0;
 
-        function path (element) {
+        function path(element) {
             if (element.className) {
                 if (element.classList.contains('jexcel_container')) {
                     jexcelElement = element;
@@ -9627,7 +9628,7 @@ if (! formula && typeof(require) === 'function') {
             }
 
             if (element.parentNode) {
-                if (! jexcelElement) {
+                if (!jexcelElement) {
                     path(element.parentNode);
                 }
             }
@@ -9635,23 +9636,23 @@ if (! formula && typeof(require) === 'function') {
 
         path(element);
 
-        return [ jexcelElement, jexcelSection ];
+        return [jexcelElement, jexcelSection];
     }
 
-    jexcel.doubleDigitFormat = function(v) {
-        v = ''+v;
+    jexcel.doubleDigitFormat = function (v) {
+        v = '' + v;
         if (v.length == 1) {
-            v = '0'+v;
+            v = '0' + v;
         }
         return v;
     }
 
-    jexcel.createFromTable = function(el, options) {
+    jexcel.createFromTable = function (el, options) {
         if (el.tagName != 'TABLE') {
             console.log('Element is not a table');
         } else {
             // Configuration
-            if (! options) {
+            if (!options) {
                 options = {};
             }
             options.columns = [];
@@ -9663,12 +9664,12 @@ if (! formula && typeof(require) === 'function') {
                 // Get column width
                 for (var i = 0; i < colgroup.length; i++) {
                     var width = colgroup[i].style.width;
-                    if (! width) {
+                    if (!width) {
                         var width = colgroup[i].getAttribute('width');
                     }
                     // Set column width
                     if (width) {
-                        if (! options.columns[i]) {
+                        if (!options.columns[i]) {
                             options.columns[i] = {}
                         }
                         options.columns[i].width = width;
@@ -9677,13 +9678,13 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Parse header
-            var parseHeader = function(header) {
+            var parseHeader = function (header) {
                 // Get width information
                 var info = header.getBoundingClientRect();
                 var width = info.width > 50 ? info.width : 50;
 
                 // Create column option
-                if (! options.columns[i]) {
+                if (!options.columns[i]) {
                     options.columns[i] = {};
                 }
                 if (header.getAttribute('data-celltype')) {
@@ -9722,7 +9723,7 @@ if (! formula && typeof(require) === 'function') {
                     nested.push(cells);
                 }
                 // Get the last row in the thead
-                headers = headers[headers.length-1].children;
+                headers = headers[headers.length - 1].children;
                 // Go though the headers
                 for (var i = 0; i < headers.length; i++) {
                     parseHeader(headers[i]);
@@ -9739,7 +9740,7 @@ if (! formula && typeof(require) === 'function') {
             var content = el.querySelectorAll(':scope > tr, :scope > tbody > tr');
             for (var j = 0; j < content.length; j++) {
                 options.data[rowNumber] = [];
-                if (options.parseTableFirstRowAsHeader == true && ! headers.length && j == 0) {
+                if (options.parseTableFirstRowAsHeader == true && !headers.length && j == 0) {
                     for (var i = 0; i < content[j].children.length; i++) {
                         parseHeader(content[j].children[i]);
                     }
@@ -9748,7 +9749,7 @@ if (! formula && typeof(require) === 'function') {
                         // WickedGrid formula compatibility
                         var value = content[j].children[i].getAttribute('data-formula');
                         if (value) {
-                            if (value.substr(0,1) != '=') {
+                            if (value.substr(0, 1) != '=') {
                                 value = '=' + value;
                             }
                         } else {
@@ -9757,7 +9758,7 @@ if (! formula && typeof(require) === 'function') {
                         options.data[rowNumber].push(value);
 
                         // Key
-                        var cellName = jexcel.getColumnNameFromId([ i, j ]);
+                        var cellName = jexcel.getColumnNameFromId([i, j]);
 
                         // Classes
                         var tmp = content[j].children[i].getAttribute('class');
@@ -9769,7 +9770,7 @@ if (! formula && typeof(require) === 'function') {
                         var mergedColspan = parseInt(content[j].children[i].getAttribute('colspan')) || 0;
                         var mergedRowspan = parseInt(content[j].children[i].getAttribute('rowspan')) || 0;
                         if (mergedColspan || mergedRowspan) {
-                            mergeCells[cellName] = [ mergedColspan || 1, mergedRowspan || 1 ];
+                            mergeCells[cellName] = [mergedColspan || 1, mergedRowspan || 1];
                         }
 
                         // Avoid problems with hidden cells
@@ -9847,7 +9848,7 @@ if (! formula && typeof(require) === 'function') {
                     pattern[i] = [];
                     for (var j = 0; j < options.data.length; j++) {
                         var value = options.data[j][i];
-                        if (! pattern[i][value]) {
+                        if (!pattern[i][value]) {
                             pattern[i][value] = 0;
                         }
                         pattern[i][value]++;
@@ -9855,7 +9856,7 @@ if (! formula && typeof(require) === 'function') {
                             test = false;
                         }
                         if (value.length == 10) {
-                            if (! (value.substr(4,1) == '-' && value.substr(7,1) == '-')) {
+                            if (!(value.substr(4, 1) == '-' && value.substr(7, 1) == '-')) {
                                 testCalendar = false;
                             }
                         } else {
@@ -9876,23 +9877,23 @@ if (! formula && typeof(require) === 'function') {
             return options;
         }
     }
-        /**
-         * add
-         */
-        jexcel.transformScaleLeft = function(o,number){
-            return Math.round(number / o.options.transform.scale)
-        }
-        jexcel.transformScaleTop = function(o,number){
-            return Math.round(number / o.options.transform.scale)
-        }
+    /**
+     * add
+     */
+    jexcel.transformScaleLeft = function (o, number) {
+        return Math.round(number / o.options.transform.scale)
+    }
+    jexcel.transformScaleTop = function (o, number) {
+        return Math.round(number / o.options.transform.scale)
+    }
     // Helpers
-    jexcel.helpers = (function() {
+    jexcel.helpers = (function () {
         var component = {};
 
         /**
          * Get carret position for one element
          */
-        component.getCaretIndex = function(e) {
+        component.getCaretIndex = function (e) {
             if (this.config.root) {
                 var d = this.config.root;
             } else {
@@ -9915,7 +9916,7 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Invert keys and values
          */
-        component.invert = function(o) {
+        component.invert = function (o) {
             var d = [];
             var k = Object.keys(o);
             for (var i = 0; i < k.length; i++) {
@@ -9930,7 +9931,7 @@ if (! formula && typeof(require) === 'function') {
          * @param integer i
          * @return string letter
          */
-        component.getColumnName = function(i) {
+        component.getColumnName = function (i) {
             var letter = '';
             if (i > 701) {
                 letter += String.fromCharCode(64 + parseInt(i / 676));
@@ -9946,11 +9947,11 @@ if (! formula && typeof(require) === 'function') {
         /**
          * Get column name from coords
          */
-        component.getColumnNameFromCoords = function(x, y) {
+        component.getColumnNameFromCoords = function (x, y) {
             return component.getColumnName(parseInt(x)) + (parseInt(y) + 1);
         }
 
-        component.getCoordsFromColumnName = function(columnName) {
+        component.getCoordsFromColumnName = function (columnName) {
             // Get the letters
             var t = /^[a-zA-Z]+/.exec(columnName);
 
@@ -9972,26 +9973,26 @@ if (! formula && typeof(require) === 'function') {
                     number--;
                 }
 
-                return [ code, number ];
+                return [code, number];
             }
         }
 
         /**
          * Extract json configuration from a TABLE DOM tag
          */
-        component.createFromTable = function() {}
+        component.createFromTable = function () { }
 
         /**
          * Helper injectArray
          */
-        component.injectArray = function(o, idx, arr) {
+        component.injectArray = function (o, idx, arr) {
             return o.slice(0, idx).concat(arr).concat(o.slice(idx));
         }
 
         /**
          * Parse CSV string to JS array
          */
-        component.parseCSV = function(str, delimiter) {
+        component.parseCSV = function (str, delimiter) {
             // user-supplied delimeter or default comma
             delimiter = (delimiter || ",");
 
@@ -10008,11 +10009,11 @@ if (! formula && typeof(require) === 'function') {
             // Go over all chars
             for (var i = 0; i < str.length; i++) {
                 // Create new row
-                if (! data[row]) {
+                if (!data[row]) {
                     data[row] = [];
                 }
                 // Create new column
-                if (! data[row][col]) {
+                if (!data[row][col]) {
                     data[row][col] = '';
                 }
 
@@ -10022,7 +10023,7 @@ if (! formula && typeof(require) === 'function') {
                 }
 
                 // New row
-                if ((str[i] == '\n' || str[i] == delimiter) && (inside == false || closed == true || ! flag)) {
+                if ((str[i] == '\n' || str[i] == delimiter) && (inside == false || closed == true || !flag)) {
                     // Restart flags
                     flag = null;
                     inside = false;
@@ -10030,8 +10031,8 @@ if (! formula && typeof(require) === 'function') {
 
                     if (data[row][col][0] == '"') {
                         var val = data[row][col].trim();
-                        if (val[val.length-1] == '"') {
-                            data[row][col] = val.substr(1, val.length-2);
+                        if (val[val.length - 1] == '"') {
+                            data[row][col] = val.substr(1, val.length - 2);
                         }
                     }
 
@@ -10051,7 +10052,7 @@ if (! formula && typeof(require) === 'function') {
                 } else {
                     // Inside quotes
                     if (str[i] == '"') {
-                        inside = ! inside;
+                        inside = !inside;
                     }
 
                     if (flag === null) {
@@ -10059,9 +10060,9 @@ if (! formula && typeof(require) === 'function') {
                         if (flag == true) {
                             continue;
                         }
-                    } else if (flag === true && ! closed) {
+                    } else if (flag === true && !closed) {
                         if (str[i] == '"') {
-                            if (str[i+1] == '"') {
+                            if (str[i + 1] == '"') {
                                 inside = true;
                                 data[row][col] += str[i];
                                 i++;
@@ -10094,17 +10095,17 @@ if (! formula && typeof(require) === 'function') {
     /**
      * Jquery Support
      */
-    if (typeof(jQuery) != 'undefined') {
-        (function($){
-            $.fn.jspreadsheet = $.fn.jexcel = function(mixed) {
+    if (typeof (jQuery) != 'undefined') {
+        (function ($) {
+            $.fn.jspreadsheet = $.fn.jexcel = function (mixed) {
                 var spreadsheetContainer = $(this).get(0);
-                if (! spreadsheetContainer.jexcel) {
+                if (!spreadsheetContainer.jexcel) {
                     return jexcel($(this).get(0), arguments[0]);
                 } else {
                     if (Array.isArray(spreadsheetContainer.jexcel)) {
-                        return spreadsheetContainer.jexcel[mixed][arguments[1]].apply(this, Array.prototype.slice.call( arguments, 2 ));
+                        return spreadsheetContainer.jexcel[mixed][arguments[1]].apply(this, Array.prototype.slice.call(arguments, 2));
                     } else {
-                        return spreadsheetContainer.jexcel[mixed].apply(this, Array.prototype.slice.call( arguments, 1 ));
+                        return spreadsheetContainer.jexcel[mixed].apply(this, Array.prototype.slice.call(arguments, 1));
                     }
                 }
             };
