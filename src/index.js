@@ -3284,7 +3284,7 @@ if (!formula && typeof (require) === 'function') {
                 var x = (x2 - x1) + obj.content.scrollLeft;
                 var y = (y2 - y1) + obj.content.scrollTop - 2;
             } else {
-                var x = (x2 - x1) + obj.content.scrollLeft + w2;
+                var x = (x2 - x1) + obj.content.scrollLeft + w2 + 100;
                 var y = (y2 - y1) + obj.content.scrollTop + h2;
             }
 
