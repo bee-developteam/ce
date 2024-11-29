@@ -8494,7 +8494,8 @@ if (!formula && typeof (require) === 'function') {
                         var width = e.pageX - jexcel.current.resizing.mousePosition;
 
                         if (jexcel.current.resizing.width + width > 0) {
-                            var tempWidth = jexcel.current.resizing.width + width;
+                            var tempWidth = (jexcel.current.resizing.width + width)/jexcel.current.options.transform.scale;
+                            console.log("tempWidth",tempWidth)
                             jexcel.current.colgroup[jexcel.current.resizing.column].setAttribute('width', tempWidth);
 
                             jexcel.current.updateCornerPosition();
