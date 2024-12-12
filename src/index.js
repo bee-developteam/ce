@@ -7294,23 +7294,26 @@ if (!formula && typeof (require) === 'function') {
 
             if (y == null) {
                 // Insert a new column
-                if (obj.options.allowInsertColumn == true) {
-                    items.push({
-                        title: obj.options.text.insertANewColumnBefore,
-                        onclick: function () {
-                            obj.insertColumn(1, parseInt(x), 1);
-                        }
-                    });
+                if(el.selectedCell[0] == el.selectedCell[2]){
+                    if (obj.options.allowInsertColumn == true) {
+                        items.push({
+                            title: obj.options.text.insertANewColumnBefore,
+                            onclick: function () {
+                                obj.insertColumn(1, parseInt(x), 1);
+                            }
+                        });
+                    }
+    
+                    if (obj.options.allowInsertColumn == true) {
+                        items.push({
+                            title: obj.options.text.insertANewColumnAfter,
+                            onclick: function () {
+                                obj.insertColumn(1, parseInt(x), 0);
+                            }
+                        });
+                    }
                 }
-
-                if (obj.options.allowInsertColumn == true) {
-                    items.push({
-                        title: obj.options.text.insertANewColumnAfter,
-                        onclick: function () {
-                            obj.insertColumn(1, parseInt(x), 0);
-                        }
-                    });
-                }
+              
 
                 // Delete a column
                 if (obj.options.allowDeleteColumn == true) {
