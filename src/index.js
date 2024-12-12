@@ -7294,7 +7294,7 @@ if (!formula && typeof (require) === 'function') {
 
             if (y == null) {
                 // Insert a new column
-                if(el.selectedCell[0] == el.selectedCell[2]){
+                if (el.selectedCell[0] == el.selectedCell[2]) {
                     if (obj.options.allowInsertColumn == true) {
                         items.push({
                             title: obj.options.text.insertANewColumnBefore,
@@ -7303,7 +7303,7 @@ if (!formula && typeof (require) === 'function') {
                             }
                         });
                     }
-    
+
                     if (obj.options.allowInsertColumn == true) {
                         items.push({
                             title: obj.options.text.insertANewColumnAfter,
@@ -7313,7 +7313,7 @@ if (!formula && typeof (require) === 'function') {
                         });
                     }
                 }
-              
+
 
                 // Delete a column
                 if (obj.options.allowDeleteColumn == true) {
@@ -7359,20 +7359,22 @@ if (!formula && typeof (require) === 'function') {
             } else {
                 if (x == null) {
                     // Insert new row
-                    if (obj.options.allowInsertRow == true) {
-                        items.push({
-                            title: obj.options.text.insertANewRowBefore,
-                            onclick: function () {
-                                obj.insertRow(1, parseInt(y), 1);
-                            }
-                        });
+                    if (el.selectedCell[1] == el.selectedCell[3]) {
+                        if (obj.options.allowInsertRow == true) {
+                            items.push({
+                                title: obj.options.text.insertANewRowBefore,
+                                onclick: function () {
+                                    obj.insertRow(1, parseInt(y), 1);
+                                }
+                            });
 
-                        items.push({
-                            title: obj.options.text.insertANewRowAfter,
-                            onclick: function () {
-                                obj.insertRow(1, parseInt(y));
-                            }
-                        });
+                            items.push({
+                                title: obj.options.text.insertANewRowAfter,
+                                onclick: function () {
+                                    obj.insertRow(1, parseInt(y));
+                                }
+                            });
+                        }
                     }
 
                     if (obj.options.allowDeleteRow == true) {
