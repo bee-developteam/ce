@@ -7380,6 +7380,8 @@ if (!formula && typeof (require) === 'function') {
                             }
                         });
                     }
+
+                    items.push({ type: 'line' });
                 }
 
 
