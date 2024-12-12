@@ -7354,31 +7354,33 @@ if (!formula && typeof (require) === 'function') {
                     // });
                 }
             } else {
+                console.log(obj)
                 // Insert new row
-                // if (obj.options.allowInsertRow == true) {
-                //     items.push({
-                //         title: obj.options.text.insertANewRowBefore,
-                //         onclick: function () {
-                //             obj.insertRow(1, parseInt(y), 1);
-                //         }
-                //     });
+                if (obj.options.allowInsertRow == true) {
+                    items.push({
+                        title: obj.options.text.insertANewRowBefore,
+                        onclick: function () {
+                            obj.insertRow(1, parseInt(y), 1);
+                        }
+                    });
 
-                //     items.push({
-                //         title: obj.options.text.insertANewRowAfter,
-                //         onclick: function () {
-                //             obj.insertRow(1, parseInt(y));
-                //         }
-                //     });
-                // }
+                    items.push({
+                        title: obj.options.text.insertANewRowAfter,
+                        onclick: function () {
+                            obj.insertRow(1, parseInt(y));
+                        }
+                    });
+                }
 
-                // if (obj.options.allowDeleteRow == true) {
-                //     items.push({
-                //         title: obj.options.text.deleteSelectedRows,
-                //         onclick: function () {
-                //             obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
-                //         }
-                //     });
-                // }
+                if (obj.options.allowDeleteRow == true) {
+                    items.push({
+                        title: obj.options.text.deleteSelectedRows,
+                        onclick: function () {
+                            obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                        }
+                    });
+                }
+            
 
                 if (x) {
                     if (obj.options.allowComments == true) {
