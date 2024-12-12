@@ -7332,6 +7332,9 @@ if (!formula && typeof (require) === 'function') {
                     });
                 }
 
+                // Line
+                items.push({ type: 'line' });
+
                 // Sorting
                 if (obj.options.columnSorting == true) {
                     // Line
@@ -7379,7 +7382,7 @@ if (!formula && typeof (require) === 'function') {
 
                 if (x) {
                     if (obj.options.allowComments == true) {
-                        //items.push({ type: 'line' });
+                        items.push({ type: 'line' });
 
                         var title = obj.records[y][x].getAttribute('title') || '';
 
@@ -7405,8 +7408,7 @@ if (!formula && typeof (require) === 'function') {
                 }
             }
 
-            // Line
-            items.push({ type: 'line' });
+
 
             // Copy
             items.push({
@@ -8372,7 +8374,7 @@ if (!formula && typeof (require) === 'function') {
                 if (jexcel.current.resizing.column) {
                     // New width
                     var newWidth = jexcel.current.colgroup[jexcel.current.resizing.column].getAttribute('width');
-                    console.log('newWidth',newWidth)
+                    console.log('newWidth', newWidth)
                     console.log(jexcel.current)
                     // Columns
                     var columns = jexcel.current.getSelectedColumns();
@@ -8494,8 +8496,8 @@ if (!formula && typeof (require) === 'function') {
                         var width = e.pageX - jexcel.current.resizing.mousePosition;
 
                         if (jexcel.current.resizing.width + width > 0) {
-                            var tempWidth = (jexcel.current.resizing.width + width)/jexcel.current.options.transform.scale;
-                            console.log("tempWidth",tempWidth)
+                            var tempWidth = (jexcel.current.resizing.width + width) / jexcel.current.options.transform.scale;
+                            console.log("tempWidth", tempWidth)
                             jexcel.current.colgroup[jexcel.current.resizing.column].setAttribute('width', tempWidth);
 
                             jexcel.current.updateCornerPosition();
