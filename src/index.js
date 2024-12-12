@@ -7354,7 +7354,7 @@ if (!formula && typeof (require) === 'function') {
                     // });
                 }
             } else {
-                console.log(obj)
+                console.log("obj",obj)
                 // Insert new row
                 if (obj.options.allowInsertRow == true) {
                     items.push({
